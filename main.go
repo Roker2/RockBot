@@ -7,13 +7,13 @@ import (
 	"./modules/media/Anilibria"
 	"./modules/mute"
 	"./modules/welcome"
+	"encoding/json"
+	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/handlers/Filters"
 	"log"
-	"fmt"
-	"encoding/json"
 	"os"
 )
 
