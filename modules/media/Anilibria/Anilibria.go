@@ -36,7 +36,7 @@ func (release ALRelease) ToString() string {
 	str = strings.TrimSuffix(str, " ")
 	str = strings.TrimSuffix(str, ",")
 	str += "\n<b>Описание:</b> " + release.description
-	str += "...\n<a href=\"https://www.anilibria.tv/release/" + release.code + ".html\">Ссылка</a>"
+	str += "\n<a href=\"https://www.anilibria.tv/release/" + release.code + ".html\">Ссылка</a>"
 	return str
 }
 
@@ -95,22 +95,7 @@ func Randomal(b ext.Bot, u *gotgbot.Update) error  {
 	msg.FileId = "https://www.anilibria.tv" + release.pictureurl
 	_, err = msg.Send()
 	if err != nil {
-		//return err
-		tempstr := release.ToString()[:1000]
-		if tempstr[len(tempstr)] == ' ' {
-			tempstr = string(tempstr[len(tempstr)-1])
-		}
-		if string(tempstr[len(tempstr) - 1]) != "\n" || string(tempstr[len(tempstr) - 1]) != "." {
-			tempstr += "..."
-		}
-		tempstr += "\n<a href=\"https://www.anilibria.tv/release/" + release.code + ".html\">Ссылка</a>"
-		msg = b.NewSendablePhoto(u.Message.Chat.Id, tempstr)
-		msg.ParseMode = parsemode.Html
-		msg.FileId = "https://www.anilibria.tv" + release.pictureurl
-		_, err = msg.Send()
-		if err != nil {
-			return err
-		}
+		return err
 	}
 	return nil
 }
