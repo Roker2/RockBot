@@ -5,6 +5,7 @@ import (
 	"./modules/bans"
 	"./modules/info"
 	"./modules/media/Anilibria"
+	"./modules/media/SunMyungMoon"
 	"./modules/mute"
 	"./modules/welcome"
 	"encoding/json"
@@ -47,6 +48,7 @@ func main() {
 	}
 	updater.Dispatcher.AddHandler(handlers.NewCommand("start", start))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("randomal", Anilibria.Randomal))
+	updater.Dispatcher.AddHandler(handlers.NewCommand("randomsmmq", SunMyungMoon.RandomSMMQ))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("info", info.UserInfo))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("chatinfo", info.ChatInfo))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ban", []rune{'/', '!'}, bans.Ban))
