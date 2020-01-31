@@ -90,12 +90,25 @@ func Randomal(b ext.Bot, u *gotgbot.Update) error  {
 	release.description = strings.Replace(release.description, "<br>", "\n", -1)
 	//log.Print(release.ToString())
 	//str = str[:1000 - len("https://www.anilibria.tv/release/" + release.code + ".html") - 25]
-	msg := b.NewSendablePhoto(u.Message.Chat.Id, release.ToString())
-	msg.ParseMode = parsemode.Html
-	msg.FileId = "https://www.anilibria.tv" + release.pictureurl
-	_, err = msg.Send()
-	if err != nil {
-		return err
+	if len(release.ToString()) <= 1024 {
+		msg := b.NewSendablePhoto(u.Message.Chat.Id, release.ToString())
+		msg.ParseMode = parsemode.Html
+		msg.FileId = "https://www.anilibria.tv" + release.pictureurl
+		_, err = msg.Send()
+		if err != nil {
+			return err
+		}
+	} else {
+		msg := b.NewSendablePhoto(u.Message.Chat.Id, "")
+		msg.FileId = "https://www.anilibria.tv" + release.pictureurl
+		_, err = msg.Send()
+		if err != nil {
+			return err
+		}
+		_, err = b.SendMessageHTML(u.Message.Chat.Id, release.ToString())
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
