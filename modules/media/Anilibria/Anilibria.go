@@ -36,7 +36,7 @@ func (release ALRelease) ToString() string {
 	str = strings.TrimSuffix(str, " ")
 	str = strings.TrimSuffix(str, ",")
 	str += "\n<b>Описание:</b> " + release.description
-	str += "\n<a href=\"https://www.anilibria.tv/release/" + release.code + ".html\">Ссылка</a>"
+	//str += "\n<a href=\"https://www.anilibria.tv/release/" + release.code + ".html\">Ссылка</a>"
 	return str
 }
 
@@ -94,6 +94,14 @@ func Randomal(b ext.Bot, u *gotgbot.Update) error  {
 		msg := b.NewSendablePhoto(u.Message.Chat.Id, release.ToString())
 		msg.ParseMode = parsemode.Html
 		msg.FileId = "https://www.anilibria.tv" + release.pictureurl
+		markup := ext.InlineKeyboardMarkup{
+			InlineKeyboard: &[][]ext.InlineKeyboardButton{
+				[]ext.InlineKeyboardButton{
+					ext.InlineKeyboardButton{Text:"Ссылка", Url:"https://www.anilibria.tv/release/" + release.code + ".html"},
+				},
+			},
+		}
+		msg.ReplyMarkup = ext.ReplyMarkup(&markup)
 		_, err = msg.Send()
 		if err != nil {
 			return err
@@ -105,7 +113,17 @@ func Randomal(b ext.Bot, u *gotgbot.Update) error  {
 		if err != nil {
 			return err
 		}
-		_, err = b.SendMessageHTML(u.Message.Chat.Id, release.ToString())
+		msgtext := b.NewSendableMessage(u.Message.Chat.Id, release.ToString())
+		msgtext.ParseMode = parsemode.Html
+		markup := ext.InlineKeyboardMarkup{
+			InlineKeyboard: &[][]ext.InlineKeyboardButton{
+				[]ext.InlineKeyboardButton{
+					ext.InlineKeyboardButton{Text:"Ссылка", Url:"https://www.anilibria.tv/release/" + release.code + ".html"},
+				},
+			},
+		}
+		msgtext.ReplyMarkup = ext.ReplyMarkup(&markup)
+		_, err = msgtext.Send()
 		if err != nil {
 			return err
 		}
