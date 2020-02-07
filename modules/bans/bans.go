@@ -20,7 +20,6 @@ func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 			}
 		}
 		banId = banId2
-		log.Print("Тут")
 	} else {
 		if !utils.IsReply(b, u) {
 			return nil
