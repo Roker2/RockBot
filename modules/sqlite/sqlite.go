@@ -6,6 +6,7 @@ import (
   "os"
   "log"
 	"strconv"
+  "strings"
   _ "github.com/mattn/go-sqlite3"
 )
 
@@ -100,5 +101,36 @@ func AddUserWarn (ChatId int, UserId int) int {
   warns++
   log.Print("UserId + ChatId: " + strconv.Itoa(UserId + ChatId) + " warns: " + strconv.Itoa(warns))
   statement.Exec(warns, UserId + ChatId)
+  return warns
+}
+
+func GetUserWarns (ChatId int, UserId int) int {
+  os.Mkdir("databases",0770)
+  db, err := sql.Open("sqlite3", "./databases/warns.db")
+  if err != nil {
+    errors.SendError(err)
+    return -1// err
+  }
+  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER)")
+  if err != nil {
+    errors.SendError(err)
+    return -1// err
+  }
+  statement.Exec()
+  var warns int
+  statement, err = db.Prepare("SELECT warns FROM user WHERE id = ?")
+  if err != nil {
+    errors.SendError(err)
+    return -1// err
+  }
+  err = statement.QueryRow(UserId + ChatId).Scan(&warns)
+  if err != nil {
+    errors.SendError(err)
+    if strings.Contains(err.Error(), "sql: no rows in result set") {
+      return 0
+    } else {
+      return -1// err
+    }
+  }
   return warns
 }
