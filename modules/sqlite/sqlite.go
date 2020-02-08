@@ -82,13 +82,7 @@ func AddUserWarn (ChatId int, UserId int) int {
     return -1// err
   }
   statement.Exec()
-  var warns int
-  statement, err = db.Prepare("SELECT warns FROM user WHERE id = ?")
-  if err != nil {
-    errors.SendError(err)
-    return -1// err
-  }
-  err = statement.QueryRow(UserId + ChatId).Scan(&warns)
+  warns := GetUserWarns(ChatId, UserId)
   if warns == 0 {
     statement, err = db.Prepare("INSERT INTO user (warns, id) VALUES (?, ?)")
   } else {
