@@ -128,3 +128,22 @@ func GetUserWarns (ChatId int, UserId int) int {
   }
   return warns
 }
+
+func ResetUserWarns (ChatId int, UserId int) error {
+  os.Mkdir("databases",0770)
+  db, err := sql.Open("sqlite3", "./databases/warns.db")
+  if err != nil {
+    return err
+  }
+  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER)")
+  if err != nil {
+    return err
+  }
+  statement.Exec()
+  statement, err = db.Prepare("UPDATE user SET warns = ? WHERE id = ?")
+  if err != nil {
+    return err
+  }
+  statement.Exec(0, UserId + ChatId)
+  return nil
+}
