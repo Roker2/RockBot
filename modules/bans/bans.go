@@ -10,21 +10,14 @@ import (
 
 func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	var banId int
-	if len(args) >= 1  {
-		banId2, err := strconv.Atoi(args[0])
-		if err != nil {
-			_, err = b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста ID, а не бред.")
-			if err != nil {
-				return err
-			}
-		}
-		banId = banId2
-	} else {
-		if !utils.IsReply(b, u) {
-			return nil
-		}
-		banId = u.Message.ReplyToMessage.From.Id
+	banId := utils.ExtractId(b, u, args)
+	if banId == 0 {
+		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
+		return err
+	}
+	if banId == -1 {
+		_, err := b.SendMessage(chat.Id, "Я для тебя что, вещь?")
+		return err
 	}
 	if utils.ItIsMe(b, u, banId) {
 		return nil
@@ -60,21 +53,14 @@ func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	var banId int
-	if len(args) >= 1  {
-		banId2, err := strconv.Atoi(args[0])
-		if err != nil {
-			_, err = b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста ID, а не бред.")
-			if err != nil {
-				return err
-			}
-		}
-		banId = banId2
-	} else {
-		if !utils.IsReply(b, u) {
-			return nil
-		}
-		banId = u.Message.ReplyToMessage.From.Id
+	banId := utils.ExtractId(b, u, args)
+	if banId == 0 {
+		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
+		return err
+	}
+	if banId == -1 {
+		_, err := b.SendMessage(chat.Id, "Я для тебя что, вещь?")
+		return err
 	}
 	if utils.ItIsMe(b, u, banId) {
 		return nil
@@ -113,21 +99,14 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func Kick(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	var banId int
-	if len(args) >= 1  {
-		banId2, err := strconv.Atoi(args[0])
-		if err != nil {
-			_, err = b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста ID, а не бред.")
-			if err != nil {
-				return err
-			}
-		}
-		banId = banId2
-	} else {
-		if !utils.IsReply(b, u) {
-			return nil
-		}
-		banId = u.Message.ReplyToMessage.From.Id
+	banId := utils.ExtractId(b, u, args)
+	if banId == 0 {
+		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
+		return err
+	}
+	if banId == -1 {
+		_, err := b.SendMessage(chat.Id, "Я для тебя что, вещь?")
+		return err
 	}
 	if utils.ItIsMe(b, u, banId) {
 		return nil

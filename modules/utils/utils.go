@@ -4,6 +4,7 @@ import (
 	"../errors"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"strconv"
 )
 
 func MemberIsCreator(member *ext.ChatMember) bool {
@@ -145,22 +146,25 @@ func MemberCanRestrictMembers(b ext.Bot, u *gotgbot.Update) bool {
 	return true
 }
 
-/*func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) int {
+func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) int {
 	var id int
 	if len(args) >= 1  {
 		banId2, err := strconv.Atoi(args[0])
 		if err != nil {
-			return 0
+			_, err = b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста ID, а не бред.")
+			if err != nil {
+				return 0
+			}
 		}
 		id = banId2
 	} else {
 		if !IsReply(b, u) {
 			return 0
 		}
-		if ItIsMe(b, u) {
-			return 0
-		}
 		id = u.Message.ReplyToMessage.From.Id
 	}
+	if id == b.Id {
+		return -1
+	}
 	return id
-}*/
+}
