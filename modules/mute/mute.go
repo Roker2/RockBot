@@ -10,22 +10,14 @@ import (
 
 func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	var muteId int
-	if len(args) >= 1  {
-		muteId2, err := strconv.Atoi(args[0])
-		if err != nil {
-			_, _ = b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста ID, а не бред.")
-			return err
-		}
-		muteId = muteId2
-	} else {
-		if !utils.IsReply(b, u) {
-			return nil
-		}
-		muteId = u.Message.ReplyToMessage.From.Id
+	muteId := utils.ExtractId(b, u, args)
+	if muteId == 0 {
+		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
+		return err
 	}
-	if utils.ItIsMe(b, u, muteId) {
-		return nil
+	if muteId == -1 {
+		_, err := b.SendMessage(chat.Id, "Я для тебя что, вещь?")
+		return err
 	}
 	log.Print(strconv.Itoa(muteId))
 	member, err := chat.GetMember(u.Message.From.Id)
@@ -56,22 +48,14 @@ func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	var muteId int
-	if len(args) >= 1  {
-		muteId2, err := strconv.Atoi(args[0])
-		if err != nil {
-			_, _ = b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста ID, а не бред.")
-			return err
-		}
-		muteId = muteId2
-	} else {
-		if !utils.IsReply(b, u) {
-			return nil
-		}
-		muteId = u.Message.ReplyToMessage.From.Id
+	muteId := utils.ExtractId(b, u, args)
+	if muteId == 0 {
+		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
+		return err
 	}
-	if utils.ItIsMe(b, u, muteId) {
-		return nil
+	if muteId == -1 {
+		_, err := b.SendMessage(chat.Id, "Это бессмысленно.")
+		return err
 	}
 	log.Print(strconv.Itoa(muteId))
 	member, err := chat.GetMember(u.Message.From.Id)
