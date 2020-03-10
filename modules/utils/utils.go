@@ -21,10 +21,12 @@ func MemberIsAdministrator(member *ext.ChatMember) bool {
 	return false
 }
 
-func IsReply(b ext.Bot, u *gotgbot.Update) bool {
+func IsReply(b ext.Bot, u *gotgbot.Update, writeMsg bool) bool {
 	if u.Message.ReplyToMessage == nil {
-		_, err := b.SendMessage(u.Message.Chat.Id, "Ответьте пожалуйста на сообщение того, с кем Вы хотите что-то сделать.")
-		errors.SendError(err)
+		if writeMsg {
+			_, err := b.SendMessage(u.Message.Chat.Id, "Ответьте пожалуйста на сообщение того, с кем Вы хотите что-то сделать.")
+			errors.SendError(err)
+		}
 		return false
 	}
 	return true
@@ -158,7 +160,7 @@ func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) int {
 		}
 		id = banId2
 	} else {
-		if !IsReply(b, u) {
+		if !IsReply(b, u, false) {
 			return 0
 		}
 		id = u.Message.ReplyToMessage.From.Id
