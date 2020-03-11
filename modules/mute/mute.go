@@ -10,13 +10,9 @@ import (
 
 func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	muteId := utils.ExtractId(b, u, args)
+	muteId, errortext := utils.ExtractId(b, u, args)
 	if muteId == 0 {
-		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
-		return err
-	}
-	if muteId == -1 {
-		_, err := b.SendMessage(chat.Id, "Я для тебя что, вещь?")
+		_, err := b.SendMessage(chat.Id, errortext)
 		return err
 	}
 	log.Print(strconv.Itoa(muteId))
@@ -48,13 +44,9 @@ func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	muteId := utils.ExtractId(b, u, args)
+	muteId, errortext := utils.ExtractId(b, u, args)
 	if muteId == 0 {
-		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
-		return err
-	}
-	if muteId == -1 {
-		_, err := b.SendMessage(chat.Id, "Это бессмысленно.")
+		_, err := b.SendMessage(chat.Id, errortext)
 		return err
 	}
 	log.Print(strconv.Itoa(muteId))

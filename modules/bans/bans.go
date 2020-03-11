@@ -10,13 +10,9 @@ import (
 
 func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	banId := utils.ExtractId(b, u, args)
+	banId, errortext := utils.ExtractId(b, u, args)
 	if banId == 0 {
-		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
-		return err
-	}
-	if banId == -1 {
-		_, err := b.SendMessage(chat.Id, "Я для тебя что, вещь?")
+		_, err := b.SendMessage(chat.Id, errortext)
 		return err
 	}
 	if utils.ItIsMe(b, u, banId) {
@@ -53,13 +49,9 @@ func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	banId := utils.ExtractId(b, u, args)
+	banId, errortext := utils.ExtractId(b, u, args)
 	if banId == 0 {
-		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
-		return err
-	}
-	if banId == -1 {
-		_, err := b.SendMessage(chat.Id, "Я для тебя что, вещь?")
+		_, err := b.SendMessage(chat.Id, errortext)
 		return err
 	}
 	if utils.ItIsMe(b, u, banId) {
@@ -99,13 +91,9 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func Kick(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
-	banId := utils.ExtractId(b, u, args)
+	banId, errortext := utils.ExtractId(b, u, args)
 	if banId == 0 {
-		_, err := b.SendMessage(chat.Id, "Что-то не так, не могу получить ID пользователя.")
-		return err
-	}
-	if banId == -1 {
-		_, err := b.SendMessage(chat.Id, "Я для тебя что, вещь?")
+		_, err := b.SendMessage(chat.Id, errortext)
 		return err
 	}
 	if utils.ItIsMe(b, u, banId) {

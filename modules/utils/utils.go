@@ -148,25 +148,22 @@ func MemberCanRestrictMembers(b ext.Bot, u *gotgbot.Update) bool {
 	return true
 }
 
-func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) int {
+func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) (int, string) {
 	var id int
 	if len(args) >= 1  {
 		banId2, err := strconv.Atoi(args[0])
 		if err != nil {
-			_, err = b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста ID, а не бред.")
-			if err != nil {
-				return 0
-			}
+			return 0, "Введите пожалуйста ID, а не бред."
 		}
 		id = banId2
 	} else {
 		if !IsReply(b, u, false) {
-			return 0
+			return 0, "Ответьте пожалуйста на сообщение человека, с которым Вы хотите что-то сделать, или напишите его ID"
 		}
 		id = u.Message.ReplyToMessage.From.Id
 	}
 	if id == b.Id {
-		return -1
+		return 0, "Я для тебя что, вещь?"
 	}
-	return id
+	return id, ""
 }
