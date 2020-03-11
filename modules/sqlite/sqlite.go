@@ -1,13 +1,13 @@
 package sqlite
 
 import (
-	"../errors"
+  "../errors"
   "database/sql"
-  "os"
-  "log"
-	"strconv"
-  "strings"
   _ "github.com/mattn/go-sqlite3"
+  "log"
+  "os"
+  "strconv"
+  "strings"
 )
 
 func GetWarnsQuantityOfChat (ChatId int) int {
@@ -76,25 +76,30 @@ func AddUserWarn (ChatId int, UserId int) int {
     errors.SendError(err)
     return -1// err
   }
-  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER)")
+  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER, ChatId INTEGER, UserId INTEGER)")
   if err != nil {
     errors.SendError(err)
     return -1// err
   }
   statement.Exec()
   warns := GetUserWarns(ChatId, UserId)
-  if warns == 0 {
-    statement, err = db.Prepare("INSERT INTO user (warns, id) VALUES (?, ?)")
+  log.Print("UserId + ChatId: " + strconv.Itoa(UserId + ChatId) + " warns: " + strconv.Itoa(warns))
+  warns++
+  if warns == 1 {
+    statement, err = db.Prepare("INSERT INTO user (id, warns, ChatId, UserId) VALUES (?, ?, ?, ?)")
+    if err != nil {
+      errors.SendError(err)
+      return -1// err
+    }
+    statement.Exec(UserId + ChatId, warns, ChatId, UserId)
   } else {
     statement, err = db.Prepare("UPDATE user SET warns = ? WHERE id = ?")
+    if err != nil {
+      errors.SendError(err)
+      return -1// err
+    }
+    statement.Exec(warns, UserId + ChatId)
   }
-  if err != nil {
-    errors.SendError(err)
-    return -1// err
-  }
-  warns++
-  log.Print("UserId + ChatId: " + strconv.Itoa(UserId + ChatId) + " warns: " + strconv.Itoa(warns))
-  statement.Exec(warns, UserId + ChatId)
   return warns
 }
 
@@ -105,7 +110,7 @@ func GetUserWarns (ChatId int, UserId int) int {
     errors.SendError(err)
     return -1// err
   }
-  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER)")
+  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER, ChatId INTEGER, UserId INTEGER)")
   if err != nil {
     errors.SendError(err)
     return -1// err
@@ -118,6 +123,7 @@ func GetUserWarns (ChatId int, UserId int) int {
     return -1// err
   }
   err = statement.QueryRow(UserId + ChatId).Scan(&warns)
+  log.Print(strconv.Itoa(UserId + ChatId))
   if err != nil {
     errors.SendError(err)
     if strings.Contains(err.Error(), "sql: no rows in result set") {
@@ -135,7 +141,7 @@ func ResetUserWarns (ChatId int, UserId int) error {
   if err != nil {
     return err
   }
-  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER)")
+  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER, ChatId INTEGER, UserId INTEGER)")
   if err != nil {
     return err
   }
