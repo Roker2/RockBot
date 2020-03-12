@@ -2,6 +2,7 @@ package bans
 
 import (
 	"../utils"
+	"../sqlite"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"log"
@@ -84,6 +85,7 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		if err != nil {
 			return err
 		}
+		sqlite.ResetUserWarns(u.Message.Chat.Id, banId)
 		_, err = b.SendMessage(chat.Id, "Пользователь " + banMember.User.FirstName + " разбанен!")
 	}
 	return err
