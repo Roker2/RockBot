@@ -35,24 +35,21 @@ func GetWarnsQuantityOfChat (ChatId int) (int, error) {
   return warns, nil
 }
 
-func SetWarnsQuantityOfChat (ChatId int, warns int) {
+func SetWarnsQuantityOfChat (ChatId int, warns int) error {
   log.Print("Chat: " + strconv.Itoa(ChatId) + " Warns: " + strconv.Itoa(warns))
   os.Mkdir("databases",0770)
   db, err := sql.Open("sqlite3", "./databases/chatinfo.db")
   if err != nil {
-    errors.SendError(err)
-    return// -1
+    return err
   }
   statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS chatinfo (id INTEGER PRIMARY KEY, warns_quantity INTEGER)")
   if err != nil {
-    errors.SendError(err)
-    return// -2
+    return err
   }
   statement.Exec()
   statement, err = db.Prepare("SELECT warns_quantity FROM chatinfo WHERE id = ?")
   if err != nil {
-    errors.SendError(err)
-    return
+    return err
   }
   var warns_quantity int
   err = statement.QueryRow(ChatId).Scan(&warns_quantity)
@@ -62,10 +59,10 @@ func SetWarnsQuantityOfChat (ChatId int, warns int) {
     statement, err = db.Prepare("UPDATE chatinfo SET warns_quantity = ? WHERE id = ?")
   }
   if err != nil {
-    errors.SendError(err)
-    return// err
+    return err
   }
   statement.Exec(warns, ChatId)
+  return nil
 }
 
 func AddUserWarn (ChatId int, UserId int) int {

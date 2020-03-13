@@ -123,7 +123,10 @@ func SetWarnsQuantity (b ext.Bot, u *gotgbot.Update, args []string) error {
  				return err
  			}
     }
-    sqlite.SetWarnsQuantityOfChat(u.Message.Chat.Id, quantity)
+    err = sqlite.SetWarnsQuantityOfChat(u.Message.Chat.Id, quantity)
+    if err != nil {
+    	return err
+	}
   	} else {
     	_, err := b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста число.")
     	if err != nil {
