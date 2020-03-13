@@ -2,6 +2,7 @@ package warns
 //version: 1,0
 
 import (
+	"../bans"
 	"../sqlite"
 	"../utils"
 	"github.com/PaulSonOfLars/gotgbot"
@@ -54,11 +55,7 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
    	 	}
   	}
   	if strconv.Itoa(quantity) >= strconv.Itoa(sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)) {
-  		_, err = chat.KickMember(banId)
-  		if err != nil {
-  			return err
-  		}
-  		_, err = b.SendMessage(chat.Id, "Пользователь " + banMember.User.FirstName + " забанен!")
+  		err = bans.Ban(b, u, args)
   		return err
   	}
   	return nil
