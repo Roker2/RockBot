@@ -65,17 +65,15 @@ func SetWarnsQuantityOfChat (ChatId int, warns int) error {
   return nil
 }
 
-func AddUserWarn (ChatId int, UserId int) int {
+func AddUserWarn (ChatId int, UserId int) (int, error) {
   os.Mkdir("databases",0770)
   db, err := sql.Open("sqlite3", "./databases/warns.db")
   if err != nil {
-    errors.SendError(err)
-    return -1// err
+    return -1, err
   }
   statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER, ChatId INTEGER, UserId INTEGER)")
   if err != nil {
-    errors.SendError(err)
-    return -1// err
+    return -1, err
   }
   statement.Exec()
   warns := GetUserWarns(ChatId, UserId)
@@ -84,19 +82,17 @@ func AddUserWarn (ChatId int, UserId int) int {
   if warns == 1 {
     statement, err = db.Prepare("INSERT INTO user (id, warns, ChatId, UserId) VALUES (?, ?, ?, ?)")
     if err != nil {
-      errors.SendError(err)
-      return -1// err
+      return -1, err
     }
     statement.Exec(UserId + ChatId, warns, ChatId, UserId)
   } else {
     statement, err = db.Prepare("UPDATE user SET warns = ? WHERE id = ?")
     if err != nil {
-      errors.SendError(err)
-      return -1// err
+      return -1, err
     }
     statement.Exec(warns, UserId + ChatId)
   }
-  return warns
+  return warns, nil
 }
 
 func GetUserWarns (ChatId int, UserId int) int {
