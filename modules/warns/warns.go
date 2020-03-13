@@ -42,6 +42,10 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 			return err
 		}
 	}
+	maxQuantity, err := sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)
+	if err != nil {
+		return err
+	}
   	quantity := sqlite.AddUserWarn(u.Message.Chat.Id, banId)
   	if quantity == -1 {
     	_, err = b.SendMessage(u.Message.Chat.Id, "У нас маленько проблема... @Roker2!")
@@ -49,22 +53,22 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
       	return err
     	}
   	} else {
-  		_, err := b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(quantity) + "/" + strconv.Itoa(sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)))
+  		_, err := b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(quantity) + "/" + strconv.Itoa(maxQuantity))
     	if err != nil {
       	return err
    	 	}
   	}
-  	if strconv.Itoa(quantity) >= strconv.Itoa(sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)) {
+  	if quantity >= maxQuantity {
   		err = bans.Ban(b, u, args)
   		return err
   	}
   	return nil
 }
 
-func WarnsQuantity (b ext.Bot, u *gotgbot.Update) error {
+/*func WarnsQuantity (b ext.Bot, u *gotgbot.Update) error {
   	_, err := b.SendMessage(u.Message.Chat.Id, strconv.Itoa(sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)))
   	return err
-}
+}*/
 
 func GetUserWarns(b ext.Bot, u *gotgbot.Update, args []string) error {
 	banId, errortext := utils.ExtractId(b, u, args)
@@ -84,12 +88,16 @@ func GetUserWarns(b ext.Bot, u *gotgbot.Update, args []string) error {
   	} else {
  	  	banMember, err := u.Message.Chat.GetMember(banId)
     	if err != nil {
-      return err
-    }
-    	_, err = b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(sqlite.GetUserWarns(u.Message.Chat.Id, banId)) + "/" + strconv.Itoa(sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)))
+      		return err
+    	}
+		maxQuantity, err := sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)
+		if err != nil {
+			return err
+		}
+    	_, err = b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(sqlite.GetUserWarns(u.Message.Chat.Id, banId)) + "/" + strconv.Itoa(maxQuantity))
     	if err != nil {
-      return err
-    }
+    		return err
+    	}
   	}
   	return nil
 }

@@ -10,30 +10,29 @@ import (
   "strings"
 )
 
-func GetWarnsQuantityOfChat (ChatId int) int {
+func GetWarnsQuantityOfChat (ChatId int) (int, error) {
   os.Mkdir("databases",0770)
   db, err := sql.Open("sqlite3", "./databases/chatinfo.db")
   if err != nil {
-    errors.SendError(err)
-    return -1
+    return 0, err
   }
   statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS chatinfo (id INTEGER PRIMARY KEY, warns_quantity INTEGER)")
   if err != nil {
     errors.SendError(err)
-    return -2 //error: can not to create table
+    return 0, err //error: can not to create table
   }
   statement.Exec()
   var warns int
   statement, err = db.Prepare("SELECT warns_quantity FROM chatinfo WHERE id = ?")
   if err != nil {
     errors.SendError(err)
-    return -3//error: can not select
+    return 0, err//error: can not select
   }
   err = statement.QueryRow(ChatId).Scan(&warns)
   if warns == 0 {
-    return 5
+    return 5, nil
   }
-  return warns
+  return warns, nil
 }
 
 func SetWarnsQuantityOfChat (ChatId int, warns int) {
