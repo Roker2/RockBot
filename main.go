@@ -7,6 +7,7 @@ import (
 	"./modules/media/Anilibria"
 	"./modules/media/SunMyungMoon"
 	"./modules/mute"
+	"./modules/warns"
 	"./modules/welcome"
 	"encoding/json"
 	"fmt"
@@ -64,6 +65,10 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("promote", []rune{'/', '!'}, admin.Promote))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("demote", []rune{'/', '!'}, admin.Demote))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("purge", admin.Purge))
+	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("warn", []rune{'/', '!'}, warns.WarnUser))
+	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("warns", []rune{'/', '!'}, warns.GetUserWarns))
+	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setwarns", []rune{'/', '!'}, warns.SetWarnsQuantity))
+	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("resetwarns", []rune{'/', '!'}, warns.ResetWarns))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	log.Println("Starting long polling")
 	err = updater.StartPolling()
