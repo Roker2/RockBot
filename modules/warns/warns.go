@@ -127,6 +127,10 @@ func SetWarnsQuantity (b ext.Bot, u *gotgbot.Update, args []string) error {
     if err != nil {
     	return err
 	}
+	_, err = b.SendMessage(u.Message.Chat.Id, "Новое количество максимальных предупреждений: " + args[0] + ".")
+	if err != nil {
+		return err
+	}
   	} else {
     	_, err := b.SendMessage(u.Message.Chat.Id, "Введите пожалуйста число.")
     	if err != nil {
