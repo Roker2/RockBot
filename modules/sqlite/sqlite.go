@@ -146,10 +146,10 @@ func ResetUserWarns (ChatId int, UserId int) error {
     return err
   }
   statement.Exec()
-  statement, err = db.Prepare("UPDATE user SET warns = ? WHERE id = ?")
+  statement, err = db.Prepare("DELETE from user where id = ?")
   if err != nil {
     return err
   }
-  statement.Exec(0, UserId + ChatId)
+  statement.Exec(UserId + ChatId)
   return nil
 }
