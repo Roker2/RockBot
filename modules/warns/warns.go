@@ -46,16 +46,13 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-  	quantity := sqlite.AddUserWarn(u.Message.Chat.Id, banId)
-  	if quantity == -1 {
-    	_, err = b.SendMessage(u.Message.Chat.Id, "У нас маленько проблема... @Roker2!")
-    	if err != nil {
-      	return err
-    	}
+  	quantity, err := sqlite.AddUserWarn(u.Message.Chat.Id, banId)
+  	if err != nil {
+    	return err
   	} else {
   		_, err := b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(quantity) + "/" + strconv.Itoa(maxQuantity))
     	if err != nil {
-      	return err
+      		return err
    	 	}
   	}
   	if quantity >= maxQuantity {
