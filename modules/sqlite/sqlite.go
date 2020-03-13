@@ -76,7 +76,10 @@ func AddUserWarn (ChatId int, UserId int) (int, error) {
     return -1, err
   }
   statement.Exec()
-  warns := GetUserWarns(ChatId, UserId)
+  warns, err := GetUserWarns(ChatId, UserId)
+  if err != nil {
+    return -1, err
+  }
   log.Print("UserId + ChatId: " + strconv.Itoa(UserId + ChatId) + " warns: " + strconv.Itoa(warns))
   warns++
   if warns == 1 {
@@ -95,36 +98,33 @@ func AddUserWarn (ChatId int, UserId int) (int, error) {
   return warns, nil
 }
 
-func GetUserWarns (ChatId int, UserId int) int {
+func GetUserWarns (ChatId int, UserId int) (int, error) {
   os.Mkdir("databases",0770)
   db, err := sql.Open("sqlite3", "./databases/warns.db")
   if err != nil {
-    errors.SendError(err)
-    return -1// err
+    return -1, err
   }
   statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER, ChatId INTEGER, UserId INTEGER)")
   if err != nil {
-    errors.SendError(err)
-    return -1// err
+    return -1, err
   }
   statement.Exec()
   var warns int
   statement, err = db.Prepare("SELECT warns FROM user WHERE id = ?")
   if err != nil {
-    errors.SendError(err)
-    return -1// err
+    return -1, err
   }
   err = statement.QueryRow(UserId + ChatId).Scan(&warns)
   log.Print(strconv.Itoa(UserId + ChatId))
   if err != nil {
     errors.SendError(err)
     if strings.Contains(err.Error(), "sql: no rows in result set") {
-      return 0
+      return 0, nil
     } else {
-      return -1// err
+      return -1, err
     }
   }
-  return warns
+  return warns, nil
 }
 
 func ResetUserWarns (ChatId int, UserId int) error {

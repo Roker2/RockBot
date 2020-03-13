@@ -77,11 +77,9 @@ func GetUserWarns(b ext.Bot, u *gotgbot.Update, args []string) error {
  		return nil
  	}
  	log.Print(strconv.Itoa(banId))
-  	if sqlite.GetUserWarns(u.Message.Chat.Id, banId) == -1 {
-    	_, err := b.SendMessage(u.Message.Chat.Id, "У нас маленько проблема... @Roker2!")
-    	if err != nil {
-      return err
-    }
+	UserWarns, err := sqlite.GetUserWarns(u.Message.Chat.Id, banId)
+	if err != nil {
+		return err
   	} else {
  	  	banMember, err := u.Message.Chat.GetMember(banId)
     	if err != nil {
@@ -91,7 +89,7 @@ func GetUserWarns(b ext.Bot, u *gotgbot.Update, args []string) error {
 		if err != nil {
 			return err
 		}
-    	_, err = b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(sqlite.GetUserWarns(u.Message.Chat.Id, banId)) + "/" + strconv.Itoa(maxQuantity))
+    	_, err = b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(UserWarns) + "/" + strconv.Itoa(maxQuantity))
     	if err != nil {
     		return err
     	}
