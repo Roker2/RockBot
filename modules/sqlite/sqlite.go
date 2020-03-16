@@ -1,7 +1,7 @@
 package sqlite
 
 import (
-  "../errors"
+  "github.com/Roker2/RockBot/modules/errors"
   "database/sql"
   _ "github.com/mattn/go-sqlite3"
   "log"

@@ -1,8 +1,8 @@
 package bans
 
 import (
-	"../utils"
-	"../sqlite"
+	"github.com/Roker2/RockBot/modules/utils"
+	"github.com/Roker2/RockBot/modules/sqlite"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"log"

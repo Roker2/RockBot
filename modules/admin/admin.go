@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"../errors"
-	"../utils"
+	"github.com/Roker2/RockBot/modules/errors"
+	"github.com/Roker2/RockBot/modules/utils"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"strconv"

@@ -1,14 +1,14 @@
 package main
 
 import (
-	"./modules/admin"
-	"./modules/bans"
-	"./modules/info"
-	"./modules/media/Anilibria"
-	"./modules/media/SunMyungMoon"
-	"./modules/mute"
-	"./modules/warns"
-	"./modules/welcome"
+	"github.com/Roker2/RockBot/modules/admin"
+	"github.com/Roker2/RockBot/modules/bans"
+	"github.com/Roker2/RockBot/modules/info"
+	"github.com/Roker2/RockBot/modules/media/Anilibria"
+	"github.com/Roker2/RockBot/modules/media/SunMyungMoon"
+	"github.com/Roker2/RockBot/modules/mute"
+	"github.com/Roker2/RockBot/modules/warns"
+	"github.com/Roker2/RockBot/modules/welcome"
 	"encoding/json"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
