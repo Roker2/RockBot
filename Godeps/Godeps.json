@@ -1,0 +1,51 @@
+{
+	"ImportPath": "github.com/Roker2/RockBot",
+	"GoVersion": "go1.13",
+	"GodepVersion": "v80",
+	"Deps": [
+		{
+			"ImportPath": "github.com/PaulSonOfLars/gotgbot",
+			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+		},
+		{
+			"ImportPath": "github.com/PaulSonOfLars/gotgbot/ext",
+			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+		},
+		{
+			"ImportPath": "github.com/PaulSonOfLars/gotgbot/handlers",
+			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+		},
+		{
+			"ImportPath": "github.com/PaulSonOfLars/gotgbot/handlers/Filters",
+			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+		},
+		{
+			"ImportPath": "github.com/PaulSonOfLars/gotgbot/parsemode",
+			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+		},
+		{
+			"ImportPath": "github.com/konsorten/go-windows-terminal-sequences",
+			"Comment": "v1.0.2",
+			"Rev": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-sqlite3",
+			"Comment": "v2.0.3",
+			"Rev": "9bdaffc12bf8be15afceb51bb60851edd4afdff5"
+		},
+		{
+			"ImportPath": "github.com/pkg/errors",
+			"Comment": "v0.8.1-27-g7f95ac1",
+			"Rev": "7f95ac13edff643b8ce5398b6ccab125f8a20c1a"
+		},
+		{
+			"ImportPath": "github.com/sirupsen/logrus",
+			"Comment": "v1.4.2-54-g67a7fdc",
+			"Rev": "67a7fdcf741f4d5cee82cb9800994ccfd4393ad0"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "bd437916bb0eb726b873ee8e9b2dcf212d32e2fd"
+		}
+	]
+}
