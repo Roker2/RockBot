@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"github.com/Roker2/RockBot/modules/errors"
 	"strconv"
 )
 

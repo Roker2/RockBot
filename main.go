@@ -1,6 +1,12 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/PaulSonOfLars/gotgbot"
+	"github.com/PaulSonOfLars/gotgbot/ext"
+	"github.com/PaulSonOfLars/gotgbot/handlers"
+	"github.com/PaulSonOfLars/gotgbot/handlers/Filters"
 	"github.com/Roker2/RockBot/modules/admin"
 	"github.com/Roker2/RockBot/modules/bans"
 	"github.com/Roker2/RockBot/modules/info"
@@ -9,12 +15,6 @@ import (
 	"github.com/Roker2/RockBot/modules/mute"
 	"github.com/Roker2/RockBot/modules/warns"
 	"github.com/Roker2/RockBot/modules/welcome"
-	"encoding/json"
-	"fmt"
-	"github.com/PaulSonOfLars/gotgbot"
-	"github.com/PaulSonOfLars/gotgbot/ext"
-	"github.com/PaulSonOfLars/gotgbot/handlers"
-	"github.com/PaulSonOfLars/gotgbot/handlers/Filters"
 	"log"
 	"os"
 )

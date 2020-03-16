@@ -2,11 +2,11 @@ package warns
 //version: 1,0
 
 import (
+	"github.com/PaulSonOfLars/gotgbot"
+	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/bans"
 	"github.com/Roker2/RockBot/modules/sqlite"
 	"github.com/Roker2/RockBot/modules/utils"
-	"github.com/PaulSonOfLars/gotgbot"
-	"github.com/PaulSonOfLars/gotgbot/ext"
 	"log"
 	"strconv"
 )
