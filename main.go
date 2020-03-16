@@ -15,6 +15,7 @@ import (
 	"github.com/Roker2/RockBot/modules/mute"
 	"github.com/Roker2/RockBot/modules/warns"
 	"github.com/Roker2/RockBot/modules/welcome"
+	"github.com/sirupsen/logrus"
 	"log"
 	"os"
 )
@@ -70,10 +71,21 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setwarns", []rune{'/', '!'}, warns.SetWarnsQuantity))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("resetwarns", []rune{'/', '!'}, warns.ResetWarns))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
-	log.Println("Starting long polling")
-	err = updater.StartPolling()
+	// start getting updates
+	webhook := gotgbot.Webhook{
+		Serve:          "0.0.0.0",
+		ServePort:      8443,
+		ServePath:      updater.Bot.Token,
+		URL:            os.Getenv("/" + configuration.TelegramBotToken),
+		MaxConnections: 40,
+	}
+	updater.StartWebhook(webhook)
+	ok, err := updater.SetWebhook(updater.Bot.Token, webhook)
 	if err != nil {
-		log.Fatal(err)
+		logrus.WithError(err).Fatal("Failed to start bot due to: ", err)
+	}
+	if !ok {
+		logrus.Fatal("Failed to set webhook")
 	}
 	updater.Idle()
 	log.Println("Rock is started.")
