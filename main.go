@@ -76,7 +76,7 @@ func main() {
 		Serve:          "0.0.0.0",
 		ServePort:      8443,
 		ServePath:      updater.Bot.Token,
-		URL:            os.Getenv("/" + configuration.TelegramBotToken),
+		URL:            os.Getenv(configuration.TelegramBotToken),
 		MaxConnections: 40,
 	}
 	updater.StartWebhook(webhook)
