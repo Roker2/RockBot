@@ -74,7 +74,7 @@ func main() {
 	// start getting updates
 	webhook := gotgbot.Webhook{
 		Serve:          "0.0.0.0",
-		ServePort:      8443,
+		ServePort:      8080,
 		ServePath:      updater.Bot.Token,
 		URL:            "https://calm-cove-01177.herokuapp.com",
 		MaxConnections: 40,
