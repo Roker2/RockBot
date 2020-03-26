@@ -17,6 +17,7 @@ import (
 	"github.com/Roker2/RockBot/modules/welcome"
 	"github.com/sirupsen/logrus"
 	"log"
+    "strconv"
 	"os"
 )
 
@@ -72,9 +73,10 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("resetwarns", []rune{'/', '!'}, warns.ResetWarns))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	// start getting updates
+    port, err := strconv.Atoi(os.Getenv("PORT"))
 	webhook := gotgbot.Webhook{
 		Serve:          "0.0.0.0",
-		ServePort:      8080,
+		ServePort:      port,
 		ServePath:      updater.Bot.Token,
 		URL:            "https://calm-cove-01177.herokuapp.com",
 		MaxConnections: 40,
