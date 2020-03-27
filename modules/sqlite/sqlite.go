@@ -3,7 +3,7 @@ package sqlite
 import (
   "github.com/Roker2/RockBot/modules/errors"
   "database/sql"
-  _ "github.com/mattn/go-sqlite3"
+  _ "github.com/go-sql-driver/mysql"
   "log"
   "os"
   "strconv"
@@ -11,8 +11,7 @@ import (
 )
 
 func GetWarnsQuantityOfChat (ChatId int) (int, error) {
-  os.Mkdir("databases",0770)
-  db, err := sql.Open("sqlite3", "./databases/chatinfo.db")
+  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
   if err != nil {
     return 0, err
   }
@@ -37,8 +36,7 @@ func GetWarnsQuantityOfChat (ChatId int) (int, error) {
 
 func SetWarnsQuantityOfChat (ChatId int, warns int) error {
   log.Print("Chat: " + strconv.Itoa(ChatId) + " Warns: " + strconv.Itoa(warns))
-  os.Mkdir("databases",0770)
-  db, err := sql.Open("sqlite3", "./databases/chatinfo.db")
+  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
   if err != nil {
     return err
   }
@@ -66,8 +64,7 @@ func SetWarnsQuantityOfChat (ChatId int, warns int) error {
 }
 
 func AddUserWarn (ChatId int, UserId int) (int, error) {
-  os.Mkdir("databases",0770)
-  db, err := sql.Open("sqlite3", "./databases/warns.db")
+  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
   if err != nil {
     return -1, err
   }
@@ -99,8 +96,7 @@ func AddUserWarn (ChatId int, UserId int) (int, error) {
 }
 
 func GetUserWarns (ChatId int, UserId int) (int, error) {
-  os.Mkdir("databases",0770)
-  db, err := sql.Open("sqlite3", "./databases/warns.db")
+  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
   if err != nil {
     return -1, err
   }
@@ -128,8 +124,7 @@ func GetUserWarns (ChatId int, UserId int) (int, error) {
 }
 
 func ResetUserWarns (ChatId int, UserId int) error {
-  os.Mkdir("databases",0770)
-  db, err := sql.Open("sqlite3", "./databases/warns.db")
+  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
   if err != nil {
     return err
   }
