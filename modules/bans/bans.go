@@ -3,7 +3,7 @@ package bans
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
-	"github.com/Roker2/RockBot/modules/sqlite"
+	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/utils"
 	"log"
 	"strconv"
@@ -85,7 +85,7 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		if err != nil {
 			return err
 		}
-		sqlite.ResetUserWarns(u.Message.Chat.Id, banId)
+		sql.ResetUserWarns(u.Message.Chat.Id, banId)
 		_, err = b.SendMessage(chat.Id, "Пользователь " + banMember.User.FirstName + " разбанен!")
 	}
 	return err

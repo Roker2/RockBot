@@ -5,7 +5,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/bans"
-	"github.com/Roker2/RockBot/modules/sqlite"
+	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/utils"
 	"log"
 	"strconv"
@@ -42,11 +42,11 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 			return err
 		}
 	}
-	maxQuantity, err := sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)
+	maxQuantity, err := sql.GetWarnsQuantityOfChat(u.Message.Chat.Id)
 	if err != nil {
 		return err
 	}
-  	quantity, err := sqlite.AddUserWarn(u.Message.Chat.Id, banId)
+  	quantity, err := sql.AddUserWarn(u.Message.Chat.Id, banId)
   	if err != nil {
     	return err
   	} else {
@@ -63,7 +63,7 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 }
 
 /*func WarnsQuantity (b ext.Bot, u *gotgbot.Update) error {
-  	_, err := b.SendMessage(u.Message.Chat.Id, strconv.Itoa(sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)))
+  	_, err := b.SendMessage(u.Message.Chat.Id, strconv.Itoa(sql.GetWarnsQuantityOfChat(u.Message.Chat.Id)))
   	return err
 }*/
 
@@ -77,7 +77,7 @@ func GetUserWarns(b ext.Bot, u *gotgbot.Update, args []string) error {
  		return nil
  	}
  	log.Print(strconv.Itoa(banId))
-	UserWarns, err := sqlite.GetUserWarns(u.Message.Chat.Id, banId)
+	UserWarns, err := sql.GetUserWarns(u.Message.Chat.Id, banId)
 	if err != nil {
 		return err
   	} else {
@@ -85,7 +85,7 @@ func GetUserWarns(b ext.Bot, u *gotgbot.Update, args []string) error {
     	if err != nil {
       		return err
     	}
-		maxQuantity, err := sqlite.GetWarnsQuantityOfChat(u.Message.Chat.Id)
+		maxQuantity, err := sql.GetWarnsQuantityOfChat(u.Message.Chat.Id)
 		if err != nil {
 			return err
 		}
@@ -118,7 +118,7 @@ func SetWarnsQuantity (b ext.Bot, u *gotgbot.Update, args []string) error {
  				return err
  			}
     }
-    err = sqlite.SetWarnsQuantityOfChat(u.Message.Chat.Id, quantity)
+    err = sql.SetWarnsQuantityOfChat(u.Message.Chat.Id, quantity)
     if err != nil {
     	return err
 	}
@@ -176,7 +176,7 @@ func ResetWarns (b ext.Bot, u *gotgbot.Update, args []string) error {
       	return err
     	}
   	}
-  	err = sqlite.ResetUserWarns(u.Message.Chat.Id, banId)
+  	err = sql.ResetUserWarns(u.Message.Chat.Id, banId)
   	if err != nil {
     return err
   }
