@@ -68,10 +68,9 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 }*/
 
 func GetUserWarns(b ext.Bot, u *gotgbot.Update, args []string) error {
-	banId, errortext := utils.ExtractId(b, u, args)
+	banId, _ := utils.ExtractId(b, u, args)
 	if banId == 0 {
-		_, err := b.SendMessage(u.Message.Chat.Id, errortext)
-		return err
+		banId = u.Message.From.Id
 	}
  	if utils.ItIsMe(b, u, banId) {
  		return nil
