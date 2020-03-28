@@ -9,13 +9,17 @@ import (
   "strings"
 )
 
+const chatinfoTable = "CREATE TABLE IF NOT EXISTS chatinfo (id BIGINT PRIMARY KEY, warns_quantity INTEGER);"
+
+const usersTable = "CREATE TABLE IF NOT EXISTS users(id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT);"
+
 func GetWarnsQuantityOfChat (ChatId int) (int, error) {
   db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
   //log.Print(os.Getenv("DATABASE_URL"))
   if err != nil {
     return 0, err
   }
-  _, err = db.Exec("CREATE TABLE IF NOT EXISTS chatinfo (id BIGINT PRIMARY KEY, warns_quantity INTEGER);")
+  _, err = db.Exec(chatinfoTable)
   if err != nil {
     return -1, err
   }
@@ -34,7 +38,7 @@ func SetWarnsQuantityOfChat (ChatId int, warns int) error {
   if err != nil {
     return err
   }
-  _, err = db.Exec("CREATE TABLE IF NOT EXISTS chatinfo (id BIGINT PRIMARY KEY, warns_quantity INTEGER);")
+  _, err = db.Exec(chatinfoTable)
   if err != nil {
     return err
   }
@@ -60,7 +64,7 @@ func AddUserWarn (ChatId int, UserId int) (int, error) {
   if err != nil {
     return -1, err
   }
-  _, err = db.Exec("CREATE TABLE IF NOT EXISTS users(id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT);")
+  _, err = db.Exec(usersTable)
   if err != nil {
     return -1, err
   }
@@ -90,7 +94,7 @@ func GetUserWarns (ChatId int, UserId int) (int, error) {
   if err != nil {
     return -1, err
   }
-  _, err = db.Exec("CREATE TABLE IF NOT EXISTS users(id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT) ;")
+  _, err = db.Exec(usersTable)
   if err != nil {
     return -1, err
   }
@@ -115,7 +119,7 @@ func ResetUserWarns (ChatId int, UserId int) error {
   if err != nil {
     return err
   }
-  _, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT)")
+  _, err = db.Exec(usersTable)
   if err != nil {
     return err
   }
