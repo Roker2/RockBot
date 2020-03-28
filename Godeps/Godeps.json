@@ -29,9 +29,19 @@
 			"Rev": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
 		},
 		{
-			"ImportPath": "github.com/mattn/go-sqlite3",
-			"Comment": "v2.0.3",
-			"Rev": "9bdaffc12bf8be15afceb51bb60851edd4afdff5"
+			"ImportPath": "github.com/lib/pq",
+			"Comment": "v1.3.0-4-g9eb3fc8",
+			"Rev": "9eb3fc897d6fd97dd4aad3d0404b54e2f7cc56be"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/oid",
+			"Comment": "v1.3.0-4-g9eb3fc8",
+			"Rev": "9eb3fc897d6fd97dd4aad3d0404b54e2f7cc56be"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/scram",
+			"Comment": "v1.3.0-4-g9eb3fc8",
+			"Rev": "9eb3fc897d6fd97dd4aad3d0404b54e2f7cc56be"
 		},
 		{
 			"ImportPath": "github.com/pkg/errors",
