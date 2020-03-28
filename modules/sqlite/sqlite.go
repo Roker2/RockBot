@@ -1,33 +1,26 @@
 package sqlite
 
 import (
-  "github.com/Roker2/RockBot/modules/errors"
   "database/sql"
-  _ "github.com/go-sql-driver/mysql"
+  "github.com/Roker2/RockBot/modules/errors"
+  _ "github.com/lib/pq"
   "log"
   "os"
-  "strconv"
   "strings"
 )
 
 func GetWarnsQuantityOfChat (ChatId int) (int, error) {
-  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  //log.Print(os.Getenv("DATABASE_URL"))
   if err != nil {
     return 0, err
   }
-  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS chatinfo (id INTEGER PRIMARY KEY, warns_quantity INTEGER)")
+  _, err = db.Exec("CREATE TABLE IF NOT EXISTS chatinfo (id BIGINT PRIMARY KEY, warns_quantity INTEGER);")
   if err != nil {
-    errors.SendError(err)
-    return 0, err //error: can not to create table
+    return -1, err
   }
-  statement.Exec()
   var warns int
-  statement, err = db.Prepare("SELECT warns_quantity FROM chatinfo WHERE id = ?")
-  if err != nil {
-    errors.SendError(err)
-    return 0, err//error: can not select
-  }
-  err = statement.QueryRow(ChatId).Scan(&warns)
+  err = db.QueryRow("SELECT warns_quantity FROM chatinfo WHERE id = $1 ;", ChatId).Scan(&warns)
   if warns == 0 {
     return 5, nil
   }
@@ -35,83 +28,76 @@ func GetWarnsQuantityOfChat (ChatId int) (int, error) {
 }
 
 func SetWarnsQuantityOfChat (ChatId int, warns int) error {
-  log.Print("Chat: " + strconv.Itoa(ChatId) + " Warns: " + strconv.Itoa(warns))
-  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
+  //log.Print("Chat: " + strconv.Itoa(ChatId) + " Warns: " + strconv.Itoa(warns))
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  //log.Print(os.Getenv("DATABASE_URL"))
   if err != nil {
     return err
   }
-  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS chatinfo (id INTEGER PRIMARY KEY, warns_quantity INTEGER)")
-  if err != nil {
-    return err
-  }
-  statement.Exec()
-  statement, err = db.Prepare("SELECT warns_quantity FROM chatinfo WHERE id = ?")
+  _, err = db.Exec("CREATE TABLE IF NOT EXISTS chatinfo (id BIGINT PRIMARY KEY, warns_quantity INTEGER);")
   if err != nil {
     return err
   }
   var warns_quantity int
-  err = statement.QueryRow(ChatId).Scan(&warns_quantity)
+  err = db.QueryRow("SELECT warns_quantity FROM chatinfo WHERE id = $1 ;", ChatId).Scan(&warns_quantity)
   if warns_quantity == 0 {
-    statement, err = db.Prepare("INSERT INTO chatinfo (warns_quantity, id) VALUES (?, ?)")
+    _, err = db.Exec("INSERT INTO chatinfo (warns_quantity, id) VALUES ($1, $2);", warns, ChatId)
+    if err != nil {
+      return err
+    }
   } else {
-    statement, err = db.Prepare("UPDATE chatinfo SET warns_quantity = ? WHERE id = ?")
+    _, err = db.Exec("UPDATE chatinfo SET warns_quantity = $1 WHERE id = $2 ;", warns, ChatId)
+    if err != nil {
+      return err
+    }
   }
-  if err != nil {
-    return err
-  }
-  statement.Exec(warns, ChatId)
   return nil
 }
 
 func AddUserWarn (ChatId int, UserId int) (int, error) {
-  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  //log.Print(os.Getenv("DATABASE_URL"))
   if err != nil {
     return -1, err
   }
-  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER, ChatId INTEGER, UserId INTEGER)")
+  _, err = db.Exec("CREATE TABLE IF NOT EXISTS users(id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT);")
   if err != nil {
     return -1, err
   }
-  statement.Exec()
   warns, err := GetUserWarns(ChatId, UserId)
   if err != nil {
     return -1, err
   }
-  log.Print("UserId + ChatId: " + strconv.Itoa(UserId + ChatId) + " warns: " + strconv.Itoa(warns))
+  //log.Print("UserId + ChatId: " + strconv.Itoa(UserId + ChatId) + " warns: " + strconv.Itoa(warns))
   warns++
   if warns == 1 {
-    statement, err = db.Prepare("INSERT INTO user (id, warns, ChatId, UserId) VALUES (?, ?, ?, ?)")
+    _, err = db.Exec("INSERT INTO users(id, warns, ChatId, UserId) VALUES ($1, $2, $3, $4);", UserId + ChatId, warns, ChatId, UserId)
     if err != nil {
       return -1, err
     }
-    statement.Exec(UserId + ChatId, warns, ChatId, UserId)
   } else {
-    statement, err = db.Prepare("UPDATE user SET warns = ? WHERE id = ?")
+    _, err = db.Exec("UPDATE users SET warns = $1 WHERE id = $2 ;", warns, UserId + ChatId)
     if err != nil {
       return -1, err
     }
-    statement.Exec(warns, UserId + ChatId)
   }
   return warns, nil
 }
 
 func GetUserWarns (ChatId int, UserId int) (int, error) {
-  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  //log.Print(os.Getenv("DATABASE_URL"))
   if err != nil {
     return -1, err
   }
-  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER, ChatId INTEGER, UserId INTEGER)")
+  _, err = db.Exec("CREATE TABLE IF NOT EXISTS users(id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT) ;")
   if err != nil {
     return -1, err
   }
-  statement.Exec()
+  log.Print("HELLO")
   var warns int
-  statement, err = db.Prepare("SELECT warns FROM user WHERE id = ?")
-  if err != nil {
-    return -1, err
-  }
-  err = statement.QueryRow(UserId + ChatId).Scan(&warns)
-  log.Print(strconv.Itoa(UserId + ChatId))
+  err = db.QueryRow("SELECT warns FROM users WHERE id = $1 ;", UserId + ChatId).Scan(&warns)
+  //log.Print(strconv.Itoa(UserId + ChatId))
   if err != nil {
     errors.SendError(err)
     if strings.Contains(err.Error(), "sql: no rows in result set") {
@@ -124,19 +110,18 @@ func GetUserWarns (ChatId int, UserId int) (int, error) {
 }
 
 func ResetUserWarns (ChatId int, UserId int) error {
-  db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  //log.Print(os.Getenv("DATABASE_URL"))
   if err != nil {
     return err
   }
-  statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, warns INTEGER, ChatId INTEGER, UserId INTEGER)")
+  _, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT)")
   if err != nil {
     return err
   }
-  statement.Exec()
-  statement, err = db.Prepare("DELETE from user where id = ?")
+  _, err = db.Exec("DELETE from users where id = $1", UserId + ChatId)
   if err != nil {
     return err
   }
-  statement.Exec(UserId + ChatId)
   return nil
 }
