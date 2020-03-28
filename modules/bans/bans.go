@@ -29,10 +29,10 @@ func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
 		return err
 	}
-	/*if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
+	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
 		return err
-	}*/
+	}
 	utils.MemberCanRestrictMembers(b, u)
 	if banMember != nil {
 		if utils.MemberIsAdministrator(banMember) {
@@ -72,10 +72,10 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err = b.SendMessage(chat.Id, "Вы не администратор.")
 		return err
 	}
-	/*if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
+	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
 		return err
-	}*/
+	}
 	utils.MemberCanRestrictMembers(b, u)
 	if utils.MemberIsAdministrator(banMember) {
 		_, err = b.SendMessage(chat.Id, "Я не могу сделать это с администратором.")
@@ -115,10 +115,10 @@ func Kick(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err = b.SendMessage(chat.Id, "Вы не администратор.")
 		return err
 	}
-	/*if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
+	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
 		return err
-	}*/
+	}
 	utils.MemberCanRestrictMembers(b, u)
 	if utils.MemberIsAdministrator(banMember) {
 		_, err = b.SendMessage(chat.Id, "Я не могу сделать это с администратором.")
