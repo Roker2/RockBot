@@ -1,10 +1,10 @@
 package admin
 
 import (
-	"github.com/Roker2/RockBot/modules/errors"
-	"github.com/Roker2/RockBot/modules/utils"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"github.com/Roker2/RockBot/modules/errors"
+	"github.com/Roker2/RockBot/modules/utils"
 	"strconv"
 	"strings"
 	"time"

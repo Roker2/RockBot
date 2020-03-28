@@ -17,8 +17,8 @@ import (
 	"github.com/Roker2/RockBot/modules/welcome"
 	"github.com/sirupsen/logrus"
 	"log"
-	"strconv"
 	"os"
+	"strconv"
 )
 
 type Config struct {
