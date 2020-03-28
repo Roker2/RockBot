@@ -54,11 +54,6 @@ func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if !utils.BotIsAdministrator(b, u) {
 		return err
 	}
-	//banMember, err := chat.GetMember(muteId)
-	/*if utils.MemberIsAdministrator(banMember) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Я не могу заставить молчать администратора.")
-		return err
-	}*/
 	if !utils.MemberIsAdministrator(member) {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
 		return err
