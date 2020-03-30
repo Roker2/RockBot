@@ -3,6 +3,7 @@ package welcome
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"strings"
 )
 
 func NewMember(b ext.Bot, u *gotgbot.Update) error {
@@ -12,10 +13,11 @@ func NewMember(b ext.Bot, u *gotgbot.Update) error {
 			continue
 		}
 		var err error
+		welcome := "Добро пожаловать, {firstName}!"
 		if member.FirstName != "" {
-			_, err = b.SendMessage(u.Message.Chat.Id, "Добро пожаловать, " + member.FirstName + "!")
+			_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(welcome, "{firstName}", member.FirstName))
 		} else {
-			_, err = b.SendMessage(u.Message.Chat.Id, "Добро пожаловать, пользователь!")
+			_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(welcome, "{firstName}", "пользователь"))
 		}
 		if err != nil {
 			return err
