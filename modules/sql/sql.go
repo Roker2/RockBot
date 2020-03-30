@@ -94,6 +94,42 @@ func SetWelcome(ChatId int, welcomeText string) error {
   return err
 }
 
+func GetRules (ChatId int) (string, error) {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  if err != nil {
+    return "Правила не установлены!", err
+  }
+  _, err = db.Exec(chatinfoTable)
+  if err != nil {
+    return "Правила не установлены!", err
+  }
+  var rules string
+  err = db.QueryRow("SELECT rules FROM chatinfo WHERE id = $1;", ChatId).Scan(&rules)
+  if err != nil {
+    return "Правила не установлены!", err
+  }
+  return rules, err
+}
+
+func SetRules(ChatId int, rulesText string) error {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  if err != nil {
+    return err
+  }
+  _, err = db.Exec(chatinfoTable)
+  var chatExist bool
+  err = db.QueryRow("SELECT count (1) FROM chatinfo WHERE id = $1", ChatId).Scan(&chatExist)
+  if err != nil {
+    return err
+  }
+  if !chatExist {
+    _, err = db.Exec("INSERT INTO chatinfo (id, rules) VALUES ($1, $2)", ChatId, rulesText)
+  } else {
+    _, err = db.Exec("UPDATE chatinfo SET rules = $2 WHERE id = $1;", ChatId, rulesText)
+  }
+  return err
+}
+
 func AddUserWarn (ChatId int, UserId int) (int, error) {
   db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
   //log.Print(os.Getenv("DATABASE_URL"))
