@@ -3,6 +3,8 @@ package welcome
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"github.com/Roker2/RockBot/modules/errors"
+	"github.com/Roker2/RockBot/modules/sql"
 	"strings"
 )
 
@@ -12,8 +14,10 @@ func NewMember(b ext.Bot, u *gotgbot.Update) error {
 		if member.Id == b.Id {
 			continue
 		}
-		var err error
-		welcome := "Добро пожаловать, {firstName}!"
+		welcome, err := sql.GetWelcome(u.Message.Chat.Id)
+		if err != nil {
+			errors.SendError(err)
+		}
 		if member.FirstName != "" {
 			_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(welcome, "{firstName}", member.FirstName))
 		} else {
