@@ -16,7 +16,7 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if len(args) == 0 {
-		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет установить правила.")
+		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет установить правила.\nИспользуйте HTML для форматирования текста. <br> - переход на новую строку.")
 		return err
 	}
 	var rules string
@@ -39,6 +39,6 @@ func GetRules(b ext.Bot, u *gotgbot.Update) error {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Ошибка получения правил.\n" + err.Error())
 		return err;
 	}
-	_, err = b.SendMessage(u.Message.Chat.Id, rules)
+	_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(rules, "<br>", "\n"))
 	return err;
 }
