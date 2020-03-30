@@ -5,23 +5,23 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot",
-			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+			"Rev": "ba86a379fd2e68f63fcc5395c0e194ea8bb056d1"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/ext",
-			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+			"Rev": "ba86a379fd2e68f63fcc5395c0e194ea8bb056d1"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/handlers",
-			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+			"Rev": "ba86a379fd2e68f63fcc5395c0e194ea8bb056d1"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/handlers/Filters",
-			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+			"Rev": "ba86a379fd2e68f63fcc5395c0e194ea8bb056d1"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/parsemode",
-			"Rev": "abe3d8f5395b105ca7fb9579851580d92b63babb"
+			"Rev": "ba86a379fd2e68f63fcc5395c0e194ea8bb056d1"
 		},
 		{
 			"ImportPath": "github.com/konsorten/go-windows-terminal-sequences",
@@ -45,13 +45,53 @@
 		},
 		{
 			"ImportPath": "github.com/pkg/errors",
-			"Comment": "v0.8.1-27-g7f95ac1",
-			"Rev": "7f95ac13edff643b8ce5398b6ccab125f8a20c1a"
+			"Comment": "v0.9.1",
+			"Rev": "614d223910a179a466c1767a985424175c39b465"
 		},
 		{
 			"ImportPath": "github.com/sirupsen/logrus",
 			"Comment": "v1.4.2-54-g67a7fdc",
 			"Rev": "67a7fdcf741f4d5cee82cb9800994ccfd4393ad0"
+		},
+		{
+			"ImportPath": "go.uber.org/atomic",
+			"Comment": "v1.6.0-1-gb2c105d",
+			"Rev": "b2c105d12ef6919fdf9e32b217d66ffe86e6a6f6"
+		},
+		{
+			"ImportPath": "go.uber.org/multierr",
+			"Comment": "v1.5.0",
+			"Rev": "b587143a48b62b01d337824eab43700af6ffe222"
+		},
+		{
+			"ImportPath": "go.uber.org/zap",
+			"Comment": "v1.14.1-2-gec2dc45",
+			"Rev": "ec2dc456c680236892af2c645172713e1c4e1acd"
+		},
+		{
+			"ImportPath": "go.uber.org/zap/buffer",
+			"Comment": "v1.14.1-2-gec2dc45",
+			"Rev": "ec2dc456c680236892af2c645172713e1c4e1acd"
+		},
+		{
+			"ImportPath": "go.uber.org/zap/internal/bufferpool",
+			"Comment": "v1.14.1-2-gec2dc45",
+			"Rev": "ec2dc456c680236892af2c645172713e1c4e1acd"
+		},
+		{
+			"ImportPath": "go.uber.org/zap/internal/color",
+			"Comment": "v1.14.1-2-gec2dc45",
+			"Rev": "ec2dc456c680236892af2c645172713e1c4e1acd"
+		},
+		{
+			"ImportPath": "go.uber.org/zap/internal/exit",
+			"Comment": "v1.14.1-2-gec2dc45",
+			"Rev": "ec2dc456c680236892af2c645172713e1c4e1acd"
+		},
+		{
+			"ImportPath": "go.uber.org/zap/zapcore",
+			"Comment": "v1.14.1-2-gec2dc45",
+			"Rev": "ec2dc456c680236892af2c645172713e1c4e1acd"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/unix",
