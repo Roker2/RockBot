@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
@@ -16,6 +15,8 @@ import (
 	"github.com/Roker2/RockBot/modules/warns"
 	"github.com/Roker2/RockBot/modules/welcome"
 	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"log"
 	"os"
 	"strconv"
@@ -32,11 +33,20 @@ func start(b ext.Bot, u *gotgbot.Update) error {
 }*/
 
 func main() {
-	log.Println("Starting Rock...")
-	fmt.Println(os.Getenv("TOKEN"))
-	updater, err := gotgbot.NewUpdater(os.Getenv("TOKEN"))
+	cfg := zap.NewProductionEncoderConfig()
+	cfg.EncodeLevel = zapcore.CapitalLevelEncoder
+	cfg.EncodeTime = zapcore.RFC3339TimeEncoder
+
+	logger := zap.New(zapcore.NewCore(zapcore.NewConsoleEncoder(cfg), os.Stdout, zap.InfoLevel))
+	defer logger.Sync() // flushes buffer, if any
+	l := logger.Sugar()
+
+	l.Info("Starting Rock...")
+
+	l.Info(os.Getenv("TOKEN"))
+	updater, err := gotgbot.NewUpdater(os.Getenv("TOKEN"), logger)
 	if err != nil {
-		log.Fatal(err)
+		l.Fatalw("failed to start updater", zap.Error(err))
 	}
 	updater.Dispatcher.AddHandler(handlers.NewCommand("start", start))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("randomal", Anilibria.Randomal))
