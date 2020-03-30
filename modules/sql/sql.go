@@ -58,6 +58,23 @@ func SetWarnsQuantityOfChat (ChatId int, warns int) error {
   return nil
 }
 
+func GetWelcome (ChatId int) (string, error) {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  if err != nil {
+    return "Добро пожаловать, {firstName}!", err
+  }
+  _, err = db.Exec(chatinfoTable)
+  if err != nil {
+    return "Добро пожаловать, {firstName}!", err
+  }
+  var welcome string
+  err = db.QueryRow("SELECT welcome FROM chatinfo WHERE id = $1;", ChatId).Scan(&welcome)
+  if err != nil {
+    return "Добро пожаловать, {firstName}!", err
+  }
+  return welcome, err
+}
+
 func AddUserWarn (ChatId int, UserId int) (int, error) {
   db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
   //log.Print(os.Getenv("DATABASE_URL"))
