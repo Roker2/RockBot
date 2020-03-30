@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
@@ -22,10 +21,6 @@ import (
 	"strconv"
 )
 
-type Config struct {
-    TelegramBotToken string
-}
-
 func start(b ext.Bot, u *gotgbot.Update) error {
 	_, err := b.SendMessage(u.Message.Chat.Id, "Привет. Меня зовут Рок Драгоций, я являюсь чат-ботом и книжным персонажем. Если что-то понадобится, то просто введите команду.")
 	return err
@@ -38,15 +33,8 @@ func start(b ext.Bot, u *gotgbot.Update) error {
 
 func main() {
 	log.Println("Starting Rock...")
-	file, _ := os.Open("config.json")
-	decoder := json.NewDecoder(file)
-	configuration := Config{}
-	err := decoder.Decode(&configuration)
-	if err != nil {
-		log.Panic(err)
-	}
-	fmt.Println(configuration.TelegramBotToken)
-	updater, err := gotgbot.NewUpdater(configuration.TelegramBotToken)
+	fmt.Println(os.Getenv("TOKEN"))
+	updater, err := gotgbot.NewUpdater(os.Getenv("TOKEN"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,11 +66,12 @@ func main() {
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	// start getting updates
 	port, err := strconv.Atoi(os.Getenv("PORT"))
+	herokuUrl := os.Getenv("HEROKU_URL")
 	webhook := gotgbot.Webhook{
 		Serve:          "0.0.0.0",
 		ServePort:      port,
 		ServePath:      updater.Bot.Token,
-		URL:            "https://calm-cove-01177.herokuapp.com",
+		URL:            herokuUrl,
 		MaxConnections: 40,
 	}
 	updater.StartWebhook(webhook)
