@@ -13,6 +13,7 @@ import (
 	"github.com/Roker2/RockBot/modules/media/Anilibria"
 	"github.com/Roker2/RockBot/modules/media/SunMyungMoon"
 	"github.com/Roker2/RockBot/modules/mute"
+	"github.com/Roker2/RockBot/modules/rules"
 	"github.com/Roker2/RockBot/modules/warns"
 	"github.com/Roker2/RockBot/modules/welcome"
 	"github.com/sirupsen/logrus"
@@ -72,6 +73,8 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("warns", []rune{'/', '!'}, warns.GetUserWarns))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setwarns", []rune{'/', '!'}, warns.SetWarnsQuantity))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("resetwarns", []rune{'/', '!'}, warns.ResetWarns))
+	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setrules", []rune{'/', '!'}, rules.SetRules))
+	updater.Dispatcher.AddHandler(handlers.NewCommand("rules", rules.GetRules))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	// start getting updates
 	port, err := strconv.Atoi(os.Getenv("PORT"))
