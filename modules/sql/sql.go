@@ -75,6 +75,25 @@ func GetWelcome (ChatId int) (string, error) {
   return welcome, err
 }
 
+func SetWelcome(ChatId int, welcomeText string) error {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  if err != nil {
+    return err
+  }
+  _, err = db.Exec(chatinfoTable)
+  var chatExist bool
+  err = db.QueryRow("SELECT count (1) FROM chatinfo WHERE id = $1", ChatId).Scan(&chatExist)
+  if err != nil {
+    return err
+  }
+  if chatExist {
+    _, err = db.Exec("INSERT INTO chatinfo (id, welcome) VALUES ($1, $2)", ChatId, welcomeText)
+  } else {
+    _, err = db.Exec("UPDATE chatinfo SET welcome = $2 WHERE if = $1;", ChatId, welcomeText)
+  }
+  return err
+}
+
 func AddUserWarn (ChatId int, UserId int) (int, error) {
   db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
   //log.Print(os.Getenv("DATABASE_URL"))
