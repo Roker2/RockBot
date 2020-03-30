@@ -86,10 +86,10 @@ func SetWelcome(ChatId int, welcomeText string) error {
   if err != nil {
     return err
   }
-  if chatExist {
+  if !chatExist {
     _, err = db.Exec("INSERT INTO chatinfo (id, welcome) VALUES ($1, $2)", ChatId, welcomeText)
   } else {
-    _, err = db.Exec("UPDATE chatinfo SET welcome = $2 WHERE if = $1;", ChatId, welcomeText)
+    _, err = db.Exec("UPDATE chatinfo SET welcome = $2 WHERE id = $1;", ChatId, welcomeText)
   }
   return err
 }

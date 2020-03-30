@@ -5,6 +5,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/Roker2/RockBot/modules/sql"
+	"github.com/Roker2/RockBot/modules/utils"
 	"strings"
 )
 
@@ -42,4 +43,23 @@ func LeftMember(b ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 	return nil
+}
+
+func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
+	member, err := u.Message.Chat.GetMember(u.Message.From.Id)
+	if !utils.MemberIsAdministrator(member) {
+		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		return err
+	}
+	if len(args) == 0 {
+		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет заменить встречающую реплику на свою.\nФорматирование:\n{firstName} - Имя пользователя\n{имя переменной} заменяется на текстовое значение.")
+		return err
+	}
+	var welcome string
+	for _, value := range args {
+		welcome += value + " "
+	}
+	welcome = strings.TrimSuffix(welcome, " ")
+	err = sql.SetWelcome(u.Message.Chat.Id, welcome)
+	return err
 }
