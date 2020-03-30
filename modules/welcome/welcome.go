@@ -20,9 +20,9 @@ func NewMember(b ext.Bot, u *gotgbot.Update) error {
 			errors.SendError(err)
 		}
 		if member.FirstName != "" {
-			_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(welcome, "{firstName}", member.FirstName))
+			_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", member.FirstName), "<br>", "\n"))
 		} else {
-			_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(welcome, "{firstName}", "пользователь"))
+			_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", "пользователь"), "<br>", "\n"))
 		}
 		if err != nil {
 			return err
@@ -52,7 +52,7 @@ func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if len(args) == 0 {
-		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет заменить встречающую реплику на свою.\nФорматирование:\n{firstName} - Имя пользователя\n{имя переменной} заменяется на текстовое значение.")
+		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет заменить встречающую реплику на свою.\nФорматирование:\n{firstName} - Имя пользователя\n{имя переменной} заменяется на текстовое значение.\nИспользуйте HTML для форматирования текста. <br> - переход на новую строку.")
 		return err
 	}
 	var welcome string
