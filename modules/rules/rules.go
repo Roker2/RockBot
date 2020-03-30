@@ -25,6 +25,10 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 	rules = strings.TrimSuffix(rules, " ")
 	err = sql.SetRules(u.Message.Chat.Id, rules)
+	if err != nil {
+		return err
+	}
+	_, err = b.SendMessage(u.Message.Chat.Id, "Правила установлены! Вы можете посмотреть их с помощью команды /rules.")
 	return err
 }
 
