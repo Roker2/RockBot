@@ -2,6 +2,8 @@ package sql
 
 import (
   "database/sql"
+  "github.com/PaulSonOfLars/gotgbot"
+  "github.com/PaulSonOfLars/gotgbot/ext"
   "github.com/Roker2/RockBot/modules/errors"
   _ "github.com/lib/pq"
   "log"
@@ -12,6 +14,15 @@ import (
 const chatinfoTable = "CREATE TABLE IF NOT EXISTS chatinfo (id BIGINT PRIMARY KEY, warns_quantity INTEGER, welcome TEXT, rules TEXT);"
 
 const usersTable = "CREATE TABLE IF NOT EXISTS users(id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT);"
+
+func TempCommandForUpdates(b ext.Bot, u *gotgbot.Update) error {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  if err != nil {
+    return err
+  }
+  _, err = db.Exec("ALTER TABLE chatinfo ADD COLUMN welcome TEXT, ADD COLUMN rules TEXT;")
+  return err
+}
 
 func GetWarnsQuantityOfChat (ChatId int) (int, error) {
   db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))

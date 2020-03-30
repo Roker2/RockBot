@@ -13,6 +13,7 @@ import (
 	"github.com/Roker2/RockBot/modules/media/Anilibria"
 	"github.com/Roker2/RockBot/modules/media/SunMyungMoon"
 	"github.com/Roker2/RockBot/modules/mute"
+	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/warns"
 	"github.com/Roker2/RockBot/modules/welcome"
 	"github.com/sirupsen/logrus"
@@ -67,6 +68,7 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("promote", []rune{'/', '!'}, admin.Promote))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("demote", []rune{'/', '!'}, admin.Demote))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("purge", admin.Purge))
+	updater.Dispatcher.AddHandler(handlers.NewCommand("tempcommand", sql.TempCommandForUpdates))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("warn", []rune{'/', '!'}, warns.WarnUser))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("warns", []rune{'/', '!'}, warns.GetUserWarns))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setwarns", []rune{'/', '!'}, warns.SetWarnsQuantity))
