@@ -19,11 +19,8 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет установить правила.\nИспользуйте HTML для форматирования текста. <br> - переход на новую строку.")
 		return err
 	}
-	var rules string
-	for _, value := range args {
-		rules += value + " "
-	}
-	rules = strings.TrimSuffix(rules, " ")
+	rules := u.Message.OriginalHTML()
+	rules = strings.ReplaceAll(rules, "/setrules ", "")
 	err = sql.SetRules(u.Message.Chat.Id, rules)
 	if err != nil {
 		return err
