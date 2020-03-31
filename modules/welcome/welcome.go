@@ -55,11 +55,8 @@ func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет заменить встречающую реплику на свою.\nФорматирование:\n{firstName} - Имя пользователя\n{имя переменной} заменяется на текстовое значение.\nИспользуйте HTML для форматирования текста. <br> - переход на новую строку.")
 		return err
 	}
-	var welcome string
-	for _, value := range args {
-		welcome += value + " "
-	}
-	welcome = strings.TrimSuffix(welcome, " ")
+	welcome := u.Message.Text
+	welcome = strings.ReplaceAll(welcome, "/setwelcome ", "")
 	err = sql.SetWelcome(u.Message.Chat.Id, welcome)
 	return err
 }
