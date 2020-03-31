@@ -16,7 +16,7 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if len(args) == 0 {
-		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет установить правила.\nИспользуйте HTML для форматирования текста. <br> - переход на новую строку.")
+		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет установить правила.")
 		return err
 	}
 	rules := u.Message.OriginalHTML()
