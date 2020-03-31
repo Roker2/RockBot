@@ -20,7 +20,8 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	rules := u.Message.OriginalHTML()
-	rules = strings.ReplaceAll(rules, "/setrules ", "")
+	rules = strings.ReplaceAll(rules, "/setrules", "")
+	rules = rules[1:]
 	err = sql.SetRules(u.Message.Chat.Id, rules)
 	if err != nil {
 		return err

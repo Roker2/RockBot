@@ -56,7 +56,8 @@ func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	welcome := u.Message.OriginalHTML()
-	welcome = strings.ReplaceAll(welcome, "/setwelcome ", "")
+	welcome = strings.ReplaceAll(welcome, "/setwelcome", "")
+	welcome = welcome[1:]
 	err = sql.SetWelcome(u.Message.Chat.Id, welcome)
 	return err
 }
