@@ -5,6 +5,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
 	"strconv"
+	"strings"
 )
 
 func MemberIsCreator(member *ext.ChatMember) bool {
@@ -166,4 +167,16 @@ func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) (int, string) {
 		return 0, "Я для тебя что, вещь?"
 	}
 	return id, ""
+}
+
+func RemoveCommand(msg string) string {
+	fisrtSpace := strings.Index(msg, " ")
+	firstNewLine := strings.Index(msg, "\n")
+	var index int
+	if fisrtSpace < firstNewLine {
+		index = fisrtSpace
+	} else {
+		index = firstNewLine
+	}
+	return msg[index:]
 }
