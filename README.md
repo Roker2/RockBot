@@ -1,6 +1,8 @@
-### Rock Bot
+### Rock Scenery Bot
 
 Commands
+
+@RockSceneryBot in Telegram
 
 | Commands   | Description                 |
 | :--------- | :-------------------------- |
@@ -17,4 +19,11 @@ Commands
 | pin        | Pin message                 |
 | unpin      | Unpin message               |
 | purge      | Delete massive of messages  |
+| setwelcome | Set welcome message         |
+| promote    | Make new admin              |
+| demote     | Remove admin                |
+| warn       | Warn user                   |
+| warns      | Check warns                 |
+| setwarns   | Set quantity of warns       |
+| resetwarns | Reset user warns            |
 | randomsmmq | Random Sun Myung Moon Quote |
