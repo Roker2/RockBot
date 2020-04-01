@@ -178,5 +178,5 @@ func RemoveCommand(msg string) string {
 		}
 	}
 	log.Print(msg)
-	return msg[index:]
+	return msg[(index + 1):]
 }
