@@ -19,9 +19,7 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет установить правила.")
 		return err
 	}
-	rules := u.Message.OriginalHTML()
-	rules = strings.ReplaceAll(rules, "/setrules", "")
-	rules = rules[1:]
+	rules := utils.RemoveCommand(u.Message.OriginalHTML())
 	err = sql.SetRules(u.Message.Chat.Id, rules)
 	if err != nil {
 		return err
