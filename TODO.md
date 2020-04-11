@@ -3,3 +3,4 @@
 * Add /welcome
 * Add languages support
 * Add /ping
+* Add /weather
