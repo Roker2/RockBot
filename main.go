@@ -61,6 +61,7 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("unmute", []rune{'/', '!'}, mute.Unmute))
 	updater.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), welcome.NewMember))
 	updater.Dispatcher.AddHandler(handlers.NewMessage(Filters.LeftChatMembers(), welcome.LeftMember))
+	updater.Dispatcher.AddHandler(handlers.NewCommand("welcome", welcome.Welcome))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setwelcome", []rune{'/', '!'}, welcome.SetWelcome))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("pin", []rune{'/', '!'}, admin.Pin))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("unpin", admin.Unpin))

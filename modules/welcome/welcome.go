@@ -63,3 +63,17 @@ func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
 	_, err = b.SendMessageHTML(u.Message.Chat.Id, "Новое приветствие установлено.\n" + welcome)
 	return err
 }
+
+func Welcome(b ext.Bot, u *gotgbot.Update) error {
+	member := u.Message.From
+	welcome, err := sql.GetWelcome(u.Message.Chat.Id)
+	if err != nil {
+		errors.SendError(err)
+	}
+	if member.FirstName != "" {
+		_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", member.FirstName), "<br>", "\n"))
+	} else {
+		_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", "пользователь"), "<br>", "\n"))
+	}
+	return err
+}
