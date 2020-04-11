@@ -30,7 +30,7 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func GetRules(b ext.Bot, u *gotgbot.Update) error {
 	rules, err := sql.GetRules(u.Message.Chat.Id)
-	if err != nil {
+	if err != nil && err.Error() != "sql: no rows in result set" {
 		errors.SendError(err)
 		_, err = b.SendMessage(u.Message.Chat.Id, "Ошибка получения правил.\n" + err.Error())
 		return err;
