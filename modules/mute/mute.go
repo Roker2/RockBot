@@ -25,7 +25,7 @@ func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
 		return err
 	}
-	if !member.CanRestrictMembers {
+	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
 		return err
 	}
@@ -58,7 +58,7 @@ func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
 		return err
 	}
-	if !member.CanRestrictMembers {
+	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
 	} else {
 		_, err = b.UnRestrictChatMember(chat.Id, muteId)
