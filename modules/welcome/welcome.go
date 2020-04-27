@@ -16,15 +16,7 @@ func NewMember(b ext.Bot, u *gotgbot.Update) error {
 		if member.Id == b.Id {
 			continue
 		}
-		welcome, err := sql.GetWelcome(u.Message.Chat.Id)
-		if err != nil {
-			errors.SendError(err)
-		}
-		if member.FirstName != "" {
-			_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", member.FirstName), "<br>", "\n"))
-		} else {
-			_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", "пользователь"), "<br>", "\n"))
-		}
+		err := Welcome(b, u)
 		if err != nil {
 			return err
 		}
