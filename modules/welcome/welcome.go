@@ -80,20 +80,30 @@ func Welcome(b ext.Bot, u *gotgbot.Update) error {
 	if index != -1 {
 		buttonsText := welcome[index + 10:]
 		welcome = welcome[:index]
+		//create empty markup
 		markup := ext.InlineKeyboardMarkup{
 			InlineKeyboard: &[][]ext.InlineKeyboardButton{},
 		}
+		//create two-dimensional array of buttons
 		inlineKeyboard := [][]ext.InlineKeyboardButton{}
+		//split \n
+		//\n - new line of buttons
 		newLineSplit := strings.Split(buttonsText, "\n")
-		for _, temp1 := range newLineSplit {//
+		for _, temp1 := range newLineSplit {
+			//create array of buttons (one line)
 			tempMassive := []ext.InlineKeyboardButton{}
+			//split ", "
+			//it is separation to buttons from line
 			commaSplit := strings.Split(temp1, ", ")
 			for _, temp2 := range commaSplit {
 				splittedText := strings.Split(temp2, " - ")
+				//add button to line
 				tempMassive = append(tempMassive, ext.InlineKeyboardButton{Text:splittedText[0], Url:splittedText[1]})
 			}
+			//add line to array of buttons
 			inlineKeyboard = append(inlineKeyboard, tempMassive)
 		}
+		//set array of buttons
 		markup.InlineKeyboard = &inlineKeyboard
 		newMsg.ReplyMarkup = ext.ReplyMarkup(&markup)
 	}
