@@ -76,7 +76,7 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewCommand("rules", rules.GetRules))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	// start getting updates
-	if os.Getenv("USE_WEBHOOKS") == "yes" {
+	//if os.Getenv("USE_WEBHOOKS") == "yes" {
 		port, err := strconv.Atoi(os.Getenv("PORT"))
 		herokuUrl := os.Getenv("HEROKU_URL")
 		webhook := gotgbot.Webhook{
@@ -94,13 +94,13 @@ func main() {
 		if !ok {
 			logrus.Fatal("Failed to set webhook")
 		}
-	} else {
+	/*} else {
 		logrus.Println("Starting long polling")
 		err = updater.StartPolling()
 		if err != nil {
 			logrus.Fatal(err)
 		}
-	}
+	}*/
 	updater.Idle()
 	logrus.Println("Rock is started.")
 }
