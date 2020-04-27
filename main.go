@@ -17,7 +17,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"log"
 	"os"
 	"strconv"
 )
@@ -96,12 +95,12 @@ func main() {
 			logrus.Fatal("Failed to set webhook")
 		}
 	} else {
-		log.Println("Starting long polling")
+		logrus.Println("Starting long polling")
 		err = updater.StartPolling()
 		if err != nil {
-			log.Fatal(err)
+			logrus.Fatal(err)
 		}
 	}
 	updater.Idle()
-	log.Println("Rock is started.")
+	logrus.Println("Rock is started.")
 }
