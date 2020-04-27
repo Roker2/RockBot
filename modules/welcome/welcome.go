@@ -3,9 +3,12 @@ package welcome
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"github.com/PaulSonOfLars/gotgbot/parsemode"
 	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/utils"
+	"github.com/sirupsen/logrus"
+	"strconv"
 	"strings"
 )
 
@@ -70,10 +73,35 @@ func Welcome(b ext.Bot, u *gotgbot.Update) error {
 	if err != nil {
 		errors.SendError(err)
 	}
-	if member.FirstName != "" {
-		_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", member.FirstName), "<br>", "\n"))
-	} else {
-		_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", "пользователь"), "<br>", "\n"))
+	newMsg := b.NewSendableMessage(u.Message.Chat.Id, "")
+	index := strings.Index(welcome, "[buttons]")
+	if index != -1 {
+		buttonsText := welcome[index + 9:]
+		welcome = welcome[:index]
+		markup := ext.InlineKeyboardMarkup{
+			InlineKeyboard: &[][]ext.InlineKeyboardButton{},
+		}
+		inlineKeyboard := [][]ext.InlineKeyboardButton{}
+		newLineSplit := strings.Split(buttonsText, "\n")
+		logrus.Println(strconv.Itoa(len(newLineSplit)))
+		for _, temp1 := range newLineSplit {//
+			tempMassive := []ext.InlineKeyboardButton{}
+			commaSplit := strings.Split(temp1, ", ")
+			for _, temp2 := range commaSplit {
+				splittedText := strings.Split(temp2, " - ")
+				tempMassive = append(tempMassive, ext.InlineKeyboardButton{Text:splittedText[0], Url:splittedText[1]})
+			}
+			inlineKeyboard = append(inlineKeyboard, tempMassive)
+		}//
+		markup.InlineKeyboard = &inlineKeyboard
+		newMsg.ReplyMarkup = ext.ReplyMarkup(&markup)
 	}
+	if member.FirstName != "" {
+		newMsg.Text = strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", member.FirstName), "<br>", "\n")
+	} else {
+		newMsg.Text = strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", "пользователь"), "<br>", "\n")
+	}
+	newMsg.ParseMode = parsemode.Html
+	_, err = newMsg.Send()
 	return err
 }
