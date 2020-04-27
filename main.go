@@ -77,22 +77,30 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewCommand("rules", rules.GetRules))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	// start getting updates
-	port, err := strconv.Atoi(os.Getenv("PORT"))
-	herokuUrl := os.Getenv("HEROKU_URL")
-	webhook := gotgbot.Webhook{
-		Serve:          "0.0.0.0",
-		ServePort:      port,
-		ServePath:      updater.Bot.Token,
-		URL:            herokuUrl,
-		MaxConnections: 40,
-	}
-	updater.StartWebhook(webhook)
-	ok, err := updater.SetWebhook(updater.Bot.Token, webhook)
-	if err != nil {
-		logrus.WithError(err).Fatal("Failed to start bot due to: ", err)
-	}
-	if !ok {
-		logrus.Fatal("Failed to set webhook")
+	if os.Getenv("USE_WEBHOOKS") == "yes" {
+		port, err := strconv.Atoi(os.Getenv("PORT"))
+		herokuUrl := os.Getenv("HEROKU_URL")
+		webhook := gotgbot.Webhook{
+			Serve:          "0.0.0.0",
+			ServePort:      port,
+			ServePath:      updater.Bot.Token,
+			URL:            herokuUrl,
+			MaxConnections: 40,
+		}
+		updater.StartWebhook(webhook)
+		ok, err := updater.SetWebhook(updater.Bot.Token, webhook)
+		if err != nil {
+			logrus.WithError(err).Fatal("Failed to start bot due to: ", err)
+		}
+		if !ok {
+			logrus.Fatal("Failed to set webhook")
+		}
+	} else {
+		log.Println("Starting long polling")
+		err = updater.StartPolling()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	updater.Idle()
 	log.Println("Rock is started.")
