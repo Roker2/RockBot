@@ -61,7 +61,11 @@ func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = b.SendMessageHTML(u.Message.Chat.Id, "Новое приветствие установлено.\n" + welcome)
+	_, err = b.SendMessageHTML(u.Message.Chat.Id, "Новое приветствие установлено.")
+	if err != nil {
+		return err
+	}
+	err = Welcome(b, u)
 	return err
 }
 
