@@ -1,5 +1,5 @@
 ### Todo list
-* Add link buttons support
+* Add link buttons support    ^|^s
 * Add /welcome ✓
 * Add languages support
 * Add /ping
