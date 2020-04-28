@@ -6,3 +6,5 @@
 * Add /weather
 * Add temp mute (set timer or time of unmuting) ✓
 * Fix main.go
+* randomsmmq: Move quotes to csv
+* mute and ban modules: Create common function
