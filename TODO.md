@@ -5,3 +5,4 @@
 * Add /ping ✓
 * Add /weather
 * Add temp mute (set timer or time of unmuting) ✓
+* Fix main.go
