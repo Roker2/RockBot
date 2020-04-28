@@ -12,6 +12,7 @@ Commands
 | ban        | Ban user                    |
 | unban      | Unban user                  |
 | mute       | Mute user                   |
+| tmute      | Temporarly mute user        |
 | unmute     | Unmute use                  |
 | kick       | Kick user                   |
 | kickme     | Kick... YOU                 |
@@ -26,4 +27,9 @@ Commands
 | warns      | Check warns                 |
 | setwarns   | Set quantity of warns       |
 | resetwarns | Reset user warns            |
+| welcome    | Say "Hi!"                   |
+| setwelcome | Set welcome text            |
+| setrules   | Set rules of chat           |
+| rules      | Send message with rules     |
+| ping       | Ping sites                  |
 | randomsmmq | Random Sun Myung Moon Quote |
