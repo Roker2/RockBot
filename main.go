@@ -11,6 +11,7 @@ import (
 	"github.com/Roker2/RockBot/modules/media/Anilibria"
 	"github.com/Roker2/RockBot/modules/media/SunMyungMoon"
 	"github.com/Roker2/RockBot/modules/mute"
+	"github.com/Roker2/RockBot/modules/ping"
 	"github.com/Roker2/RockBot/modules/rules"
 	"github.com/Roker2/RockBot/modules/warns"
 	"github.com/Roker2/RockBot/modules/welcome"
@@ -74,6 +75,7 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("resetwarns", []rune{'/', '!'}, warns.ResetWarns))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setrules", []rune{'/', '!'}, rules.SetRules))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("rules", rules.GetRules))
+	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ping", []rune{'/', '!'}, ping.Ping))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	// start getting updates
 	//if os.Getenv("USE_WEBHOOKS") == "yes" {
