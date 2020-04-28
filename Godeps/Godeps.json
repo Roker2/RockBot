@@ -24,6 +24,11 @@
 			"Rev": "ba86a379fd2e68f63fcc5395c0e194ea8bb056d1"
 		},
 		{
+			"ImportPath": "github.com/glinton/ping",
+			"Comment": "v0.1.3-2-g5ac87da",
+			"Rev": "5ac87da8cd968fee80fcb9cd7c730528ed8a686e"
+		},
+		{
 			"ImportPath": "github.com/konsorten/go-windows-terminal-sequences",
 			"Comment": "v1.0.2",
 			"Rev": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
@@ -94,7 +99,35 @@
 			"Rev": "ec2dc456c680236892af2c645172713e1c4e1acd"
 		},
 		{
+			"ImportPath": "golang.org/x/net/bpf",
+			"Rev": "ff2c4b7c35a07b0c1e90ce72aa7bfe41bb66a3cb"
+		},
+		{
+			"ImportPath": "golang.org/x/net/icmp",
+			"Rev": "ff2c4b7c35a07b0c1e90ce72aa7bfe41bb66a3cb"
+		},
+		{
+			"ImportPath": "golang.org/x/net/internal/iana",
+			"Rev": "ff2c4b7c35a07b0c1e90ce72aa7bfe41bb66a3cb"
+		},
+		{
+			"ImportPath": "golang.org/x/net/internal/socket",
+			"Rev": "ff2c4b7c35a07b0c1e90ce72aa7bfe41bb66a3cb"
+		},
+		{
+			"ImportPath": "golang.org/x/net/ipv4",
+			"Rev": "ff2c4b7c35a07b0c1e90ce72aa7bfe41bb66a3cb"
+		},
+		{
+			"ImportPath": "golang.org/x/net/ipv6",
+			"Rev": "ff2c4b7c35a07b0c1e90ce72aa7bfe41bb66a3cb"
+		},
+		{
 			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "bd437916bb0eb726b873ee8e9b2dcf212d32e2fd"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/windows",
 			"Rev": "bd437916bb0eb726b873ee8e9b2dcf212d32e2fd"
 		}
 	]
