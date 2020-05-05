@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
+	"github.com/Roker2/RockBot/modules/sql"
 	"log"
 	"strconv"
 )
@@ -153,12 +154,20 @@ func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) (int, string) {
 	if IsReply(b, u, false) {
 		return u.Message.ReplyToMessage.From.Id, ""
 	} else {
-		if len(args) >= 1  {
-			banId2, err := strconv.Atoi(args[0])
+		id := 0
+		if args[0][0] == '@' {
+			var err error
+			id, err = sql.GetUserId(args[0])
+			if err != nil {
+				return id, "Не могу получить ID человека. Ответьте командой на его сообщение."
+			}
+			return id, ""
+		} else if len(args) >= 1  {
+			id, err := strconv.Atoi(args[0])
 			if err != nil {
 				return 0, "Введите пожалуйста ID, а не бред."
 			}
-			return banId2, ""
+			return id, ""
 		} else {
 			return 0, "Ответьте пожалуйста на сообщение человека, с которым Вы хотите что-то сделать, или напишите его ID"
 		}
