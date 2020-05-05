@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/sql"
+	"github.com/Roker2/RockBot/modules/utils"
 	"strconv"
 )
 
@@ -37,5 +38,21 @@ func ChatInfo(b ext.Bot, u *gotgbot.Update) error {
 }
 
 func SaveUserToDatabase(b ext.Bot, u *gotgbot.Update) error {
-	return sql.SaveUser(u.Message.From)
+	err := sql.SaveUser(u.Message.From)
+	if err != nil {
+		return err
+	}
+	if u.Message.ForwardFrom != nil {
+		err = sql.SaveUser(u.Message.ForwardFrom)
+		if err != nil {
+			return err
+		}
+	}
+	if !utils.IsReply(u, b, false) {
+		err = sql.SaveUser(u.Message.ReplyToMessage.From)
+		if err != nil {
+			return err
+		}
+	}
+	return err
 }
