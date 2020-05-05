@@ -3,6 +3,7 @@ package mute
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/Roker2/RockBot/modules/utils"
 	"log"
 	"strconv"
@@ -81,7 +82,8 @@ func TemporarlyMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	for _, temp := range args {
 		tempTime, err := strconv.Atoi(temp[:len(temp) - 1])
 		if err != nil {
-			return err
+			errors.SendError(err)
+			continue
 		}
 		switch temp[len(temp) - 1] {
 		case 'm':
