@@ -48,7 +48,7 @@ func SaveUserToDatabase(b ext.Bot, u *gotgbot.Update) error {
 			return err
 		}
 	}
-	if !utils.IsReply(b, u, false) {
+	if utils.IsReply(b, u, false) {
 		err = sql.SaveUser(u.Message.ReplyToMessage.From)
 		if err != nil {
 			return err
