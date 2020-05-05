@@ -3,6 +3,7 @@ package sql
 import (
   "database/sql"
   "github.com/Roker2/RockBot/modules/errors"
+  "github.com/PaulSonOfLars/gotgbot/ext"
   _ "github.com/lib/pq"
   "log"
   "os"
@@ -12,6 +13,8 @@ import (
 const chatinfoTable = "CREATE TABLE IF NOT EXISTS chatinfo (id BIGINT PRIMARY KEY, warns_quantity INTEGER, welcome TEXT, rules TEXT);"
 
 const usersTable = "CREATE TABLE IF NOT EXISTS users(id BIGINT PRIMARY KEY, warns INTEGER, ChatId BIGINT, UserId BIGINT);"
+
+const allUsersTable = "CREATE TABLE IF NOT EXISTS AllUsers(id BIGINT PRIMARY KEY, UserName TEXT);"
 
 func GetWarnsQuantityOfChat (ChatId int) (int, error) {
   db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
@@ -200,4 +203,34 @@ func ResetUserWarns (ChatId int, UserId int) error {
     return err
   }
   return nil
+}
+
+func SaveUser(user *ext.User) error {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  if err != nil {
+    return err
+  }
+  _, err = db.Exec(allUsersTable)
+  if err != nil {
+    return err
+  }
+  id, err := GetUserId(user.Username)
+  errors.SendError(err)
+  if id == 0 {
+    _, err = db.Exec("INSERT INTO AllUsers(id, UserName) VALUES ($1, $2);", user.Id, user.Username)
+  } else {
+    _, err = db.Exec("UPDATE AllUsers SET UserName = $1 WHERE id = $2 ;", user.Username, user.Id)
+  }
+  return err
+}
+
+func GetUserId(userName string) (int, error) {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  if err != nil {
+    //return 0, err
+    errors.SendError(err)
+  }
+  id := 0
+  err = db.QueryRow("SELECT id FROM AllUsers WHERE UserName = $1 ;", userName).Scan(&id)
+  return id, err
 }

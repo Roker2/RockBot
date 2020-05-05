@@ -3,6 +3,7 @@ package info
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"github.com/Roker2/RockBot/modules/sql"
 	"strconv"
 )
 
@@ -33,4 +34,8 @@ func ChatInfo(b ext.Bot, u *gotgbot.Update) error {
 	textInfo := "<b>Chat ID:</b> <code>" + strconv.Itoa(chat.Id) + "</code>\n<b>User Name:</b> @" + chat.Username + "\n<b>Members count:</b> " + strconv.Itoa(membersCount)
 	_, err = b.SendMessageHTML(u.Message.Chat.Id, textInfo)
 	return err
+}
+
+func SaveUserToDatabase(b ext.Bot, u *gotgbot.Update) error {
+	return sql.SaveUser(u.Message.From)
 }
