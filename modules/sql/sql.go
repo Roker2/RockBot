@@ -31,6 +31,7 @@ func GetWarnsQuantityOfChat (ChatId int) (int, error) {
   if warns == 0 {
     return 5, nil
   }
+  defer db.Close()
   return warns, nil
 }
 
@@ -58,6 +59,7 @@ func SetWarnsQuantityOfChat (ChatId int, warns int) error {
       return err
     }
   }
+  defer db.Close()
   return nil
 }
 
@@ -75,6 +77,7 @@ func GetWelcome (ChatId int) (string, error) {
   if err != nil {
     return "Добро пожаловать, {firstName}!", err
   }
+  defer db.Close()
   return welcome, err
 }
 
@@ -94,6 +97,7 @@ func SetWelcome(ChatId int, welcomeText string) error {
   } else {
     _, err = db.Exec("UPDATE chatinfo SET welcome = $2 WHERE id = $1;", ChatId, welcomeText)
   }
+  defer db.Close()
   return err
 }
 
@@ -111,6 +115,7 @@ func GetRules (ChatId int) (string, error) {
   if err != nil {
     return "Правила не установлены!", err
   }
+  defer db.Close()
   return rules, err
 }
 
@@ -130,6 +135,7 @@ func SetRules(ChatId int, rulesText string) error {
   } else {
     _, err = db.Exec("UPDATE chatinfo SET rules = $2 WHERE id = $1;", ChatId, rulesText)
   }
+  defer db.Close()
   return err
 }
 
@@ -160,6 +166,7 @@ func AddUserWarn (ChatId int, UserId int) (int, error) {
       return -1, err
     }
   }
+  defer db.Close()
   return warns, nil
 }
 
@@ -185,6 +192,7 @@ func GetUserWarns (ChatId int, UserId int) (int, error) {
       return -1, err
     }
   }
+  defer db.Close()
   return warns, nil
 }
 
@@ -202,6 +210,7 @@ func ResetUserWarns (ChatId int, UserId int) error {
   if err != nil {
     return err
   }
+  defer db.Close()
   return nil
 }
 
@@ -221,6 +230,7 @@ func SaveUser(user *ext.User) error {
   } else {
     _, err = db.Exec("UPDATE AllUsers SET UserName = $1 WHERE id = $2 ;", user.Username, user.Id)
   }
+  defer db.Close()
   return err
 }
 
@@ -232,5 +242,6 @@ func GetUserId(userName string) (int, error) {
   }
   id := 0
   err = db.QueryRow("SELECT id FROM AllUsers WHERE UserName = $1 ;", userName).Scan(&id)
+  defer db.Close()
   return id, err
 }
