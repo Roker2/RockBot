@@ -157,7 +157,7 @@ func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) (int, string) {
 		id := 0
 		if args[0][0] == '@' {
 			var err error
-			id, err = sql.GetUserId(args[0])
+			id, err = sql.GetUserId(args[0][1:])
 			if err != nil {
 				return id, "Не могу получить ID человека. Ответьте командой на его сообщение."
 			}
