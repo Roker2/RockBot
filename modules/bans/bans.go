@@ -85,7 +85,10 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		if err != nil {
 			return err
 		}
-		sql.ResetUserWarns(u.Message.Chat.Id, banId)
+		err = sql.ResetUserWarns(u.Message.Chat.Id, banId)
+		if err != nil {
+			return err
+		}
 		_, err = b.SendMessage(chat.Id, "Пользователь " + banMember.User.FirstName + " разбанен!")
 	}
 	return err
