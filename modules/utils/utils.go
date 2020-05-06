@@ -5,7 +5,6 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/Roker2/RockBot/modules/sql"
-	"log"
 	"strconv"
 )
 
@@ -184,6 +183,5 @@ func RemoveCommand(msg string) string {
 			break
 		}
 	}
-	log.Print(msg)
 	return msg[(index + 1):]
 }

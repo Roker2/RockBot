@@ -5,7 +5,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/utils"
-	"log"
+	"github.com/sirupsen/logrus"
 	"strconv"
 )
 
@@ -19,7 +19,7 @@ func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if utils.ItIsMe(b, u, banId) {
 		return nil
 	}
-	log.Print(strconv.Itoa(banId))
+	logrus.Println(strconv.Itoa(banId))
 	member, err := chat.GetMember(u.Message.From.Id)
 	if !utils.BotIsAdministrator(b, u) {
 		return err
@@ -58,7 +58,7 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if utils.ItIsMe(b, u, banId) {
 		return nil
 	}
-	log.Print(strconv.Itoa(banId))
+	logrus.Println(strconv.Itoa(banId))
 	if utils.IsUserInChat(chat, banId) {
 		_, err := b.SendMessage(chat.Id, "Этот пользователь в данный момент в чате.")
 		return err
@@ -101,7 +101,7 @@ func Kick(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if utils.ItIsMe(b, u, banId) {
 		return nil
 	}
-	log.Print(strconv.Itoa(banId))
+	logrus.Println(strconv.Itoa(banId))
 	if !utils.IsUserInChat(chat, banId) {
 		_, err := b.SendMessage(chat.Id, "Этого пользователя нет в чате.")
 		return err

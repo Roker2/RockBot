@@ -2,10 +2,9 @@ package sql
 
 import (
   "database/sql"
-  "github.com/Roker2/RockBot/modules/errors"
   "github.com/PaulSonOfLars/gotgbot/ext"
+  "github.com/Roker2/RockBot/modules/errors"
   _ "github.com/lib/pq"
-  "log"
   "os"
   "strings"
 )
@@ -180,7 +179,6 @@ func GetUserWarns (ChatId int, UserId int) (int, error) {
   if err != nil {
     return -1, err
   }
-  log.Print("HELLO")
   var warns int
   err = db.QueryRow("SELECT warns FROM users WHERE id = $1 ;", UserId + ChatId).Scan(&warns)
   //log.Print(strconv.Itoa(UserId + ChatId))
