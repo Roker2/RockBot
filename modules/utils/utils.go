@@ -159,12 +159,14 @@ func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) (int, string) {
 			var err error
 			id, err = sql.GetUserId(args[0][1:])
 			if err != nil {
+				errors.SendError(err)
 				return id, "Не могу получить ID человека. Ответьте командой на его сообщение."
 			}
 			return id, ""
 		} else if len(args) >= 1  {
 			id, err := strconv.Atoi(args[0])
 			if err != nil {
+				errors.SendError(err)
 				return 0, "Введите пожалуйста ID, а не бред."
 			}
 			return id, ""
