@@ -226,7 +226,7 @@ func SaveUser(user *ext.User) error {
   if err != nil {
     return err
   }
-  if userExist {
+  if !userExist {
     _, err = db.Exec("INSERT INTO AllUsers(id, UserName) VALUES ($1, $2);", user.Id, user.Username)
   } else {
     _, err = db.Exec("UPDATE AllUsers SET UserName = $1 WHERE id = $2 ;", user.Username, user.Id)
