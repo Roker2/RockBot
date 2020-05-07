@@ -223,13 +223,15 @@ func SaveUser(user *ext.User) error {
   }
   var userExist bool
   err = db.QueryRow("SELECT count (1) FROM AllUsers WHERE id = $1", user.Id).Scan(&userExist)
-  if err != nil {
-    return err
-  }
   if !userExist {
     _, err = db.Exec("INSERT INTO AllUsers(id, UserName) VALUES ($1, $2);", user.Id, user.Username)
   } else {
-    _, err = db.Exec("UPDATE AllUsers SET UserName = $1 WHERE id = $2 ;", user.Username, user.Id)
+    var needToChange bool
+    err = db.QueryRow("SELECT count (1) FROM AllUsers WHERE id = $1 AND UserName = $2", user.Id, user.Username).Scan(&needToChange)
+    needToChange = !needToChange
+    if needToChange {
+      _, err = db.Exec("UPDATE AllUsers SET UserName = $1 WHERE id = $2 ;", user.Username, user.Id)
+    }
   }
   defer db.Close()
   return err
