@@ -3,6 +3,7 @@ package Filters
 import (
 	"strings"
 
+	"github.com/PaulSonOfLars/gotgbot/dice"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 )
 
@@ -84,6 +85,27 @@ func Private(message *ext.Message) bool {
 
 func Group(message *ext.Message) bool {
 	return message.Chat.Type == "group" || message.Chat.Type == "supergroup"
+}
+
+func SuperGroup(message *ext.Message) bool {
+	return message.Chat.Type == "group"
+}
+
+func Pin(message *ext.Message) bool {
+	return message.PinnedMessage != nil
+}
+
+func Dice(message *ext.Message) bool {
+	// default is dice, so consider emptystring to be dice
+	return message.Dice != nil && (message.Dice.Emoji == "" || message.Dice.Emoji == dice.Dice)
+}
+
+func Dart(message *ext.Message) bool {
+	return message.Dice != nil && message.Dice.Emoji == dice.Dart
+}
+
+func DiceValue(message *ext.Message, val int) bool {
+	return message.Dice != nil && message.Dice.Value == val
 }
 
 func Username(name string) func(message *ext.Message) bool {

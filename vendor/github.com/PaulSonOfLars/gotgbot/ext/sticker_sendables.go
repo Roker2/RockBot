@@ -86,25 +86,35 @@ func (usf *sendableUploadStickerFile) Send() (*File, error) {
 	return newFile, json.Unmarshal(r.Result, newFile)
 }
 
-type sendableCreateNewSticker struct {
-	bot    Bot `json:"-"`
-	UserId int
-	Name   string
-	Title  string
+// TODO: check whether uploading tgs_stickers works
+type sendableCreateNewStickerSet struct {
+	bot         Bot    `json:"-"`
+	StickerType string `json:"-"` // "png_sticker" or "tgs_sticker"
+	UserId      int
+	Name        string
+	Title       string
 	file
 	Emojis        string
 	ContainsMasks bool
 	MaskPosition  *MaskPosition
 }
 
-func (b Bot) NewSendableCreateNewSticker(userId int, name string, title string, emojis string) *sendableCreateNewSticker {
-	return &sendableCreateNewSticker{bot: b, UserId: userId, Name: name, Title: title, Emojis: emojis}
+func (b Bot) NewSendableCreateNewStickerSet(userId int, name string, title string, emojis string) *sendableCreateNewStickerSet {
+	return &sendableCreateNewStickerSet{bot: b, UserId: userId, Name: name, Title: title, Emojis: emojis}
 }
 
-func (cns *sendableCreateNewSticker) Send() (bool, error) {
-	maskPos, err := json.Marshal(cns.MaskPosition)
-	if err != nil {
-		return false, errors.Wrapf(err, "failed to parse mask position")
+func (cns *sendableCreateNewStickerSet) Send() (bool, error) {
+	var maskPos []byte
+	if cns.MaskPosition != nil {
+		var err error
+		maskPos, err = json.Marshal(cns.MaskPosition)
+		if err != nil {
+			return false, errors.Wrapf(err, "failed to parse mask position")
+		}
+	}
+
+	if cns.StickerType == "" {
+		cns.StickerType = "png_sticker"
 	}
 
 	v := url.Values{}
@@ -115,7 +125,7 @@ func (cns *sendableCreateNewSticker) Send() (bool, error) {
 	v.Add("contains_mask", strconv.FormatBool(cns.ContainsMasks))
 	v.Add("mask_position", string(maskPos))
 
-	r, err := cns.bot.sendFile(cns.file, "sticker", "createNewStickerSet", v)
+	r, err := cns.bot.sendFile(cns.file, cns.StickerType, "createNewStickerSet", v)
 	if err != nil {
 		return false, errors.Wrapf(err, "unable to createNewStickerSet")
 	}
@@ -128,9 +138,10 @@ func (cns *sendableCreateNewSticker) Send() (bool, error) {
 }
 
 type sendableAddStickerToSet struct {
-	bot    Bot `json:"-"`
-	UserId int
-	Name   string
+	bot         Bot    `json:"-"`
+	StickerType string `json:"-"` // "png_sticker" or "tgs_sticker"
+	UserId      int
+	Name        string
 	file
 	Emojis       string
 	MaskPosition *MaskPosition
@@ -141,9 +152,17 @@ func (b Bot) NewSendableAddStickerToSet(userId int, name string, emojis string) 
 }
 
 func (asts *sendableAddStickerToSet) Send() (bool, error) {
-	maskPos, err := json.Marshal(asts.MaskPosition)
-	if err != nil {
-		return false, errors.Wrapf(err, "failed to parse mask position")
+	var maskPos []byte
+	if asts.MaskPosition != nil {
+		var err error
+		maskPos, err = json.Marshal(asts.MaskPosition)
+		if err != nil {
+			return false, errors.Wrapf(err, "failed to parse mask position")
+		}
+	}
+
+	if asts.StickerType == "" {
+		asts.StickerType = "png_sticker"
 	}
 
 	v := url.Values{}
@@ -152,9 +171,35 @@ func (asts *sendableAddStickerToSet) Send() (bool, error) {
 	v.Add("emojis", asts.Emojis)
 	v.Add("mask_position", string(maskPos))
 
-	r, err := asts.bot.sendFile(asts.file, "sticker", "addStickerToSet", v)
+	r, err := asts.bot.sendFile(asts.file, asts.StickerType, "addStickerToSet", v)
 	if err != nil {
 		return false, errors.Wrapf(err, "unable to addStickerToSet")
+	}
+	if !r.Ok {
+		return false, errors.New(r.Description)
+	}
+
+	var bb bool
+	return bb, json.Unmarshal(r.Result, &bb)
+}
+
+type sendableSetStickerSetThumb struct {
+	bot    Bot `json:"-"`
+	UserId int
+	file
+}
+
+func (b Bot) NewSendableSetStickerSetThumb(userId int) *sendableSetStickerSetThumb {
+	return &sendableSetStickerSetThumb{bot: b, UserId: userId}
+}
+
+func (ssst *sendableSetStickerSetThumb) Send() (bool, error) {
+	v := url.Values{}
+	v.Add("user_id", strconv.Itoa(ssst.UserId))
+
+	r, err := ssst.bot.sendFile(ssst.file, "sticker", "setStickerSetThumb", v)
+	if err != nil {
+		return false, errors.Wrapf(err, "unable to setStickerSetThumb")
 	}
 	if !r.Ok {
 		return false, errors.New(r.Description)

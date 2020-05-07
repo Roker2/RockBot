@@ -28,22 +28,23 @@ type ParsedMessageEntity struct {
 }
 
 type Audio struct {
-	FileId       string `json:"file_id"`
-	FileUniqueId string `json:"file_unique_id"`
-	Duration     int    `json:"duration"`
-	Performer    string `json:"performer"`
-	Title        string `json:"title"`
-	MimeType     string `json:"mime_type"`
-	FileSize     int    `json:"file_size"`
+	FileId       string     `json:"file_id"`
+	FileUniqueId string     `json:"file_unique_id"`
+	Duration     int        `json:"duration"`
+	Performer    string     `json:"performer"`
+	Title        string     `json:"title"`
+	MimeType     string     `json:"mime_type"`
+	FileSize     int        `json:"file_size"`
+	Thumb        *PhotoSize `json:"thumb"`
 }
 
 type Document struct {
-	FileId       string    `json:"file_id"`
-	FileUniqueId string    `json:"file_unique_id"`
-	Thumb        PhotoSize `json:"thumb"`
-	FileName     string    `json:"file_name"`
-	MimeType     string    `json:"mime_type"`
-	FileSize     int       `json:"file_size"`
+	FileId       string     `json:"file_id"`
+	FileUniqueId string     `json:"file_unique_id"`
+	Thumb        *PhotoSize `json:"thumb"`
+	FileName     string     `json:"file_name"`
+	MimeType     string     `json:"mime_type"`
+	FileSize     int        `json:"file_size"`
 }
 
 type PhotoSize struct {
@@ -55,14 +56,14 @@ type PhotoSize struct {
 }
 
 type Video struct {
-	FileId       string    `json:"file_id"`
-	FileUniqueId string    `json:"file_unique_id"`
-	Width        int       `json:"width"`
-	Height       int       `json:"height"`
-	Duration     int       `json:"duration"`
-	Thumb        PhotoSize `json:"thumb"`
-	MimeType     string    `json:"mime_type"`
-	FileSize     int       `json:"file_size"`
+	FileId       string     `json:"file_id"`
+	FileUniqueId string     `json:"file_unique_id"`
+	Width        int        `json:"width"`
+	Height       int        `json:"height"`
+	Duration     int        `json:"duration"`
+	Thumb        *PhotoSize `json:"thumb"`
+	MimeType     string     `json:"mime_type"`
+	FileSize     int        `json:"file_size"`
 }
 
 type Voice struct {
@@ -74,12 +75,12 @@ type Voice struct {
 }
 
 type VideoNote struct {
-	FileId       string    `json:"file_id"`
-	FileUniqueId string    `json:"file_unique_id"`
-	Length       int       `json:"length"`
-	Duration     int       `json:"duration"`
-	Thumb        PhotoSize `json:"thumb"`
-	FileSize     int       `json:"file_size"`
+	FileId       string     `json:"file_id"`
+	FileUniqueId string     `json:"file_unique_id"`
+	Length       int        `json:"length"`
+	Duration     int        `json:"duration"`
+	Thumb        *PhotoSize `json:"thumb"`
+	FileSize     int        `json:"file_size"`
 }
 
 type Contact struct {
@@ -117,22 +118,33 @@ type PollOption struct {
 }
 
 type Poll struct {
-	Bot                   Bot          `json:"-"`
-	Id                    string       `json:"id"`
-	Question              string       `json:"question"`
-	Options               []PollOption `json:"options"`
-	TotalVoterCount       int          `json:"total_voter_count"`
-	IsClosed              bool         `json:"is_closed"`
-	IsAnonymous           bool         `json:"is_anonymous"`
-	Type                  string       `json:"type"`
-	AllowsMultipleAnswers bool         `json:"allows_multiple_answers"`
-	CorrectOptionId       int          `json:"correct_option_id"`
+	Bot                   Bot             `json:"-"`
+	Id                    string          `json:"id"`
+	Question              string          `json:"question"`
+	Options               []PollOption    `json:"options"`
+	TotalVoterCount       int             `json:"total_voter_count"`
+	IsClosed              bool            `json:"is_closed"`
+	IsAnonymous           bool            `json:"is_anonymous"`
+	Type                  string          `json:"type"`
+	AllowsMultipleAnswers bool            `json:"allows_multiple_answers"`
+	CorrectOptionId       int             `json:"correct_option_id"`
+	Explanation           string          `json:"explanation"`
+	ExplanationEntities   []MessageEntity `json:"explanation_entities"`
+	OpenPeriod            int             `json:"open_period"`
+	CloseDate             int             `json:"close_date"`
 }
+
 type PollAnswer struct {
 	Bot       Bot    `json:"-"`
 	PollId    string `json:"poll_id"`
 	User      *User  `json:"user"`
 	OptionIds []int  `json:"option_ids"`
+}
+
+type Dice struct {
+	Bot   Bot    `json:"-"`
+	Emoji string `json:"emoji"`
+	Value int    `json:"value"`
 }
 
 type Message struct {
@@ -168,6 +180,7 @@ type Message struct {
 	Location              *Location             `json:"location"`
 	Venue                 *Venue                `json:"venue"`
 	Poll                  *Poll                 `json:"poll"`
+	Dice                  *Dice                 `json:"dice"`
 	NewChatMembers        []User                `json:"new_chat_members"`
 	LeftChatMember        *User                 `json:"left_chat_member"`
 	NewChatTitle          string                `json:"new_chat_title"`
@@ -543,18 +556,6 @@ func getOrigMsgMDV2(utf16Data []uint16, ents []MessageEntity) string {
 
 	bd.WriteString(string(utf16.Decode(utf16Data[prev:])))
 	return bd.String()
-}
-
-var allMdV2 = []string{"_", "*", "`", "~", "[", "]", "(", ")", "\\"} // __ is not necessary because of _
-var repl = strings.NewReplacer(func() (out []string) {
-	for _, x := range allMdV2 {
-		out = append(out, x, "\\"+x)
-	}
-	return out
-}()...)
-
-func escapeMarkdownV2String(s string) string {
-	return repl.Replace(s)
 }
 
 func fillNestedHTML(data []uint16, ent MessageEntity, start int, entities []MessageEntity) (string, int) {

@@ -128,7 +128,12 @@ func (b Bot) NewSendablePoll(chatId int, question string, options []string) *sen
 	return &sendablePoll{bot: b, ChatId: chatId, Question: question, Options: options}
 }
 
-// NewSendablePoll creates a new callbackQuery struct to send.
+// NewSendableDice creates a new poll struct to send.
+func (b Bot) NewSendableDice(chatId int) *sendableDice {
+	return &sendableDice{bot: b, ChatId: chatId}
+}
+
+// NewSendableAnswerCallbackQuery creates a new callbackQuery struct to send.
 func (b Bot) NewSendableAnswerCallbackQuery(queryId string) *sendableCallbackQuery {
 	return &sendableCallbackQuery{bot: b, CallbackQueryId: queryId}
 }
@@ -954,6 +959,10 @@ type sendablePoll struct {
 	Type                  string
 	AllowsMultipleAnswers bool
 	CorrectOptionId       int
+	Explanation           string
+	ExplanationParseMode  string
+	OpenPeriod            int
+	CloseDate             int
 	IsClosed              bool
 	DisableNotification   bool
 	ReplyToMessageId      int
@@ -985,12 +994,16 @@ func (msg *sendablePoll) Send() (*Message, error) {
 	v.Add("type", msg.Type)
 	v.Add("allows_multiple_answers", strconv.FormatBool(msg.AllowsMultipleAnswers))
 	v.Add("correct_option_id", strconv.Itoa(msg.CorrectOptionId))
+	v.Add("explanation", msg.Explanation)
+	v.Add("explanation_parse_mode", msg.ExplanationParseMode)
+	v.Add("open_period", strconv.Itoa(msg.OpenPeriod))
+	v.Add("close_date", strconv.Itoa(msg.CloseDate))
 	v.Add("is_closed", strconv.FormatBool(msg.IsClosed))
 	v.Add("disable_notification", strconv.FormatBool(msg.DisableNotification))
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "sendChatPoll", v)
+	r, err := Get(msg.bot, "sendPoll", v)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to sendChatPoll")
 	}
@@ -1000,13 +1013,49 @@ func (msg *sendablePoll) Send() (*Message, error) {
 	return msg.bot.ParseMessage(r.Result)
 }
 
+type sendableDice struct {
+	bot                 Bot
+	ChatId              int
+	Emoji               string
+	DisableNotification bool
+	ReplyToMessageId    int
+	ReplyMarkup         ReplyMarkup
+}
+
+func (d *sendableDice) Send() (*Message, error) {
+	var replyMarkup []byte
+	if d.ReplyMarkup != nil {
+		var err error
+		replyMarkup, err = d.ReplyMarkup.Marshal()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	v := url.Values{}
+	v.Add("chat_id", strconv.Itoa(d.ChatId))
+	v.Add("emoji", d.Emoji)
+	v.Add("disable_notification", strconv.FormatBool(d.DisableNotification))
+	v.Add("reply_to_message_id", strconv.Itoa(d.ReplyToMessageId))
+	v.Add("reply_markup", string(replyMarkup))
+
+	r, err := Get(d.bot, "sendDice", v)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to sendDice")
+	}
+	if !r.Ok {
+		return nil, errors.New(r.Description)
+	}
+	return d.bot.ParseMessage(r.Result)
+}
+
 type sendableCallbackQuery struct {
 	bot             Bot
-	CallbackQueryId string `json:"callback_query_id"`
-	Text            string `json:"text"`
-	ShowAlert       bool   `json:"show_alert"`
-	Url             string `json:"url"`
-	CacheTime       int    `json:"cache_time"`
+	CallbackQueryId string
+	Text            string
+	ShowAlert       bool
+	Url             string
+	CacheTime       int
 }
 
 func (cbq *sendableCallbackQuery) Send() (bool, error) {

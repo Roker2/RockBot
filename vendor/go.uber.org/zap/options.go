@@ -87,10 +87,17 @@ func Development() Option {
 }
 
 // AddCaller configures the Logger to annotate each message with the filename
-// and line number of zap's caller.
+// and line number of zap's caller.  See also WithCaller.
 func AddCaller() Option {
+	return WithCaller(true)
+}
+
+// WithCaller configures the Logger to annotate each message with the filename
+// and line number of zap's caller, or not, depending on the value of enabled.
+// This is a generalized form of AddCaller.
+func WithCaller(enabled bool) Option {
 	return optionFunc(func(log *Logger) {
-		log.addCaller = true
+		log.addCaller = enabled
 	})
 }
 
@@ -118,7 +125,7 @@ func IncreaseLevel(lvl zapcore.LevelEnabler) Option {
 	return optionFunc(func(log *Logger) {
 		core, err := zapcore.NewIncreaseLevelCore(log.core, lvl)
 		if err != nil {
-			fmt.Fprintf(log.errorOutput, "failed to IncreaseLevel: %v", err)
+			fmt.Fprintf(log.errorOutput, "failed to IncreaseLevel: %v\n", err)
 		} else {
 			log.core = core
 		}
