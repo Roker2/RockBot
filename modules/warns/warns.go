@@ -13,36 +13,18 @@ import (
 )
 
 func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
-	if !utils.BotIsAdministrator(b, u) {
-		return nil
-	}
-  	chat := u.Message.Chat
-	banId, errortext := utils.ExtractId(b, u, args)
-	if banId == 0 {
-		_, err := b.SendMessage(chat.Id, errortext)
+	canBan, banId, err := utils.CommonBan(b, u, args)
+	if !canBan {
 		return err
 	}
-	if utils.ItIsMe(b, u, banId) {
-		return nil
+ 	banMember, err := u.Message.Chat.GetMember(banId)
+ 	if err != nil {
+ 		return err
 	}
- 	log.Print(strconv.Itoa(banId))
- 	member, err := chat.GetMember(u.Message.From.Id)
- 	if !utils.BotIsAdministrator(b, u) {
+ 	if utils.MemberIsAdministrator(banMember) {
+ 		_, err = b.SendMessage(u.Message.Chat.Id, "Я не могу дать предупреждение администратору.")
  		return err
  	}
- 	if !utils.MemberIsAdministrator(member) {
- 		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
- 		return err
- 	}
-	log.Print(strconv.Itoa(banId))
-  	utils.MemberCanRestrictMembers(b, u)
- 	banMember, err := chat.GetMember(banId)
-	if banMember != nil {
-		if utils.MemberIsAdministrator(banMember) {
-			_, err = b.SendMessage(u.Message.Chat.Id, "Я не могу дать предупреждение администратору.")
-			return err
-		}
-	}
 	maxQuantity, err := sql.GetWarnsQuantityOfChat(u.Message.Chat.Id)
 	if err != nil {
 		return err
@@ -50,11 +32,10 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
   	quantity, err := sql.AddUserWarn(u.Message.Chat.Id, banId)
   	if err != nil {
     	return err
-  	} else {
-  		_, err := b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(quantity) + "/" + strconv.Itoa(maxQuantity))
-    	if err != nil {
-      		return err
-   	 	}
+  	}
+  	_, err = b.SendMessage(u.Message.Chat.Id, "Количество предупреждений у " + banMember.User.FirstName + ": " + strconv.Itoa(quantity) + "/" + strconv.Itoa(maxQuantity))
+  	if err != nil {
+  		return err
   	}
   	if quantity >= maxQuantity {
   		err = bans.Ban(b, u, args)
