@@ -29,18 +29,18 @@ func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
 		return err
 	}
 	if utils.MemberIsAdministrator(banMember) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Я не могу заставить молчать администратора.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotToMuteAdministrator)
 		return err
 	} else {
 		_, err = b.RestrictChatMember(chat.Id, muteId)
 		if err != nil {
 			return err
 		}
-		_, err = b.SendMessage(chat.Id, "Пользователь " + banMember.User.FirstName + " теперь будет молчать.")
+		_, err = b.SendMessage(chat.Id, texts.UserIsMuted(banMember.User.FirstName))
 	}
 	return err
 }
@@ -62,13 +62,13 @@ func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
 	} else {
 		_, err = b.UnRestrictChatMember(chat.Id, muteId)
 		if err != nil {
 			return err
 		}
-		_, err = b.SendMessage(chat.Id, "Поговори мне тут...")
+		_, err = b.SendMessage(chat.Id, texts.TalkToMeHere)
 	}
 	return err
 }
@@ -76,7 +76,7 @@ func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
 func TemporarlyMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.Message.Chat
 	if len(args) == 0 {
-		_, err := b.SendMessage(chat.Id, "Данная команда предназначена для временного mute.")
+		_, err := b.SendMessage(chat.Id, texts.ThisCommandForTemporaryMute)
 		return err
 	}
 	timeInterval := time.Now().Unix()
@@ -115,11 +115,11 @@ func TemporarlyMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
 		return err
 	}
 	if utils.MemberIsAdministrator(banMember) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Я не могу заставить молчать администратора.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotToMuteAdministrator)
 		return err
 	} else {
 		newRestrict := b.NewSendableRestrictChatMember(chat.Id, muteId)
@@ -128,7 +128,7 @@ func TemporarlyMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		if err != nil {
 			return err
 		}
-		_, err = b.SendMessage(chat.Id, "Пользователь " + banMember.User.FirstName + " теперь будет молчать.")
+		_, err = b.SendMessage(chat.Id, texts.UserIsMuted(banMember.User.FirstName))
 	}
 	return err
 }
