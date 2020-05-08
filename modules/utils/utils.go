@@ -37,7 +37,7 @@ func IsReply(b ext.Bot, u *gotgbot.Update, writeMsg bool) bool {
 func BotIsAdministrator(b ext.Bot, u *gotgbot.Update) bool {
 	botmember, err := u.Message.Chat.GetMember(b.Id)
 	if !MemberIsAdministrator(botmember) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Я не администратор.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.IAmNotAdministrator)
 		errors.SendError(err)
 	}
 	return MemberIsAdministrator(botmember)
@@ -118,7 +118,7 @@ func MemberCanDelMsg(b ext.Bot, u *gotgbot.Update) bool {
 		return true
 	}
 	if !member.CanDeleteMessages {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не имеете права удалять сообщения.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotDeleteMessages)
 		errors.SendError(err)
 		return false
 	}
@@ -129,7 +129,7 @@ func BotCanDelMsg(b ext.Bot, u *gotgbot.Update) bool {
 	member, err := u.Message.Chat.GetMember(b.Id)
 	errors.SendError(err)
 	if !member.CanDeleteMessages {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Я не имею права удалять сообщения.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotDeleteMessages)
 		errors.SendError(err)
 		return false
 	}
