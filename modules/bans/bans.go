@@ -10,35 +10,8 @@ import (
 	"strconv"
 )
 
-func commonBan(b ext.Bot, u *gotgbot.Update, args []string) (bool, int, error) {
-	banId, errorText := utils.ExtractId(b, u, args)
-	if banId == 0 {
-		_, err := b.SendMessage(u.Message.Chat.Id, errorText)
-		return false, 0, err
-	}
-	if utils.ItIsMe(b, u, banId) {
-		return false, 0, nil
-	}
-	if !utils.BotIsAdministrator(b, u) {
-		return false, 0, nil
-	}
-	member, err := u.Message.Chat.GetMember(u.Message.From.Id)
-	if err != nil {
-		return false, 0, err
-	}
-	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
-		return false, 0, err
-	}
-	if !utils.MemberCanRestrictMembers(b, u) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
-		return false, 0, err
-	}
-	return true, banId, nil
-}
-
 func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
-	canBan, banId, err := commonBan(b, u, args)
+	canBan, banId, err := utils.CommonBan(b, u, args)
 	if !canBan {
 		return err
 	}
@@ -105,7 +78,7 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 }
 
 func Kick(b ext.Bot, u *gotgbot.Update, args []string) error {
-	canBan, banId, err := commonBan(b, u, args)
+	canBan, banId, err := utils.CommonBan(b, u, args)
 	if !canBan {
 		return err
 	}

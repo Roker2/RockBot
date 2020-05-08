@@ -186,3 +186,30 @@ func RemoveCommand(msg string) string {
 	}
 	return msg[(index + 1):]
 }
+
+func CommonBan(b ext.Bot, u *gotgbot.Update, args []string) (bool, int, error) {
+	banId, errorText := ExtractId(b, u, args)
+	if banId == 0 {
+		_, err := b.SendMessage(u.Message.Chat.Id, errorText)
+		return false, 0, err
+	}
+	if ItIsMe(b, u, banId) {
+		return false, 0, nil
+	}
+	if !BotIsAdministrator(b, u) {
+		return false, 0, nil
+	}
+	member, err := u.Message.Chat.GetMember(u.Message.From.Id)
+	if err != nil {
+		return false, 0, err
+	}
+	if !MemberIsAdministrator(member) {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
+		return false, 0, err
+	}
+	if !MemberCanRestrictMembers(b, u) {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
+		return false, 0, err
+	}
+	return true, banId, nil
+}
