@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
 	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/Roker2/RockBot/modules/sql"
+	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
 	"strings"
 )
@@ -31,7 +32,7 @@ func LeftMember(b ext.Bot, u *gotgbot.Update) error {
 	if member.FirstName != "" {
 		_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(text, "{firstName}", member.FirstName))
 	} else {
-		_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(text, "{firstName}", "пользователь"))
+		_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(text, "{firstName}", texts.User))
 	}
 	if err != nil {
 		return err
@@ -42,11 +43,11 @@ func LeftMember(b ext.Bot, u *gotgbot.Update) error {
 func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
 	member, err := u.Message.Chat.GetMember(u.Message.From.Id)
 	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
 		return err
 	}
 	if len(args) == 0 {
-		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет заменить встречающую реплику на свою.\nФорматирование:\n{firstName} - Имя пользователя\n{имя переменной} заменяется на текстовое значение.")
+		_, err := b.SendMessage(u.Message.Chat.Id, texts.AboutSetWelcome)
 		return err
 	}
 	welcome := utils.RemoveCommand(u.Message.OriginalHTML())
@@ -54,7 +55,7 @@ func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = b.SendMessageHTML(u.Message.Chat.Id, "Новое приветствие установлено.")
+	_, err = b.SendMessageHTML(u.Message.Chat.Id, texts.NewWelcomeIsSettled)
 	if err != nil {
 		return err
 	}
@@ -103,7 +104,7 @@ func Welcome(b ext.Bot, u *gotgbot.Update) error {
 	if member.FirstName != "" {
 		newMsg.Text = strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", member.FirstName), "<br>", "\n")
 	} else {
-		newMsg.Text = strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", "пользователь"), "<br>", "\n")
+		newMsg.Text = strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", texts.User), "<br>", "\n")
 	}
 	newMsg.ParseMode = parsemode.Html
 	_, err = newMsg.Send()
