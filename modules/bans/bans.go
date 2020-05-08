@@ -10,43 +10,51 @@ import (
 	"strconv"
 )
 
-func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
-	chat := u.Message.Chat
-	banId, errortext := utils.ExtractId(b, u, args)
+func commonBan(b ext.Bot, u *gotgbot.Update, args []string) (bool, int, error) {
+	banId, errorText := utils.ExtractId(b, u, args)
 	if banId == 0 {
-		_, err := b.SendMessage(chat.Id, errortext)
-		return err
+		_, err := b.SendMessage(u.Message.Chat.Id, errorText)
+		return false, 0, err
 	}
 	if utils.ItIsMe(b, u, banId) {
-		return nil
+		return false, 0, nil
 	}
-	logrus.Println(strconv.Itoa(banId))
-	member, err := chat.GetMember(u.Message.From.Id)
 	if !utils.BotIsAdministrator(b, u) {
-		return err
+		return false, 0, nil
 	}
-	banMember, err := chat.GetMember(banId)
+	member, err := u.Message.Chat.GetMember(u.Message.From.Id)
 	if err != nil {
-		return err
+		return false, 0, err
 	}
 	if !utils.MemberIsAdministrator(member) {
 		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
-		return err
+		return false, 0, err
 	}
-	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
+	if !utils.MemberCanRestrictMembers(b, u) {
 		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
+		return false, 0, err
+	}
+	return true, banId, nil
+}
+
+func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
+	canBan, banId, err := commonBan(b, u, args)
+	if !canBan {
 		return err
 	}
-	utils.MemberCanRestrictMembers(b, u)
+	banMember, err := u.Message.Chat.GetMember(banId)
+	if err != nil {
+		return err
+	}
 	if utils.MemberIsAdministrator(banMember) {
 		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotToBanAdministrator)
 		return err
 	}
-	_, err = chat.KickMember(banId)
+	_, err = u.Message.Chat.KickMember(banId)
 	if err != nil {
 		return err
 	}
-	_, err = b.SendMessage(chat.Id, texts.UserIsBanned(banMember.User.FirstName))
+	_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsBanned(banMember.User.FirstName))
 	return err
 }
 
