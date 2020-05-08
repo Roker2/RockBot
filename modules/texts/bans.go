@@ -1,9 +1,5 @@
 package texts
 
-const YouCanNotToDoSomethingWithUsers = "Вы не не имеете права что-то делать с пользователями."
-
-const ICanNotToDoItWithAdministrator = "Я не могу сделать это с администратором."
-
 const UserIsInTheChat = "Этот пользователь в данный момент в чате."
 
 const UserIsNotInTheChat = "Этого пользователя нет в чате."
