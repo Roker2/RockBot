@@ -5,6 +5,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/Roker2/RockBot/modules/sql"
+	"github.com/Roker2/RockBot/modules/texts"
 	"strconv"
 )
 
@@ -142,7 +143,7 @@ func MemberCanRestrictMembers(b ext.Bot, u *gotgbot.Update) bool {
 		return true
 	}
 	if !member.CanRestrictMembers {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не не имеете права что-то делать с пользователями.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
 		errors.SendError(err)
 		return false
 	}

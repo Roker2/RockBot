@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
+	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
 	"strconv"
 	"strings"
@@ -16,7 +17,7 @@ func Pin(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(userMember) {
-		_, err = bot.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
 		return err
 	}
 	if !utils.MemberCanPin(bot, u) {
@@ -49,7 +50,7 @@ func Unpin(bot ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(userMember) {
-		_, err = bot.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
 		return err
 	}
 	if !utils.MemberCanPin(bot, u) {

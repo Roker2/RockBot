@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
+	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
 	"log"
 	"strconv"
@@ -24,7 +25,7 @@ func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 	banMember, err := chat.GetMember(muteId)
 	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
 		return err
 	}
 	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
@@ -57,7 +58,7 @@ func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
 		return err
 	}
 	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
@@ -110,7 +111,7 @@ func TemporarlyMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 	banMember, err := chat.GetMember(muteId)
 	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
 		return err
 	}
 	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {

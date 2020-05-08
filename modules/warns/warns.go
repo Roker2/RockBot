@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/bans"
 	"github.com/Roker2/RockBot/modules/sql"
+	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
 	"log"
 	"strconv"
@@ -30,7 +31,7 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
  		return err
  	}
  	if !utils.MemberIsAdministrator(member) {
- 		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+ 		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
  		return err
  	}
 	log.Print(strconv.Itoa(banId))
@@ -105,7 +106,7 @@ func SetWarnsQuantity (b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
 		return err
 	}
 	//var quantity int
@@ -163,7 +164,7 @@ func ResetWarns (b ext.Bot, u *gotgbot.Update, args []string) error {
     	return err
   	}
   	if !utils.MemberIsAdministrator(member) {
-    	_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+    	_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
     	return err
   	}
   	log.Print(strconv.Itoa(banId))

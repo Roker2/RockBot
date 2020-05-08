@@ -5,6 +5,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/Roker2/RockBot/modules/sql"
+	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
 	"strings"
 )
@@ -12,7 +13,7 @@ import (
 func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 	member, err := u.Message.Chat.GetMember(u.Message.From.Id)
 	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не администратор.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
 		return err
 	}
 	if len(args) == 0 {
