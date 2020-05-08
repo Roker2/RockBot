@@ -7,6 +7,6 @@
 * Add temp mute (set timer or time of unmuting) ✓
 * Fix main.go
 * randomsmmq: Move quotes to csv
-* mute and ban modules: Create common function
+* mute and ban modules: Create common function ✓
 * Disable and enable user commands
-* Move texts to module
+* Move texts to module (WIP)
