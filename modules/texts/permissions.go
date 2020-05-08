@@ -6,4 +6,6 @@ const ICanNotToDoItWithAdministrator = "Я не могу сделать это �
 
 const ICanNotToBanAdministrator = "Я не могу забанить администратора."
 
+const ICanNotToKickAdministrator = "Я не могу кикнуть администратора."
+
 const ICanNotToMuteAdministrator = "Я не могу заставить молчать администратора."
