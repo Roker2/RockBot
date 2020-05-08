@@ -27,11 +27,11 @@ func Pin(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		return nil
 	}
 	if u.Message.ReplyToMessage == nil {
-		_, err := bot.SendMessage(u.Message.Chat.Id, "Ответьте пожалуйста на сообщение, которое Вы хотите закрепить.")
+		_, err := bot.SendMessage(u.Message.Chat.Id, texts.PleaseReplyToTheMessageYouWantToPin)
 		return err
 	}
 	if u.Message.Chat.Type == "private" {
-		_, err := bot.SendMessage(u.Message.Chat.Id, "Данный чат приватный, в приватных чатах я не могу закрепить сообщение.")
+		_, err := bot.SendMessage(u.Message.Chat.Id, texts.ThisChatIsPrivateICanNotToPinMessage)
 		return err
 	}
 	Notify := true
@@ -60,7 +60,7 @@ func Unpin(bot ext.Bot, u *gotgbot.Update) error {
 		return nil
 	}
 	if u.Message.Chat.Type == "private" {
-		_, err := bot.SendMessage(u.Message.Chat.Id, "Данный чат приватный, в приватных чатах я не могу открепить сообщение.")
+		_, err := bot.SendMessage(u.Message.Chat.Id, texts.ThisChatIsPrivateICanNotToUnpinMessage)
 		return err
 	}
 	_, err = bot.UnpinChatMessage(u.Message.Chat.Id)
@@ -88,7 +88,7 @@ func Promote(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		if len(args) > 0 {
 			promoteId, err = strconv.Atoi(args[0])
 		} else {
-			_, err = bot.SendMessage(u.Message.Chat.Id, "Ответьте пожалуйста на сообщение того, кому Вы хотите выдать права администратора, или введите его ID.")
+			_, err = bot.SendMessage(u.Message.Chat.Id, texts.PleaseReplyToTheMessageOfThePersonYouWantToGrantAdministratorRightsToOrEnterTheirID)
 			return err
 		}
 	}
@@ -117,7 +117,7 @@ func Demote(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		if len(args) > 0 {
 			promoteId, err = strconv.Atoi(args[0])
 		} else {
-			_, err = bot.SendMessage(u.Message.Chat.Id, "Ответьте пожалуйста на сообщение того, у кого Вы хотите убрать права администратора, или введите его ID.")
+			_, err = bot.SendMessage(u.Message.Chat.Id, texts.PleaseReplyToTheMessageOfThePersonYouWantToRemoveAdministratorRightsToOrEnterTheirID)
 			return err
 		}
 	}
@@ -145,7 +145,7 @@ func Purge(bot ext.Bot, u *gotgbot.Update) error {
 		_, err := bot.DeleteMessage(chatId, i)
 		errors.SendError(err)
 	}
-	msg, err := bot.SendMessage(chatId, "Очистка завершена. Сообщение удалится через 5 секунд.")
+	msg, err := bot.SendMessage(chatId, texts.PurgeCompleted)
 	time.Sleep(5000)
 	_, err = bot.DeleteMessage(chatId, msg.MessageId)
 	return nil
