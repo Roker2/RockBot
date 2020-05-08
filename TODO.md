@@ -9,3 +9,4 @@
 * randomsmmq: Move quotes to csv
 * mute and ban modules: Create common function
 * Disable and enable user commands
+* Move texts to module
