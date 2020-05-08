@@ -108,51 +108,23 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 }
 
 func Kick(b ext.Bot, u *gotgbot.Update, args []string) error {
-	chat := u.Message.Chat
-	banId, errortext := utils.ExtractId(b, u, args)
-	if banId == 0 {
-		_, err := b.SendMessage(chat.Id, errortext)
+	canBan, banId, err := commonBan(b, u, args)
+	if !canBan {
 		return err
 	}
-	if utils.ItIsMe(b, u, banId) {
-		return nil
-	}
-	logrus.Println(strconv.Itoa(banId))
-	if !utils.IsUserInChat(chat, banId) {
-		_, err := b.SendMessage(chat.Id, texts.UserIsNotInTheChat)
-		return err
-	}
-	member, err := chat.GetMember(u.Message.From.Id)
-	if !utils.BotIsAdministrator(b, u) {
-		return err
-	}
-	banMember, err := chat.GetMember(banId)
+	banMember, err := u.Message.Chat.GetMember(banId)
 	if err != nil {
 		return err
 	}
-	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(chat.Id, texts.YouAreNotAdministrator)
-		return err
-	}
-	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
-		return err
-	}
-	utils.MemberCanRestrictMembers(b, u)
 	if utils.MemberIsAdministrator(banMember) {
-		_, err = b.SendMessage(chat.Id, texts.ICanNotToKickAdministrator)
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotToKickAdministrator)
 		return err
 	}
-	if !utils.MemberIsAdministrator(banMember) {
-		_, err = b.SendMessage(chat.Id, texts.YouAreNotAdministrator)
+	_, err = u.Message.Chat.UnbanMember(banId)
+	if err != nil {
 		return err
-	} else {
-		_, err = chat.UnbanMember(banId)
-		if err != nil {
-			return err
-		}
-		_, err = b.SendMessage(chat.Id, texts.UserIsKicked(banMember.User.FirstName))
 	}
+	_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsKicked(banMember.User.FirstName))
 	return err
 }
 
