@@ -6,77 +6,52 @@ import (
 	"github.com/Roker2/RockBot/modules/errors"
 	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
-	"log"
 	"strconv"
 	"time"
 )
 
 func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
-	chat := u.Message.Chat
-	muteId, errortext := utils.ExtractId(b, u, args)
-	if muteId == 0 {
-		_, err := b.SendMessage(chat.Id, errortext)
+	canBan, muteId, err := utils.CommonBan(b, u, args)
+	if !canBan {
 		return err
 	}
-	log.Print(strconv.Itoa(muteId))
-	member, err := chat.GetMember(u.Message.From.Id)
-	if !utils.BotIsAdministrator(b, u) {
+	muteMember, err := u.Message.Chat.GetMember(muteId)
+	if err != nil {
 		return err
 	}
-	banMember, err := chat.GetMember(muteId)
-	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
-		return err
-	}
-	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
-		return err
-	}
-	if utils.MemberIsAdministrator(banMember) {
+	if utils.MemberIsAdministrator(muteMember) {
 		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotToMuteAdministrator)
 		return err
 	} else {
-		_, err = b.RestrictChatMember(chat.Id, muteId)
+		_, err = b.RestrictChatMember(u.Message.Chat.Id, muteId)
 		if err != nil {
 			return err
 		}
-		_, err = b.SendMessage(chat.Id, texts.UserIsMuted(banMember.User.FirstName))
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsMuted(muteMember.User.FirstName))
 	}
 	return err
 }
 
 func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
-	chat := u.Message.Chat
-	muteId, errortext := utils.ExtractId(b, u, args)
-	if muteId == 0 {
-		_, err := b.SendMessage(chat.Id, errortext)
+	canBan, muteId, err := utils.CommonBan(b, u, args)
+	if !canBan {
 		return err
 	}
-	log.Print(strconv.Itoa(muteId))
-	member, err := chat.GetMember(u.Message.From.Id)
-	if !utils.BotIsAdministrator(b, u) {
+	_, err = b.UnRestrictChatMember(u.Message.Chat.Id, muteId)
+	if err != nil {
 		return err
 	}
-	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
-		return err
-	}
-	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
-	} else {
-		_, err = b.UnRestrictChatMember(chat.Id, muteId)
-		if err != nil {
-			return err
-		}
-		_, err = b.SendMessage(chat.Id, texts.TalkToMeHere)
-	}
+	_, err = b.SendMessage(u.Message.Chat.Id, texts.TalkToMeHere)
 	return err
 }
 
-func TemporarlyMute(b ext.Bot, u *gotgbot.Update, args []string) error {
-	chat := u.Message.Chat
+func TemporaryMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if len(args) == 0 {
-		_, err := b.SendMessage(chat.Id, texts.ThisCommandForTemporaryMute)
+		_, err := b.SendMessage(u.Message.Chat.Id, texts.ThisCommandForTemporaryMute)
+		return err
+	}
+	canBan, muteId, err := utils.CommonBan(b, u, args)
+	if !canBan {
 		return err
 	}
 	timeInterval := time.Now().Unix()
@@ -95,40 +70,20 @@ func TemporarlyMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 			timeInterval += int64(tempTime * 60 * 60 * 24)
 		}
 	}
-	muteId, errortext := utils.ExtractId(b, u, args)
-	if muteId == 0 {
-		if !utils.IsReply(b, u, false) {
-			_, err := b.SendMessage(chat.Id, errortext)
-			return err
-		} else {
-			muteId = u.Message.ReplyToMessage.From.Id
-		}
-	}
-	log.Print(strconv.Itoa(muteId))
-	member, err := chat.GetMember(u.Message.From.Id)
-	if !utils.BotIsAdministrator(b, u) {
+	muteMember, err := u.Message.Chat.GetMember(muteId)
+	if err != nil {
 		return err
 	}
-	banMember, err := chat.GetMember(muteId)
-	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
-		return err
-	}
-	if !member.CanRestrictMembers && !utils.MemberIsCreator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
-		return err
-	}
-	if utils.MemberIsAdministrator(banMember) {
+	if utils.MemberIsAdministrator(muteMember) {
 		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotToMuteAdministrator)
 		return err
-	} else {
-		newRestrict := b.NewSendableRestrictChatMember(chat.Id, muteId)
-		newRestrict.UntilDate = timeInterval
-		_, err = newRestrict.Send()
-		if err != nil {
-			return err
-		}
-		_, err = b.SendMessage(chat.Id, texts.UserIsMuted(banMember.User.FirstName))
 	}
+	newRestrict := b.NewSendableRestrictChatMember(u.Message.Chat.Id, muteId)
+	newRestrict.UntilDate = timeInterval
+	_, err = newRestrict.Send()
+	if err != nil {
+		return err
+	}
+	_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsMuted(muteMember.User.FirstName))
 	return err
 }
