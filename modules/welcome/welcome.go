@@ -27,10 +27,11 @@ func NewMember(b ext.Bot, u *gotgbot.Update) error {
 func LeftMember(b ext.Bot, u *gotgbot.Update) error {
 	member := u.EffectiveMessage.LeftChatMember
 	var err error
+	text := "До встречи, {firstName}!"
 	if member.FirstName != "" {
-		_, err = b.SendMessage(u.Message.Chat.Id, "До встречи, " + member.FirstName + "!")
+		_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(text, "{firstName}", member.FirstName))
 	} else {
-		_, err = b.SendMessage(u.Message.Chat.Id, "До встречи, пользователь!")
+		_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(text, "{firstName}", "пользователь"))
 	}
 	if err != nil {
 		return err
