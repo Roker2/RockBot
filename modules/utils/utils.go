@@ -142,7 +142,7 @@ func MemberCanRestrictMembers(b ext.Bot, u *gotgbot.Update) bool {
 	if MemberIsCreator(member) == true {
 		return true
 	}
-	if !member.CanRestrictMembers {
+	if !member.CanRestrictMembers && !MemberIsCreator(member) {
 		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
 		errors.SendError(err)
 		return false
