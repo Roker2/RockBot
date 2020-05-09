@@ -26,7 +26,7 @@ func MemberIsAdministrator(member *ext.ChatMember) bool {
 func IsReply(b ext.Bot, u *gotgbot.Update, writeMsg bool) bool {
 	if u.Message.ReplyToMessage == nil {
 		if writeMsg {
-			_, err := b.SendMessage(u.Message.Chat.Id, "Ответьте пожалуйста на сообщение того, с кем Вы хотите что-то сделать.")
+			_, err := b.SendMessage(u.Message.Chat.Id, texts.ReplyOrWriteId)
 			errors.SendError(err)
 		}
 		return false
@@ -54,7 +54,7 @@ func IsUserInChat(chat *ext.Chat, userId int) bool  {
 
 func ItIsMe(b ext.Bot, u *gotgbot.Update, Id int) bool {
 	if b.Id == Id {
-		_, err := b.SendMessage(u.Message.Chat.Id, "Я для тебя что, вещь, которую можно выбросить?")
+		_, err := b.SendMessage(u.Message.Chat.Id, texts.AmIThing)
 		errors.SendError(err)
 		return true
 	}
@@ -160,18 +160,18 @@ func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) (int, string) {
 			id, err = sql.GetUserId(args[0][1:])
 			if err != nil {
 				errors.SendError(err)
-				return id, "Не могу получить ID человека. Ответьте командой на его сообщение."
+				return id, texts.ICanNotGetId
 			}
 			return id, ""
 		} else if len(args) >= 1  {
 			id, err := strconv.Atoi(args[0])
 			if err != nil {
 				errors.SendError(err)
-				return 0, "Введите пожалуйста ID, а не бред."
+				return 0, texts.WriteIdNotBadText
 			}
 			return id, ""
 		} else {
-			return 0, "Ответьте пожалуйста на сообщение человека, с которым Вы хотите что-то сделать, или напишите его ID"
+			return 0, texts.ReplyOrWriteId
 		}
 	}
 }
