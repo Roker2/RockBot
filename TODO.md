@@ -5,7 +5,7 @@
 * Add /ping ✓
 * Add /weather
 * Add temp mute (set timer or time of unmuting) ✓
-* Fix main.go
+* Fix main.go ✓
 * randomsmmq: Move quotes to csv
 * mute and ban modules: Create common function ✓
 * Disable and enable user commands
