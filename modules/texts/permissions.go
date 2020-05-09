@@ -15,3 +15,5 @@ const ICanNotToMuteAdministrator = "Я не могу заставить молч
 const ICanNotDeleteMessages = "Я не имею права удалять сообщения."
 
 const YouCanNotDeleteMessages = "Вы не имеете права удалять сообщения."
+
+const YouAreNotAdministrator = "Вы не администратор."
