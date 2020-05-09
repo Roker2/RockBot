@@ -20,7 +20,7 @@ func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if utils.MemberIsAdministrator(muteMember) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotToMuteAdministrator)
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotMuteAdministrator)
 		return err
 	} else {
 		_, err = b.RestrictChatMember(u.Message.Chat.Id, muteId)
@@ -75,7 +75,7 @@ func TemporaryMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if utils.MemberIsAdministrator(muteMember) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotToMuteAdministrator)
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotMuteAdministrator)
 		return err
 	}
 	newRestrict := b.NewSendableRestrictChatMember(u.Message.Chat.Id, muteId)

@@ -143,7 +143,7 @@ func MemberCanRestrictMembers(b ext.Bot, u *gotgbot.Update) bool {
 		return true
 	}
 	if !member.CanRestrictMembers && !MemberIsCreator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotDoSomethingWithUsers)
 		errors.SendError(err)
 		return false
 	}
@@ -208,7 +208,7 @@ func CommonBan(b ext.Bot, u *gotgbot.Update, args []string) (bool, int, error) {
 		return false, 0, err
 	}
 	if !MemberCanRestrictMembers(b, u) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotToDoSomethingWithUsers)
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotDoSomethingWithUsers)
 		return false, 0, err
 	}
 	return true, banId, nil
