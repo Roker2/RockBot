@@ -17,3 +17,11 @@ const ICanNotDeleteMessages = "Я не имею права удалять соо
 const YouCanNotDeleteMessages = "Вы не имеете права удалять сообщения."
 
 const YouAreNotAdministrator = "Вы не администратор."
+
+const YouCanNotPinOrUnpin = "Вы не имеете права закреплять или откреплять сообщения."
+
+const ICanNotPinOrUnpin = "Я не имею права закреплять или откреплять сообщения."
+
+const YouCanNotPromote = "Вы не имеете права выдавать права администратора."
+
+const ICanNotPromote = "Я не имею права выдавать права администратора."
