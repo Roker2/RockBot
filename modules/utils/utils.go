@@ -68,7 +68,7 @@ func MemberCanPin(b ext.Bot, u *gotgbot.Update) bool {
 		return true
 	}
 	if !member.CanPinMessages {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не имеете права закреплять или откреплять сообщения.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotPinOrUnpin)
 		errors.SendError(err)
 		return false
 	}
@@ -79,7 +79,7 @@ func BotCanPin(b ext.Bot, u *gotgbot.Update) bool {
 	member, err := u.Message.Chat.GetMember(b.Id)
 	errors.SendError(err)
 	if !member.CanPinMessages {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Я не имею права закреплять или откреплять сообщения.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotPinOrUnpin)
 		errors.SendError(err)
 		return false
 	}
@@ -93,7 +93,7 @@ func MemberCanPromote(b ext.Bot, u *gotgbot.Update) bool {
 		return true
 	}
 	if !member.CanPromoteMembers {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Вы не имеете права выдавать права администратора.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotPromote)
 		errors.SendError(err)
 		return false
 	}
@@ -104,7 +104,7 @@ func BotCanPromote(b ext.Bot, u *gotgbot.Update) bool {
 	member, err := u.Message.Chat.GetMember(b.Id)
 	errors.SendError(err)
 	if !member.CanPromoteMembers {
-		_, err = b.SendMessage(u.Message.Chat.Id, "Я не имею права выдавать права администратора.")
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotPromote)
 		errors.SendError(err)
 		return false
 	}
