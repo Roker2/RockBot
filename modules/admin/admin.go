@@ -195,7 +195,11 @@ func GetDisabledCommands(bot ext.Bot, u *gotgbot.Update) error {
 	if err != nil {
 		return err
 	}
-	_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disbaledCommands)
+	if disbaledCommands == "" {
+		_, err = bot.SendMessage(u.Message.Chat.Id, "Все команды включены.")
+	} else {
+		_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disbaledCommands)
+	}
 	return err
 }
 
