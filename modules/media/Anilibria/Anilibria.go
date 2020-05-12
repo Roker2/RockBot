@@ -5,6 +5,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
+	"github.com/Roker2/RockBot/modules/sql"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -56,6 +57,13 @@ func toALRelease(info map[string]interface{}) ALRelease {
 }
 
 func Randomal(b ext.Bot, u *gotgbot.Update) error  {
+	disabledCommands, err := sql.GetDisabledCommands(u.Message.Chat.Id)
+	if err != nil {
+		return err
+	}
+	if !strings.Contains(disabledCommands, "randomal") {
+		return nil
+	}
 	resp, err := http.PostForm("https://www.anilibria.tv/public/api/index.php",
 		url.Values{"query": {"random_release"}})
 	if err != nil {
