@@ -15,7 +15,7 @@ func RandomSMMQ(b ext.Bot, u *gotgbot.Update) error {
     if err != nil {
         return err
     }
-    if !strings.Contains(disabledCommands, "welcome") {
+    if strings.Contains(disabledCommands, "welcome") {
         return nil
     }
     quotesFile, err := ioutil.ReadFile("Quotes.txt")

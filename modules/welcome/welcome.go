@@ -68,7 +68,7 @@ func Welcome(b ext.Bot, u *gotgbot.Update) error {
 	if err != nil {
 		return err
 	}
-	if !strings.Contains(disabledCommands, "welcome") {
+	if strings.Contains(disabledCommands, "welcome") {
 		return nil
 	}
 	member := u.Message.From

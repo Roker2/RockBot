@@ -15,7 +15,7 @@ func Ping(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	if !strings.Contains(disabledCommands, "welcome") {
+	if strings.Contains(disabledCommands, "welcome") {
 		return nil
 	}
 	var msgText string

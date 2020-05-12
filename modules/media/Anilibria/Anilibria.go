@@ -61,7 +61,7 @@ func Randomal(b ext.Bot, u *gotgbot.Update) error  {
 	if err != nil {
 		return err
 	}
-	if !strings.Contains(disabledCommands, "randomal") {
+	if strings.Contains(disabledCommands, "randomal") {
 		return nil
 	}
 	resp, err := http.PostForm("https://www.anilibria.tv/public/api/index.php",
