@@ -77,6 +77,8 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewCommand("rules", rules.GetRules))
 	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ping", []rune{'/', '!'}, ping.Ping))//heroku doesn't support ping :(
 	updater.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, info.SaveUserToDatabase))
+	updater.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("disablecommands", []rune{'/', '!'}, admin.DisableCommands))
+	updater.Dispatcher.AddHandler(handlers.NewCommand("disabledcommands", admin.GetDisabledCommands))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	// start getting updates
 	if os.Getenv("USE_WEBHOOKS") == "yes" {

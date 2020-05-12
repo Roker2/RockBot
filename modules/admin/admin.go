@@ -4,6 +4,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
+	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
 	"strconv"
@@ -149,4 +150,33 @@ func Purge(bot ext.Bot, u *gotgbot.Update) error {
 	time.Sleep(5000)
 	_, err = bot.DeleteMessage(chatId, msg.MessageId)
 	return nil
+}
+
+func DisableCommands(bot ext.Bot, u *gotgbot.Update, args []string) error {
+	userMember, err := u.Message.Chat.GetMember(u.Message.From.Id)
+	if err != nil {
+		return err
+	}
+	if !utils.MemberIsAdministrator(userMember) {
+		return nil
+	}
+	if len(args) == 0 {
+		_, err = bot.SendMessage(u.Message.Chat.Id, "Эта команда отключает пользовательские команды. Список команд:\nТут должен быть красивый список, но у меня его еще нет.")
+		return err
+	}
+	err = sql.SetDisabledCommands(u.Message.Chat.Id, utils.RemoveCommand(u.Message.Text))
+	if err != nil {
+		return err
+	}
+	_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + utils.RemoveCommand(u.Message.Text))
+	return err
+}
+
+func GetDisabledCommands(bot ext.Bot, u *gotgbot.Update) error {
+	disbaledCommands, err := sql.GetDisabledCommands(u.Message.Chat.Id)
+	if err != nil {
+		return err
+	}
+	_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disbaledCommands)
+	return err
 }
