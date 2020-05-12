@@ -248,3 +248,43 @@ func GetUserId(userName string) (int, error) {
   defer db.Close()
   return id, err
 }
+
+func GetDisabledCommands(ChatId int) (string, error) {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  defer db.Close()
+  if err != nil {
+    return "", err
+  }
+  var disabledCommands string
+  err = db.QueryRow("SELECT disabled_commands FROM chatinfo WHERE id = $1;", ChatId).Scan(&disabledCommands)
+  if err != nil {
+    return "", err
+  }
+  return disabledCommands, err
+}
+
+func SetDisabledCommands(ChatId int, commands string) error {
+  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  defer db.Close()
+  if err != nil {
+    return err
+  }
+  _, err = db.Exec(chatinfoTable)
+  if err != nil {
+    return err
+  }
+  var chatExist bool
+  err = db.QueryRow("SELECT count (1) FROM chatinfo WHERE id = $1", ChatId).Scan(&chatExist)
+  if chatExist {
+    _, err = db.Exec("INSERT INTO chatinfo (disabled_commands, id) VALUES ($1, $2);", commands, ChatId)
+    if err != nil {
+      return err
+    }
+  } else {
+    _, err = db.Exec("UPDATE chatinfo SET disabled_commands = $1 WHERE id = $2 ;", commands, ChatId)
+    if err != nil {
+      return err
+    }
+  }
+  return nil
+}
