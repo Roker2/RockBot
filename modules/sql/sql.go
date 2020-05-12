@@ -248,7 +248,7 @@ func GetUserId(userName string) (int, error) {
 }
 
 func GetDisabledCommands(ChatId int) (string, error) {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
   defer db.Close()
   if err != nil {
     return "", err
@@ -262,7 +262,7 @@ func GetDisabledCommands(ChatId int) (string, error) {
 }
 
 func SetDisabledCommands(ChatId int, commands string) error {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
   defer db.Close()
   if err != nil {
     return err
