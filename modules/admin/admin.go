@@ -198,3 +198,35 @@ func GetDisabledCommands(bot ext.Bot, u *gotgbot.Update) error {
 	_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disbaledCommands)
 	return err
 }
+
+func DisableAllCommands(bot ext.Bot, u *gotgbot.Update) error {
+	userMember, err := u.Message.Chat.GetMember(u.Message.From.Id)
+	if err != nil {
+		return err
+	}
+	if !utils.MemberIsAdministrator(userMember) {
+		return nil
+	}
+	err = sql.SetDisabledCommands(u.Message.Chat.Id, userCommands)
+	if err != nil {
+		return err
+	}
+	_, err = bot.SendMessage(u.Message.Chat.Id, "Все команды отключены.")
+	return err
+}
+
+func EnableAllCommands(bot ext.Bot, u *gotgbot.Update) error {
+	userMember, err := u.Message.Chat.GetMember(u.Message.From.Id)
+	if err != nil {
+		return err
+	}
+	if !utils.MemberIsAdministrator(userMember) {
+		return nil
+	}
+	err = sql.SetDisabledCommands(u.Message.Chat.Id, "")
+	if err != nil {
+		return err
+	}
+	_, err = bot.SendMessage(u.Message.Chat.Id, "Все команды включены.")
+	return err
+}
