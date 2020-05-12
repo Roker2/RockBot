@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const userCommands = "info chatinfo kickme randomal welcome rules ping randomsmmq"
+const userCommands = "randomal welcome ping randomsmmq"
 
 func Pin(bot ext.Bot, u *gotgbot.Update, args []string) error {
 	userMember, err := u.Message.Chat.GetMember(u.Message.From.Id)
