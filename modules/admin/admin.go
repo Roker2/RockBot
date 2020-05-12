@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const userCommands = "start info chatinfo kickme randomal welcome rules ping randomsmmq"
+
 func Pin(bot ext.Bot, u *gotgbot.Update, args []string) error {
 	userMember, err := u.Message.Chat.GetMember(u.Message.From.Id)
 	if err != nil {
@@ -161,14 +163,30 @@ func DisableCommands(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		return nil
 	}
 	if len(args) == 0 {
-		_, err = bot.SendMessage(u.Message.Chat.Id, "Эта команда отключает пользовательские команды. Список команд:\nТут должен быть красивый список, но у меня его еще нет.")
+		text := "Эта команда отключает пользовательские команды. Список команд:"
+		for _, command := range strings.Split(userCommands, " ") {
+			text += "\n• <code>" + command + "</code>"
+		}
+		_, err = bot.SendMessageHTML(u.Message.Chat.Id, text)
 		return err
 	}
-	err = sql.SetDisabledCommands(u.Message.Chat.Id, utils.RemoveCommand(u.Message.Text))
+	disabledCommands := ""
+	for _, command := range args {
+		for _, userCommand := range strings.Split(userCommands, " ") {
+			if userCommand == command {
+				disabledCommands += userCommand
+			}
+		}
+	}
+	if disabledCommands == "" {
+		_, err = bot.SendMessage(u.Message.Chat.Id, "Вы не написали ни одной пользовательской команды.")
+		return err
+	}
+	err = sql.SetDisabledCommands(u.Message.Chat.Id, disabledCommands)
 	if err != nil {
 		return err
 	}
-	_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + utils.RemoveCommand(u.Message.Text))
+	_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disabledCommands)
 	return err
 }
 
