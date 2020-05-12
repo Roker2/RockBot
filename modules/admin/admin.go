@@ -191,14 +191,14 @@ func DisableCommands(bot ext.Bot, u *gotgbot.Update, args []string) error {
 }
 
 func GetDisabledCommands(bot ext.Bot, u *gotgbot.Update) error {
-	disbaledCommands, err := sql.GetDisabledCommands(u.Message.Chat.Id)
+	disabledCommands, err := sql.GetDisabledCommands(u.Message.Chat.Id)
 	if err != nil {
 		return err
 	}
-	if disbaledCommands == "" {
+	if disabledCommands == "" {
 		_, err = bot.SendMessage(u.Message.Chat.Id, "Все команды включены.")
 	} else {
-		_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disbaledCommands)
+		_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disabledCommands)
 	}
 	return err
 }
