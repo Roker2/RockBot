@@ -172,10 +172,8 @@ func DisableCommands(bot ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 	disabledCommands := ""
 	for _, command := range args {
-		for _, userCommand := range strings.Split(userCommands, " ") {
-			if userCommand == command {
-				disabledCommands += userCommand
-			}
+		if strings.Contains(userCommands, command) {
+			disabledCommands += command
 		}
 	}
 	if disabledCommands == "" {
