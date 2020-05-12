@@ -275,7 +275,7 @@ func SetDisabledCommands(ChatId int, commands string) error {
   }
   var chatExist bool
   err = db.QueryRow("SELECT count (1) FROM chatinfo WHERE id = $1", ChatId).Scan(&chatExist)
-  if chatExist {
+  if !chatExist {
     _, err = db.Exec("INSERT INTO chatinfo (disabled_commands, id) VALUES ($1, $2);", commands, ChatId)
     if err != nil {
       return err
