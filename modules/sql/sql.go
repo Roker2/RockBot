@@ -15,9 +15,13 @@ const usersTable = "CREATE TABLE IF NOT EXISTS users(id BIGINT PRIMARY KEY, warn
 
 const allUsersTable = "CREATE TABLE IF NOT EXISTS AllUsers(id BIGINT PRIMARY KEY, UserName TEXT);"
 
+func openDataBase() (*sql.DB, error) {
+  return sql.Open("postgres", os.Getenv("DATABASE_URL"))
+}
+
 func GetWarnsQuantityOfChat (ChatId int) (int, error) {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-  //log.Print(os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return 0, err
   }
@@ -30,14 +34,12 @@ func GetWarnsQuantityOfChat (ChatId int) (int, error) {
   if warns == 0 {
     return 5, nil
   }
-  defer db.Close()
   return warns, nil
 }
 
 func SetWarnsQuantityOfChat (ChatId int, warns int) error {
-  //log.Print("Chat: " + strconv.Itoa(ChatId) + " Warns: " + strconv.Itoa(warns))
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-  //log.Print(os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return err
   }
@@ -58,12 +60,12 @@ func SetWarnsQuantityOfChat (ChatId int, warns int) error {
       return err
     }
   }
-  defer db.Close()
   return nil
 }
 
 func GetWelcome (ChatId int) (string, error) {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return "Добро пожаловать, {firstName}!", err
   }
@@ -76,12 +78,12 @@ func GetWelcome (ChatId int) (string, error) {
   if err != nil {
     return "Добро пожаловать, {firstName}!", err
   }
-  defer db.Close()
   return welcome, err
 }
 
 func SetWelcome(ChatId int, welcomeText string) error {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return err
   }
@@ -96,12 +98,12 @@ func SetWelcome(ChatId int, welcomeText string) error {
   } else {
     _, err = db.Exec("UPDATE chatinfo SET welcome = $2 WHERE id = $1;", ChatId, welcomeText)
   }
-  defer db.Close()
   return err
 }
 
 func GetRules (ChatId int) (string, error) {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return "Правила не установлены!", err
   }
@@ -114,12 +116,12 @@ func GetRules (ChatId int) (string, error) {
   if err != nil {
     return "Правила не установлены!", err
   }
-  defer db.Close()
   return rules, err
 }
 
 func SetRules(ChatId int, rulesText string) error {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return err
   }
@@ -134,13 +136,12 @@ func SetRules(ChatId int, rulesText string) error {
   } else {
     _, err = db.Exec("UPDATE chatinfo SET rules = $2 WHERE id = $1;", ChatId, rulesText)
   }
-  defer db.Close()
   return err
 }
 
 func AddUserWarn (ChatId int, UserId int) (int, error) {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-  //log.Print(os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return -1, err
   }
@@ -165,13 +166,12 @@ func AddUserWarn (ChatId int, UserId int) (int, error) {
       return -1, err
     }
   }
-  defer db.Close()
   return warns, nil
 }
 
 func GetUserWarns (ChatId int, UserId int) (int, error) {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-  //log.Print(os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return -1, err
   }
@@ -190,13 +190,12 @@ func GetUserWarns (ChatId int, UserId int) (int, error) {
       return -1, err
     }
   }
-  defer db.Close()
   return warns, nil
 }
 
 func ResetUserWarns (ChatId int, UserId int) error {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-  //log.Print(os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return err
   }
@@ -208,12 +207,12 @@ func ResetUserWarns (ChatId int, UserId int) error {
   if err != nil {
     return err
   }
-  defer db.Close()
   return nil
 }
 
 func SaveUser(user *ext.User) error {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     return err
   }
@@ -233,19 +232,18 @@ func SaveUser(user *ext.User) error {
       _, err = db.Exec("UPDATE AllUsers SET UserName = $1 WHERE id = $2 ;", user.Username, user.Id)
     }
   }
-  defer db.Close()
   return err
 }
 
 func GetUserId(userName string) (int, error) {
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+  db, err := openDataBase()
+  defer db.Close()
   if err != nil {
     //return 0, err
     errors.SendError(err)
   }
   id := 0
   err = db.QueryRow("SELECT id FROM AllUsers WHERE UserName = $1 ;", userName).Scan(&id)
-  defer db.Close()
   return id, err
 }
 
