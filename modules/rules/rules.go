@@ -17,7 +17,7 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if len(args) == 0 {
-		_, err := b.SendMessage(u.Message.Chat.Id, "Эта комманда позволяет установить правила.")
+		_, err := b.SendMessage(u.Message.Chat.Id, texts.DescriptionOfRulesCommand)
 		return err
 	}
 	rules := utils.RemoveCommand(u.Message.OriginalHTML())
@@ -25,7 +25,7 @@ func SetRules(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = b.SendMessage(u.Message.Chat.Id, "Правила установлены! Вы можете посмотреть их с помощью команды /rules.")
+	_, err = b.SendMessage(u.Message.Chat.Id, texts.NewRulesWereAdded)
 	return err
 }
 
@@ -33,7 +33,7 @@ func GetRules(b ext.Bot, u *gotgbot.Update) error {
 	rules, err := sql.GetRules(u.Message.Chat.Id)
 	if err != nil && err.Error() != "sql: no rows in result set" {
 		errors.SendError(err)
-		_, err = b.SendMessage(u.Message.Chat.Id, "Ошибка получения правил.\n" + err.Error())
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ErrorOfGettingRules(err.Error()))
 		return err;
 	}
 	_, err = b.SendMessageHTML(u.Message.Chat.Id, strings.ReplaceAll(rules, "<br>", "\n"))
