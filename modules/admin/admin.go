@@ -177,14 +177,14 @@ func DisableCommands(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		}
 	}
 	if disabledCommands == "" {
-		_, err = bot.SendMessage(u.Message.Chat.Id, "Вы не написали ни одной пользовательской команды.")
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouDidNotWriteAnyUserCommands)
 		return err
 	}
 	err = sql.SetDisabledCommands(u.Message.Chat.Id, disabledCommands)
 	if err != nil {
 		return err
 	}
-	_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disabledCommands)
+	_, err = bot.SendMessage(u.Message.Chat.Id, texts.DisabledUserCommandsList(disabledCommands))
 	return err
 }
 
@@ -194,9 +194,9 @@ func GetDisabledCommands(bot ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 	if disabledCommands == "" {
-		_, err = bot.SendMessage(u.Message.Chat.Id, "Все команды включены.")
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.AllUserCommandsAreEnabled)
 	} else {
-		_, err = bot.SendMessage(u.Message.Chat.Id, "Отключены следующие команды: " + disabledCommands)
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.DisabledUserCommandsList(disabledCommands))
 	}
 	return err
 }
@@ -213,7 +213,7 @@ func DisableAllCommands(bot ext.Bot, u *gotgbot.Update) error {
 	if err != nil {
 		return err
 	}
-	_, err = bot.SendMessage(u.Message.Chat.Id, "Все команды отключены.")
+	_, err = bot.SendMessage(u.Message.Chat.Id, texts.AllUserCommandsAreDisabled)
 	return err
 }
 
@@ -229,6 +229,6 @@ func EnableAllCommands(bot ext.Bot, u *gotgbot.Update) error {
 	if err != nil {
 		return err
 	}
-	_, err = bot.SendMessage(u.Message.Chat.Id, "Все команды включены.")
+	_, err = bot.SendMessage(u.Message.Chat.Id, texts.AllUserCommandsAreEnabled)
 	return err
 }
