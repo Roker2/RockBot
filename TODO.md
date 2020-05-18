@@ -8,6 +8,6 @@
 * Fix main.go ✓
 * randomsmmq: Move quotes to csv
 * mute and ban modules: Create common function ✓
-* Disable and enable user commands
-* Move texts to module (WIP)
-* sql: Add common function which return db
+* Disable and enable user commands ✓
+* Move texts to module ✓
+* sql: Add common function which return db ✓
