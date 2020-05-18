@@ -28,7 +28,7 @@ func NewMember(b ext.Bot, u *gotgbot.Update) error {
 func LeftMember(b ext.Bot, u *gotgbot.Update) error {
 	member := u.EffectiveMessage.LeftChatMember
 	var err error
-	text := "До встречи, {firstName}!"
+	text := texts.ByeUser
 	if member.FirstName != "" {
 		_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(text, "{firstName}", member.FirstName))
 	} else {
