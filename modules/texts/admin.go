@@ -11,3 +11,13 @@ const PleaseReplyToTheMessageOfThePersonYouWantToGrantAdministratorRightsToOrEnt
 const PleaseReplyToTheMessageOfThePersonYouWantToRemoveAdministratorRightsToOrEnterTheirID = "Ответьте пожалуйста на сообщение того, кому Вы хотите убрать права администратора, или введите его ID."
 
 const PurgeCompleted = "Очистка завершена. Сообщение удалится через 5 секунд."
+
+const AllUserCommandsAreDisabled = "Все пользовательские команды отключены."
+
+const AllUserCommandsAreEnabled = "Все пользовательские команды включены."
+
+const YouDidNotWriteAnyUserCommands = "Вы не написали ни одной пользовательской команды."
+
+func DisabledUserCommandsList(disabledCommands string) string {
+	return "Отключены следующие пользовательские команды: " + disabledCommands
+}
