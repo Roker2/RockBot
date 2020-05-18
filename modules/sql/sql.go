@@ -4,6 +4,7 @@ import (
   "database/sql"
   "github.com/PaulSonOfLars/gotgbot/ext"
   "github.com/Roker2/RockBot/modules/errors"
+  "github.com/Roker2/RockBot/modules/texts"
   _ "github.com/lib/pq"
   "os"
   "strings"
@@ -67,16 +68,16 @@ func GetWelcome (ChatId int) (string, error) {
   db, err := openDataBase()
   defer db.Close()
   if err != nil {
-    return "Добро пожаловать, {firstName}!", err
+    return texts.DefaultWelcome, err
   }
   _, err = db.Exec(chatinfoTable)
   if err != nil {
-    return "Добро пожаловать, {firstName}!", err
+    return texts.DefaultWelcome, err
   }
   var welcome string
   err = db.QueryRow("SELECT welcome FROM chatinfo WHERE id = $1;", ChatId).Scan(&welcome)
   if err != nil {
-    return "Добро пожаловать, {firstName}!", err
+    return texts.DefaultWelcome, err
   }
   return welcome, err
 }
@@ -105,16 +106,16 @@ func GetRules (ChatId int) (string, error) {
   db, err := openDataBase()
   defer db.Close()
   if err != nil {
-    return "Правила не установлены!", err
+    return texts.DefaultRules, err
   }
   _, err = db.Exec(chatinfoTable)
   if err != nil {
-    return "Правила не установлены!", err
+    return texts.DefaultRules, err
   }
   var rules string
   err = db.QueryRow("SELECT rules FROM chatinfo WHERE id = $1;", ChatId).Scan(&rules)
   if err != nil {
-    return "Правила не установлены!", err
+    return texts.DefaultRules, err
   }
   return rules, err
 }
