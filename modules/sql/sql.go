@@ -184,8 +184,8 @@ func GetUserWarns (ChatId int, UserId int) (int, error) {
   err = db.QueryRow("SELECT warns FROM users WHERE id = $1 ;", UserId + ChatId).Scan(&warns)
   //log.Print(strconv.Itoa(UserId + ChatId))
   if err != nil {
-    errors.SendError(err)
     if strings.Contains(err.Error(), "sql: no rows in result set") {
+      errors.SendError(err)
       return 0, nil
     } else {
       return -1, err
