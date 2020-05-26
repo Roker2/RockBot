@@ -257,7 +257,12 @@ func GetDisabledCommands(ChatId int) (string, error) {
   var disabledCommands string
   err = db.QueryRow("SELECT disabled_commands FROM chatinfo WHERE id = $1;", ChatId).Scan(&disabledCommands)
   if err != nil {
-    return "", err
+    if strings.Contains(err.Error(), "sql: no rows in result set") {
+      errors.SendError(err)
+      return "", nil
+    } else {
+      return "", err
+    }
   }
   return disabledCommands, err
 }
