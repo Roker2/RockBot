@@ -62,7 +62,7 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if utils.MemberIsAdministrator(banMember) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotBanAdministrator)
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotDoItWithAdministrator)
 		return err
 	}
 	_, err = u.Message.Chat.UnbanMember(banId)
