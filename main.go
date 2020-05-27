@@ -77,7 +77,7 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("disablecommands", admin.DisableCommands))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("disabledcommands", admin.GetDisabledCommands))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("disableallcommands", admin.DisableAllCommands))
-	updater.Dispatcher.AddHandler(handlers.NewCommand("ensableallcommands", admin.EnableAllCommands))
+	updater.Dispatcher.AddHandler(handlers.NewCommand("enableallcommands", admin.EnableAllCommands))
 	//updater.Dispatcher.AddHandler(handlers.NewCommand("test", test))
 	updater.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), welcome.NewMember))
 	updater.Dispatcher.AddHandler(handlers.NewMessage(Filters.LeftChatMembers(), welcome.LeftMember))
