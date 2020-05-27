@@ -12,7 +12,7 @@ import (
 
 func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	canBan, muteId, err := utils.CommonBan(b, u, args)
-	if !canBan {
+	if !canBan || err != nil {
 		return err
 	}
 	muteMember, err := u.Message.Chat.GetMember(muteId)
@@ -34,7 +34,7 @@ func Mute(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func Unmute(b ext.Bot, u *gotgbot.Update, args []string) error {
 	canBan, muteId, err := utils.CommonBan(b, u, args)
-	if !canBan {
+	if !canBan || err != nil {
 		return err
 	}
 	_, err = b.UnRestrictChatMember(u.Message.Chat.Id, muteId)
@@ -51,7 +51,7 @@ func TemporaryMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	canBan, muteId, err := utils.CommonBan(b, u, args)
-	if !canBan {
+	if !canBan || err != nil {
 		return err
 	}
 	timeInterval := time.Now().Unix()

@@ -14,7 +14,7 @@ import (
 
 func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	canBan, banId, err := utils.CommonBan(b, u, args)
-	if !canBan {
+	if !canBan || err != nil {
 		return err
 	}
  	banMember, err := u.Message.Chat.GetMember(banId)
@@ -122,7 +122,7 @@ func SetWarnsQuantity (b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func ResetWarns (b ext.Bot, u *gotgbot.Update, args []string) error {
 	canBan, banId, err := utils.CommonBan(b, u, args)
-	if !canBan {
+	if !canBan || err != nil {
 		return err
 	}
   	banMember, err := u.Message.Chat.GetMember(banId)
