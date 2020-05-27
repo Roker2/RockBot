@@ -62,11 +62,11 @@ func TemporaryMute(b ext.Bot, u *gotgbot.Update, args []string) error {
 			continue
 		}
 		switch temp[len(temp) - 1] {
-		case 'm':
+		case 'm': //minutes
 			timeInterval += int64(tempTime * 60)
-		case 'h':
+		case 'h': //hours
 			timeInterval += int64(tempTime * 60 * 60)
-		case 'd':
+		case 'd': //days
 			timeInterval += int64(tempTime * 60 * 60 * 24)
 		}
 	}
