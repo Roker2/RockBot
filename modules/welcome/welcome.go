@@ -11,6 +11,26 @@ import (
 	"strings"
 )
 
+//It add some info about user to text
+func textHandler(text string, user *ext.User) string {
+	text = strings.ReplaceAll(text, "<br>", "\n")
+	//Replace {firstName} to first name of user
+	if user.FirstName != "" {
+		text = strings.ReplaceAll(text, "{firstName}", user.FirstName)
+	} else {
+		text = strings.ReplaceAll(text, "{firstName}", texts.User)
+	}
+	//Replace {lastName} to last name of user
+	if user.LastName != "" {
+		text = strings.ReplaceAll(text, "{lastName}", user.LastName)
+	}
+	//Replace {username} to last name of user
+	if user.LastName != "" {
+		text = strings.ReplaceAll(text, "{username}", user.Username)
+	}
+	return text
+}
+
 func NewMember(b ext.Bot, u *gotgbot.Update) error {
 	newMembers := u.EffectiveMessage.NewChatMembers
 	for _, member := range newMembers {
@@ -27,13 +47,8 @@ func NewMember(b ext.Bot, u *gotgbot.Update) error {
 
 func LeftMember(b ext.Bot, u *gotgbot.Update) error {
 	member := u.EffectiveMessage.LeftChatMember
-	var err error
-	text := texts.ByeUser
-	if member.FirstName != "" {
-		_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(text, "{firstName}", member.FirstName))
-	} else {
-		_, err = b.SendMessage(u.Message.Chat.Id, strings.ReplaceAll(text, "{firstName}", texts.User))
-	}
+	text := textHandler(texts.ByeUser, member)
+	_, err := b.SendMessage(u.Message.Chat.Id, text)
 	if err != nil {
 		return err
 	}
@@ -86,13 +101,13 @@ func Welcome(b ext.Bot, u *gotgbot.Update) error {
 			InlineKeyboard: &[][]ext.InlineKeyboardButton{},
 		}
 		//create two-dimensional array of buttons
-		inlineKeyboard := [][]ext.InlineKeyboardButton{}
+		var inlineKeyboard [][]ext.InlineKeyboardButton
 		//split \n
 		//\n - new line of buttons
 		newLineSplit := strings.Split(buttonsText, "\n")
 		for _, temp1 := range newLineSplit {
 			//create array of buttons (one line)
-			tempMassive := []ext.InlineKeyboardButton{}
+			var tempMassive []ext.InlineKeyboardButton
 			//split ", "
 			//it is separation to buttons from line
 			commaSplit := strings.Split(temp1, ", ")
@@ -108,11 +123,7 @@ func Welcome(b ext.Bot, u *gotgbot.Update) error {
 		markup.InlineKeyboard = &inlineKeyboard
 		newMsg.ReplyMarkup = ext.ReplyMarkup(&markup)
 	}
-	if member.FirstName != "" {
-		newMsg.Text = strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", member.FirstName), "<br>", "\n")
-	} else {
-		newMsg.Text = strings.ReplaceAll(strings.ReplaceAll(welcome, "{firstName}", texts.User), "<br>", "\n")
-	}
+	newMsg.Text = textHandler(welcome, member)
 	newMsg.ParseMode = parsemode.Html
 	_, err = newMsg.Send()
 	return err
