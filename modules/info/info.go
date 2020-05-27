@@ -8,21 +8,26 @@ import (
 	"strconv"
 )
 
-func UserInfo(b ext.Bot, u *gotgbot.Update) error {
-	user := u.Message.From
-	if u.Message.ReplyToMessage != nil {
-		user = u.Message.ReplyToMessage.From
+func UserInfo(b ext.Bot, u *gotgbot.Update, args []string) error {
+	userId, errorText := utils.ExtractId(b, u, args)
+	if userId == 0 {
+		_, err := b.SendMessage(u.Message.Chat.Id, errorText)
+		return err
 	}
-	textInfo := "<b>First Name:</b> " + user.FirstName
-	if len(user.LastName) != 0 {
-		textInfo += "\n<b>Last Name:</b> " + user.LastName
+	chatMember, err := u.Message.Chat.GetMember(userId)
+	if err != nil {
+		return err
 	}
-	textInfo += "\n<b>User ID:</b> <code>" + strconv.Itoa(user.Id)
-	if len(user.Username) != 0 {
-		textInfo += "</code>\n<b>User Name:</b> @" + user.Username
+	textInfo := "<b>First Name:</b> " + chatMember.User.FirstName
+	if len(chatMember.User.LastName) != 0 {
+		textInfo += "\n<b>Last Name:</b> " + chatMember.User.LastName
 	}
-	textInfo += "\n<b>Bot:</b> " + strconv.FormatBool(user.IsBot)
-	_, err := b.SendMessageHTML(u.Message.Chat.Id, textInfo)
+	textInfo += "\n<b>User ID:</b> <code>" + strconv.Itoa(chatMember.User.Id)
+	if len(chatMember.User.Username) != 0 {
+		textInfo += "</code>\n<b>User Name:</b> @" + chatMember.User.Username
+	}
+	textInfo += "\n<b>Bot:</b> " + strconv.FormatBool(chatMember.User.IsBot)
+	_, err = b.SendMessageHTML(u.Message.Chat.Id, textInfo)
 	return err
 }
 

@@ -51,7 +51,7 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewCommand("start", start))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("randomal", Anilibria.Randomal))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("randomsmmq", SunMyungMoon.RandomSMMQ))
-	updater.Dispatcher.AddHandler(handlers.NewCommand("info", info.UserInfo))
+	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("info", info.UserInfo))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("chatinfo", info.ChatInfo))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("ban", bans.Ban))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("unban", bans.Unban))
