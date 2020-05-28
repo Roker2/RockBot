@@ -4,8 +4,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/sql"
-	"github.com/Roker2/RockBot/modules/utils"
 	"github.com/Roker2/RockBot/modules/texts"
+	"github.com/Roker2/RockBot/modules/utils"
 	"github.com/sirupsen/logrus"
 	"strconv"
 )
