@@ -10,17 +10,11 @@ import (
 )
 
 func MemberIsCreator(member *ext.ChatMember) bool {
-	if member.Status == "creator" {
-		return true
-	}
-	return false
+	return member.Status == "creator"
 }
 
 func MemberIsAdministrator(member *ext.ChatMember) bool {
-	if member.Status == "administrator" || member.Status == "creator" {
-		return true
-	}
-	return false
+	return member.Status == "administrator" || member.Status == "creator"
 }
 
 func IsReply(b ext.Bot, u *gotgbot.Update, writeMsg bool) bool {
