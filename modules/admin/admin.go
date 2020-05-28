@@ -76,7 +76,8 @@ func Promote(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(userMember) {
-		return nil
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
+		return err
 	}
 	if !utils.MemberCanPromote(bot, u) {
 		return nil
@@ -105,7 +106,8 @@ func Demote(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(userMember) {
-		return nil
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
+		return err
 	}
 	if !utils.MemberCanPromote(bot, u) {
 		return nil
@@ -134,7 +136,8 @@ func Purge(bot ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(userMember) {
-		return nil
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
+		return err
 	}
 	if !utils.MemberCanDelMsg(bot, u) {
 		return nil
@@ -160,7 +163,8 @@ func DisableCommands(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(userMember) {
-		return nil
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
+		return err
 	}
 	if len(args) == 0 {
 		text := "Эта команда отключает пользовательские команды. Список команд:"
@@ -207,7 +211,8 @@ func DisableAllCommands(bot ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(userMember) {
-		return nil
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
+		return err
 	}
 	err = sql.SetDisabledCommands(u.Message.Chat.Id, userCommands)
 	if err != nil {
@@ -223,7 +228,8 @@ func EnableAllCommands(bot ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 	if !utils.MemberIsAdministrator(userMember) {
-		return nil
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
+		return err
 	}
 	err = sql.SetDisabledCommands(u.Message.Chat.Id, "")
 	if err != nil {
