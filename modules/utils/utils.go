@@ -155,21 +155,23 @@ func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) (int, string) {
 		return u.Message.ReplyToMessage.From.Id, ""
 	} else {
 		id := 0
-		if args[0][0] == '@' {
-			var err error
-			id, err = sql.GetUserId(args[0][1:])
-			if err != nil {
-				errors.SendError(err)
-				return id, texts.ICanNotGetId
+		if len(args) >= 1  {
+			if args[0][0] == '@' {
+				var err error
+				id, err = sql.GetUserId(args[0][1:])
+				if err != nil {
+					errors.SendError(err)
+					return id, texts.ICanNotGetId
+				}
+				return id, ""
+			} else {
+				id, err := strconv.Atoi(args[0])
+				if err != nil {
+					errors.SendError(err)
+					return 0, texts.WriteIdNotBadText
+				}
+				return id, ""
 			}
-			return id, ""
-		} else if len(args) >= 1  {
-			id, err := strconv.Atoi(args[0])
-			if err != nil {
-				errors.SendError(err)
-				return 0, texts.WriteIdNotBadText
-			}
-			return id, ""
 		} else {
 			return 0, texts.ReplyOrWriteId
 		}
