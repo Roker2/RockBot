@@ -57,7 +57,7 @@ type ChatMember struct {
 	IsMember              bool   `json:"is_member"`
 	CanSendMessages       bool   `json:"can_send_messages"`
 	CanSendMediaMessages  bool   `json:"can_send_media_messages"`
-	CanSendPolls          bool   `json:"can_send_media_messages"`
+	CanSendPolls          bool   `json:"can_send_polls"`
 	CanSendOtherMessages  bool   `json:"can_send_other_messages"`
 	CanAddWebPagePreviews bool   `json:"can_add_web_page_previews"`
 }
@@ -138,7 +138,7 @@ func (chat Chat) UnpinMessage() (bool, error) {
 	return chat.Bot.UnpinChatMessage(chat.Id)
 }
 
-func (chat Chat) Leave(description string) (bool, error) {
+func (chat Chat) Leave() (bool, error) {
 	return chat.Bot.LeaveChat(chat.Id)
 }
 
