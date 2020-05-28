@@ -4,15 +4,19 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/sql"
+	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
 	"strconv"
 )
 
 func UserInfo(b ext.Bot, u *gotgbot.Update, args []string) error {
 	userId, errorText := utils.ExtractId(b, u, args)
-	if userId == 0 {
+	if userId == 0 && errorText != texts.ReplyOrWriteId {
 		_, err := b.SendMessage(u.Message.Chat.Id, errorText)
 		return err
+	}
+	if errorText == texts.ReplyOrWriteId {
+		userId = u.Message.From.Id
 	}
 	chatMember, err := u.Message.Chat.GetMember(userId)
 	if err != nil {
