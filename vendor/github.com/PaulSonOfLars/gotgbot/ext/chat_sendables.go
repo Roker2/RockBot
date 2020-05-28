@@ -34,11 +34,8 @@ func (kcm *sendableKickChatMember) Send() (bool, error) {
 		return false, errors.Wrapf(err, "could not kickChatMember")
 	}
 
-	if !r.Ok {
-		return false, errors.New(r.Description)
-	}
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 type sendableRestrictChatMember struct {
@@ -86,12 +83,9 @@ func (rcm *sendableRestrictChatMember) Send() (bool, error) {
 	if err != nil {
 		return false, errors.Wrapf(err, "could not restrictChatMember")
 	}
-	if !r.Ok {
-		return false, errors.New(r.Description)
-	}
 
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 type sendablePromoteChatMember struct {
@@ -140,12 +134,9 @@ func (pcm *sendablePromoteChatMember) Send() (bool, error) {
 	if err != nil {
 		return false, errors.Wrapf(err, "could not promoteChatMember")
 	}
-	if !r.Ok {
-		return false, errors.New(r.Description)
-	}
 
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 type sendableSetChatAdministratorCustomTitle struct {
@@ -175,12 +166,9 @@ func (scact *sendableSetChatAdministratorCustomTitle) Send() (bool, error) {
 	if err != nil {
 		return false, errors.Wrapf(err, "could not setChatAdministratorCustomTitle")
 	}
-	if !r.Ok {
-		return false, errors.New(r.Description)
-	}
 
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 type sendableSetChatPermissions struct {
@@ -213,12 +201,9 @@ func (scp *sendableSetChatPermissions) Send() (bool, error) {
 	if err != nil {
 		return false, errors.Wrapf(err, "could not setChatPermissions")
 	}
-	if !r.Ok {
-		return false, errors.New(r.Description)
-	}
 
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 type sendablePinChatMessage struct {
@@ -247,12 +232,9 @@ func (pcm *sendablePinChatMessage) Send() (bool, error) {
 	if err != nil {
 		return false, errors.Wrapf(err, "unable to pinChatMessage")
 	}
-	if !r.Ok {
-		return false, errors.New(r.Description)
-	}
 
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 type sendableSetChatPhoto struct {
@@ -270,13 +252,10 @@ func (scp *sendableSetChatPhoto) Send() (bool, error) {
 	v.Add("chat_id", strconv.Itoa(scp.ChatId))
 
 	r, err := scp.bot.sendFile(scp.file, "photo", "setChatPhoto", v)
-
 	if err != nil {
 		return false, errors.Wrapf(err, "unable to setChatPhoto")
 	}
-	if !r.Ok {
-		return false, errors.New(r.Description)
-	}
-	var newMsg bool
-	return newMsg, json.Unmarshal(r.Result, &newMsg)
+
+	var bb bool
+	return bb, json.Unmarshal(r, &bb)
 }

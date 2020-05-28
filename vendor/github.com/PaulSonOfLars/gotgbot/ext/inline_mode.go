@@ -348,12 +348,9 @@ func (aiq sendableAnswerInlineQuery) Send() (bool, error) {
 	if err != nil {
 		return false, errors.Wrapf(err, "unable to execute answerInlineQuery request")
 	}
-	if !r.Ok {
-		return false, errors.Wrapf(err, "invalid answerInlineQuery request")
-	}
 
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 func (b Bot) AnswerInlineQuery(inlineQueryId string, results []InlineQueryResult) (bool, error) {

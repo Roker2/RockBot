@@ -7,11 +7,12 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 
 	"github.com/PaulSonOfLars/gotgbot/ext"
 )
@@ -22,7 +23,7 @@ type Updater struct {
 	Bot          *ext.Bot
 	Updates      chan *RawUpdate
 	Dispatcher   *Dispatcher
-	UpdateGetter *ext.TgBotGetter
+	UpdateGetter *ext.BotGetter
 }
 
 // NewUpdater Creates a new updater struct, paired with the necessary dispatcher and bot structs.
@@ -41,7 +42,7 @@ func NewUpdater(token string, l *zap.Logger) (*Updater, error) {
 	}
 	u.Updates = make(chan *RawUpdate)
 	u.Dispatcher = NewDispatcher(u.Bot, u.Updates)
-	u.UpdateGetter = &ext.TgBotGetter{
+	u.UpdateGetter = &ext.BotGetter{
 		Client: &http.Client{
 			Transport:     nil,
 			CheckRedirect: nil,
@@ -83,25 +84,31 @@ func (u Updater) startPolling(clean bool) {
 		r, err := u.UpdateGetter.Get(*u.Bot, "getUpdates", v)
 		if err != nil {
 			u.Bot.Logger.Errorw("unable to getUpdates", zap.Error(err))
-			continue
-
-		} else if !r.Ok {
-			u.Bot.Logger.Errorf("getUpdates error: %v", r.Description)
 			u.Bot.Logger.Error("Sleeping for 1 second...")
 			time.Sleep(time.Second)
 			continue
 
-		} else if r.Result != nil {
+		} else if r != nil {
 			var rawUpdates []json.RawMessage
-			if err := json.Unmarshal(r.Result, &rawUpdates); err != nil {
-				u.Bot.Logger.Errorw("failed to unmarshal update while polling", "result", r.Result, zap.Error(err))
+			if err := json.Unmarshal(r, &rawUpdates); err != nil {
+				u.Bot.Logger.Errorw("failed to unmarshal update while polling",
+					zap.Field{
+						Key:    "result",
+						Type:   zapcore.StringType,
+						String: string(r)},
+					zap.Error(err))
 				continue
 			}
 			if len(rawUpdates) > 0 {
 				// parse last one here
 				lastUpd, err := initUpdate(RawUpdate(rawUpdates[len(rawUpdates)-1]), *u.Bot)
 				if err != nil {
-					u.Bot.Logger.Errorw("failed to init update while polling", "result", r.Result, zap.Error(err))
+					u.Bot.Logger.Errorw("failed to init update while polling",
+						zap.Field{
+							Key:    "result",
+							Type:   zapcore.StringType,
+							String: string(r)},
+						zap.Error(err))
 					continue
 				}
 				offset = lastUpd.UpdateId + 1
@@ -174,7 +181,7 @@ func (u Updater) RemoveWebhook() (bool, error) {
 		return false, errors.Wrapf(err, "failed to remove webhook")
 	}
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 // SetWebhook Set the webhook url for telegram to contact with updates
@@ -189,9 +196,8 @@ func (u Updater) SetWebhook(path string, webhook Webhook) (bool, error) {
 	}
 
 	v := url.Values{}
-	
-	webhookURL := strings.TrimSuffix(webhook.URL, "/") + path
-	v.Add("url", webhookURL)
+
+	v.Add("url", strings.TrimSuffix(webhook.URL, "/")+"/"+strings.TrimPrefix(path, "/"))
 	// v.Add("certificate", ) // todo: add certificate support
 	v.Add("max_connections", strconv.Itoa(webhook.MaxConnections))
 	v.Add("allowed_updates", string(allowed))
@@ -202,7 +208,7 @@ func (u Updater) SetWebhook(path string, webhook Webhook) (bool, error) {
 	}
 
 	var bb bool
-	return bb, json.Unmarshal(r.Result, &bb)
+	return bb, json.Unmarshal(r, &bb)
 }
 
 type WebhookInfo struct {
@@ -223,6 +229,6 @@ func (u Updater) GetWebhookInfo() (*WebhookInfo, error) {
 	}
 
 	var wh WebhookInfo
-	return &wh, json.Unmarshal(r.Result, &wh)
+	return &wh, json.Unmarshal(r, &wh)
 
 }

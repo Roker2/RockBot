@@ -32,12 +32,9 @@ func (b Bot) GetMe() (*User, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not getMe")
 	}
-	if !r.Ok {
-		return nil, errors.New("invalid getMe request: " + r.Description)
-	}
 
 	var u User
-	return &u, json.Unmarshal(r.Result, &u)
+	return &u, json.Unmarshal(r, &u)
 }
 
 // GetMyCommands gets the list of bot commands assigned to the bot.
@@ -48,12 +45,9 @@ func (b Bot) GetMyCommands() ([]BotCommand, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not getMyCommands")
 	}
-	if !r.Ok {
-		return nil, errors.New("invalid getMyCommands request: " + r.Description)
-	}
 
 	var bc []BotCommand
-	return bc, json.Unmarshal(r.Result, &bc)
+	return bc, json.Unmarshal(r, &bc)
 }
 
 // SetMyCommands gets the list of bot commands assigned to the bot.
@@ -80,7 +74,7 @@ func (b Bot) GetUserProfilePhotos(userId int, offset int, limit int) (*UserProfi
 	if offset != 0 {
 		v.Add("offset", strconv.Itoa(offset))
 	}
-	
+
 	if limit != 0 {
 		v.Add("limit", strconv.Itoa(limit))
 	}
@@ -89,12 +83,9 @@ func (b Bot) GetUserProfilePhotos(userId int, offset int, limit int) (*UserProfi
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not get user profile photos")
 	}
-	if !r.Ok {
-		return nil, errors.New("invalid getUserProfilePhotos request: " + r.Description)
-	}
 
 	var userProfilePhotos UserProfilePhotos
-	return &userProfilePhotos, json.Unmarshal(r.Result, &userProfilePhotos)
+	return &userProfilePhotos, json.Unmarshal(r, &userProfilePhotos)
 }
 
 // GetFile Retrieve a file from the bot api
@@ -106,10 +97,7 @@ func (b Bot) GetFile(fileId string) (*File, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not complete getFile request")
 	}
-	if !r.Ok {
-		return nil, errors.New("invalid getFile request: " + r.Description)
-	}
 
 	var f File
-	return &f, json.Unmarshal(r.Result, &f)
+	return &f, json.Unmarshal(r, &f)
 }

@@ -5,27 +5,27 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot",
-			"Rev": "fd45bea9f10530a339f22f67714ea8bb38a89214"
+			"Rev": "91027c5c360418ba2991ad17763eea933781ad46"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/dice",
-			"Rev": "fd45bea9f10530a339f22f67714ea8bb38a89214"
+			"Rev": "91027c5c360418ba2991ad17763eea933781ad46"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/ext",
-			"Rev": "fd45bea9f10530a339f22f67714ea8bb38a89214"
+			"Rev": "91027c5c360418ba2991ad17763eea933781ad46"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/handlers",
-			"Rev": "fd45bea9f10530a339f22f67714ea8bb38a89214"
+			"Rev": "91027c5c360418ba2991ad17763eea933781ad46"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/handlers/Filters",
-			"Rev": "fd45bea9f10530a339f22f67714ea8bb38a89214"
+			"Rev": "91027c5c360418ba2991ad17763eea933781ad46"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/parsemode",
-			"Rev": "fd45bea9f10530a339f22f67714ea8bb38a89214"
+			"Rev": "91027c5c360418ba2991ad17763eea933781ad46"
 		},
 		{
 			"ImportPath": "github.com/glinton/ping",
