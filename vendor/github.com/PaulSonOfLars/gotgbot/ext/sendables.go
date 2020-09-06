@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/url"
-	"os"
 	"strconv"
 
 	"github.com/pkg/errors"
@@ -103,6 +102,14 @@ func (b Bot) NewSendableLocation(chatId int) *sendableLocation {
 	return &sendableLocation{bot: b, ChatId: chatId}
 }
 
+func (b Bot) NewSendableEditMessageLiveLocation(chatId int, latitude float64, longitude float64) *sendableEditMessageLiveLocation {
+	return &sendableEditMessageLiveLocation{bot: b, ChatId: chatId, Latitude: latitude, Longitude: longitude}
+}
+
+func (b Bot) NewSendableStopMessageLiveLocation(chatId int) *sendableStopMessageLiveLocation {
+	return &sendableStopMessageLiveLocation{bot: b, ChatId: chatId}
+}
+
 // NewSendableVenue creates a new venue struct to send
 func (b Bot) NewSendableVenue(chatId int) *sendableVenue {
 	return &sendableVenue{bot: b, ChatId: chatId}
@@ -138,128 +145,202 @@ func (b Bot) NewSendableAnswerCallbackQuery(queryId string) *sendableCallbackQue
 	return &sendableCallbackQuery{bot: b, CallbackQueryId: queryId}
 }
 
-type file struct {
+type InputFile struct {
+	b      Bot
 	Name   string
 	FileId string
-	Path   string
 	Reader io.Reader
 	URL    string
 }
 
+func (f InputFile) send(endpoint string, params url.Values, fileType string) (json.RawMessage, error) {
+	params.Add("name", f.Name)
+	if f.FileId != "" {
+		params.Add(fileType, f.FileId)
+		return f.b.Get(endpoint, params)
+	} else if f.URL != "" {
+		params.Add(fileType, f.URL)
+		return f.b.Get(endpoint, params)
+	} else if f.Reader != nil {
+		return f.b.Post(endpoint, params, map[string]PostFile{
+			fileType: {
+				File:     f.Reader,
+				FileName: f.Name,
+			}})
+	} else {
+		return nil, errors.New("the message had no files that could be sent")
+	}
+}
+
+func (f InputFile) GetMediaType(attachAs string, data map[string]PostFile) string {
+	if f.FileId != "" {
+		return f.FileId
+	} else if f.URL != "" {
+		return f.URL
+	} else if f.Reader != nil {
+		data[attachAs] = PostFile{
+			File:     f.Reader,
+			FileName: f.Name,
+		}
+		return "attach://" + attachAs
+	}
+	return ""
+}
+
+func (b Bot) NewFileId(fileId string) InputFile {
+	return InputFile{
+		b:      b,
+		FileId: fileId,
+	}
+}
+
+func (b Bot) NewFileURL(url string) InputFile {
+	return InputFile{
+		b:   b,
+		URL: url,
+	}
+}
+
+func (b Bot) NewFileReader(name string, r io.Reader) InputFile {
+	if name == "" {
+		name = "file"
+	}
+	return InputFile{
+		b:      b,
+		Name:   name,
+		Reader: r,
+	}
+}
+
 type InputMedia interface {
-	getType() string
-	getValues(valType string) url.Values
-}
-
-type baseInputMedia struct {
-	Media     string
-	Caption   string
-	ParseMode string
-	// TODO: sort out "attach" logic
-	// Attached  io.Reader
-}
-
-func (bim baseInputMedia) getValues(valType string) url.Values {
-	v := url.Values{}
-	v.Add("type", valType)
-	v.Add("media", bim.Media)
-	v.Add("caption", bim.Caption)
-	v.Add("parse_mode", bim.ParseMode)
-	// v.Add("attached")
-	return v
+	toJson(idx int) (map[string]string, map[string]PostFile)
 }
 
 type InputMediaAnimation struct {
-	baseInputMedia
-	// TODO: sort out thumbnails
-	// Thumb    file
+	Media     InputFile
+	Caption   string
+	ParseMode string
+
+	Thumb    *InputFile
 	Width    int
 	Height   int
 	Duration int
 }
 
-func (ima InputMediaAnimation) getType() string {
-	return "animation"
-}
-
-func (ima InputMediaAnimation) getValues(valType string) url.Values {
-	v := ima.baseInputMedia.getValues(ima.getType())
-	// v.Add("thumb")
-	v.Add("width", strconv.Itoa(ima.Width))
-	v.Add("height", strconv.Itoa(ima.Height))
-	v.Add("duration", strconv.Itoa(ima.Duration))
-	return v
+func (ima InputMediaAnimation) toJson(idx int) (map[string]string, map[string]PostFile) {
+	data := make(map[string]PostFile)
+	media := ima.Media.GetMediaType("media"+strconv.Itoa(idx), data)
+	m := map[string]string{
+		"type":       "animation",
+		"media":      media,
+		"caption":    ima.Caption,
+		"parse_mode": ima.ParseMode,
+		"width":      strconv.Itoa(ima.Width),
+		"height":     strconv.Itoa(ima.Height),
+		"duration":   strconv.Itoa(ima.Duration),
+	}
+	if ima.Thumb != nil {
+		m["thumb"] = ima.Thumb.GetMediaType("thumb"+strconv.Itoa(idx), data)
+	}
+	return m, data
 }
 
 type InputMediaDocument struct {
-	baseInputMedia
-	Thumb file
+	Media     InputFile
+	Caption   string
+	ParseMode string
+
+	Thumb *InputFile
 }
 
-func (imd InputMediaDocument) getType() string {
-	return "document"
-}
-
-func (imd InputMediaDocument) getValues(valType string) url.Values {
-	v := imd.baseInputMedia.getValues(imd.getType())
-	// v.Add("thumb")
-	return v
+func (imd InputMediaDocument) toJson(idx int) (map[string]string, map[string]PostFile) {
+	data := make(map[string]PostFile)
+	media := imd.Media.GetMediaType("media"+strconv.Itoa(idx), data)
+	m := map[string]string{
+		"type":       "document",
+		"media":      media,
+		"caption":    imd.Caption,
+		"parse_mode": imd.ParseMode,
+	}
+	if imd.Thumb != nil {
+		m["thumb"] = imd.Thumb.GetMediaType("thumb"+strconv.Itoa(idx), data)
+	}
+	return m, data
 }
 
 type InputMediaAudio struct {
-	baseInputMedia
-	Thumb     file
+	Media     InputFile
+	Caption   string
+	ParseMode string
+	Thumb     *InputFile
 	Duration  int
 	Performer string
 	Title     string
 }
 
-func (ima InputMediaAudio) getType() string {
-	return "audio"
-}
-
-func (ima InputMediaAudio) getValues(valType string) url.Values {
-	v := ima.baseInputMedia.getValues(ima.getType())
-	// v.Add("thumb")
-	v.Add("duration", strconv.Itoa(ima.Duration))
-	v.Add("performer", ima.Performer)
-	v.Add("title", ima.Title)
-	return v
+func (ima InputMediaAudio) toJson(idx int) (map[string]string, map[string]PostFile) {
+	data := make(map[string]PostFile)
+	media := ima.Media.GetMediaType("media"+strconv.Itoa(idx), data)
+	m := map[string]string{
+		"type":       "audio",
+		"media":      media,
+		"caption":    ima.Caption,
+		"parse_mode": ima.ParseMode,
+		"duration":   strconv.Itoa(ima.Duration),
+		"performer":  ima.Performer,
+		"title":      ima.Title,
+	}
+	if ima.Thumb != nil {
+		m["thumb"] = ima.Thumb.GetMediaType("thumb"+strconv.Itoa(idx), data)
+	}
+	return m, data
 }
 
 type InputMediaPhoto struct {
-	baseInputMedia
+	Media     InputFile
+	Caption   string
+	ParseMode string
 }
 
-func (imp InputMediaPhoto) getType() string {
-	return "photo"
-}
-
-func (imp InputMediaPhoto) getValues(valType string) url.Values {
-	return imp.baseInputMedia.getValues(imp.getType())
+func (imp InputMediaPhoto) toJson(idx int) (map[string]string, map[string]PostFile) {
+	data := make(map[string]PostFile)
+	media := imp.Media.GetMediaType("media"+strconv.Itoa(idx), data)
+	return map[string]string{
+		"type":       "photo",
+		"media":      media,
+		"caption":    imp.Caption,
+		"parse_mode": imp.ParseMode,
+	}, data
 }
 
 type InputMediaVideo struct {
-	baseInputMedia
-	Thumb            file
+	Media            InputFile
+	Caption          string
+	ParseMode        string
+	Thumb            *InputFile
 	Width            int
 	Height           int
 	Duration         int
 	SupportStreaming bool
 }
 
-func (imv InputMediaVideo) getType() string {
-	return "video"
-}
-
-func (imv InputMediaVideo) getValues(valType string) url.Values {
-	v := imv.baseInputMedia.getValues(imv.getType())
-	// v.Add("thumb")
-	v.Add("width", strconv.Itoa(imv.Width))
-	v.Add("height", strconv.Itoa(imv.Height))
-	v.Add("duration", strconv.Itoa(imv.Duration))
-	v.Add("duration", strconv.FormatBool(imv.SupportStreaming))
-	return v
+func (imv InputMediaVideo) toJson(idx int) (map[string]string, map[string]PostFile) {
+	data := make(map[string]PostFile)
+	media := imv.Media.GetMediaType("media"+strconv.Itoa(idx), data)
+	m := map[string]string{
+		"type":              "video",
+		"media":             media,
+		"caption":           imv.Caption,
+		"parse_mode":        imv.ParseMode,
+		"width":             strconv.Itoa(imv.Width),
+		"height":            strconv.Itoa(imv.Height),
+		"duration":          strconv.Itoa(imv.Duration),
+		"support_streaming": strconv.FormatBool(imv.SupportStreaming),
+	}
+	if imv.Thumb != nil {
+		m["thumb"] = imv.Thumb.GetMediaType("thumb"+strconv.Itoa(idx), data)
+	}
+	return m, data
 }
 
 type sendableTextMessage struct {
@@ -292,9 +373,9 @@ func (msg *sendableTextMessage) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "sendMessage", v)
+	r, err := msg.bot.Get("sendMessage", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendMessage")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -330,9 +411,9 @@ func (msg *sendableEditMessageText) Send() (*Message, error) {
 	v.Add("disable_web_page_preview", strconv.FormatBool(msg.DisableWebPreview))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "editMessageText", v)
+	r, err := msg.bot.Get("editMessageText", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to editMessageText")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -366,9 +447,9 @@ func (msg *sendableEditMessageCaption) Send() (*Message, error) {
 	v.Add("parse_mode", msg.ParseMode)
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "editMessageCaption", v)
+	r, err := msg.bot.Get("editMessageCaption", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to editMessageCaption")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -398,18 +479,18 @@ func (msg *sendableEditMessageReplyMarkup) Send() (*Message, error) {
 	v.Add("inline_message_id", msg.InlineMessageId)
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "editMessageCaption", v)
+	r, err := msg.bot.Get("editMessageCaption", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to editMessageCaption")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
 }
 
 type sendablePhoto struct {
-	bot    Bot
-	ChatId int
-	file
+	bot                 Bot
+	ChatId              int
+	Photo               InputFile
 	Caption             string
 	ParseMode           string
 	DisableNotification bool
@@ -435,18 +516,18 @@ func (msg *sendablePhoto) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := msg.bot.sendFile(msg.file, "photo", "sendPhoto", v)
+	r, err := msg.Photo.send("sendPhoto", v, "photo")
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendPhoto")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
 }
 
 type sendableAudio struct {
-	bot    Bot
-	ChatId int
-	file
+	bot                 Bot
+	ChatId              int
+	Audio               InputFile
 	Caption             string
 	ParseMode           string
 	Duration            int
@@ -478,19 +559,18 @@ func (msg *sendableAudio) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := msg.bot.sendFile(msg.file, "audio", "sendAudio", v)
+	r, err := msg.Audio.send("sendAudio", v, "audio")
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendAudio")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
 }
 
 type sendableDocument struct {
-	bot     Bot
-	ChatId  int
-	DocName string // file name
-	file
+	bot                 Bot
+	ChatId              int
+	Document            InputFile
 	Caption             string
 	ParseMode           string
 	DisableNotification bool
@@ -516,18 +596,18 @@ func (msg *sendableDocument) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := msg.bot.sendFile(msg.file, "document", "sendDocument", v)
+	r, err := msg.Document.send("sendDocument", v, "document")
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendDocument")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
 }
 
 type sendableVideo struct {
-	bot    Bot
-	ChatId int
-	file
+	bot                 Bot
+	ChatId              int
+	Video               InputFile
 	Duration            int
 	Width               int
 	Height              int
@@ -561,18 +641,18 @@ func (msg *sendableVideo) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := msg.bot.sendFile(msg.file, "video", "sendVideo", v)
+	r, err := msg.Video.send("sendVideo", v, "video")
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendVideo")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
 }
 
 type sendableVoice struct {
-	bot    Bot
-	ChatId int
-	file
+	bot                 Bot
+	ChatId              int
+	Voice               InputFile
 	Caption             string
 	ParseMode           string
 	Duration            int
@@ -600,18 +680,18 @@ func (msg *sendableVoice) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := msg.bot.sendFile(msg.file, "voice", "sendVoice", v)
+	r, err := msg.Voice.send("sendVoice", v, "voice")
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendVoice")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
 }
 
 type sendableVideoNote struct {
-	bot    Bot
-	ChatId int
-	file
+	bot                 Bot
+	ChatId              int
+	VideoNote           InputFile
 	Duration            int
 	Length              int
 	DisableNotification bool
@@ -637,9 +717,9 @@ func (msg *sendableVideoNote) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := msg.bot.sendFile(msg.file, "video", "sendVideoNote", v)
+	r, err := msg.VideoNote.send("sendVideoNote", v, "video_note")
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendVideoNote")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -650,7 +730,7 @@ type sendableEditMessageMedia struct {
 	ChatId          int
 	MessageId       int
 	InlineMessageId string
-	Media           InputMedia
+	InputMedia      InputMedia
 	ReplyMarkup     ReplyMarkup
 }
 
@@ -669,15 +749,20 @@ func (msg *sendableEditMessageMedia) Send() (*Message, error) {
 	v.Add("message_id", strconv.Itoa(msg.MessageId))
 	v.Add("inline_message_id", msg.InlineMessageId)
 	v.Add("reply_markup", string(replyMarkup))
-	vals, err := json.Marshal(msg.Media.getValues(msg.Media.getType()))
+
+	mediaMap, data := msg.InputMedia.toJson(0)
+
+	bs, err := json.Marshal(mediaMap)
+	v.Add("media", string(bs))
+
+	var r json.RawMessage
+	if len(data) != 0 {
+		r, err = msg.bot.Post("editMessageMedia", v, data)
+	} else {
+		r, err = msg.bot.Get("editMessageMedia", v)
+	}
 	if err != nil {
 		return nil, err
-	}
-	v.Add("media", string(vals))
-
-	r, err := Get(msg.bot, "editMessageMedia", v)
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to editMessageMedia")
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -703,12 +788,21 @@ func (msg *sendableMediaGroup) Send() (*Message, error) {
 	}
 
 	var media []byte
+	data := make(map[string]PostFile)
 	if msg.ArrInputMedia != nil {
-		data := make([]url.Values, len(msg.ArrInputMedia))
-		for i := 0; i < len(msg.ArrInputMedia); i++ {
-			data[i] = msg.ArrInputMedia[i].getValues(msg.ArrInputMedia[i].getType())
+		array := make([][]byte, len(msg.ArrInputMedia))
+		for idx, mediaItem := range msg.ArrInputMedia {
+			mediaMap, mediaData := mediaItem.toJson(idx)
+			array[idx], err = json.Marshal(mediaMap)
+			if err != nil {
+				return nil, errors.Wrapf(err, "failed to marshal item in array input media")
+			}
+			// assign all data elems
+			for k, v := range mediaData {
+				data[k] = v
+			}
 		}
-		vals, err := json.Marshal(data)
+		vals, err := json.Marshal(array)
 		if err != nil {
 			return nil, err
 		}
@@ -722,9 +816,14 @@ func (msg *sendableMediaGroup) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "sendMediaGroup", v)
+	var r json.RawMessage
+	if len(data) != 0 {
+		r, err = msg.bot.Post("sendMediaGroup", v, data)
+	} else {
+		r, err = msg.bot.Get("sendMediaGroup", v)
+	}
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendMediaGroup")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -760,16 +859,81 @@ func (msg *sendableLocation) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "sendLocation", v)
+	r, err := msg.bot.Get("sendLocation", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendLocation")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
 }
 
-// TODO: edit live location
-// TODO: stop live location
+type sendableEditMessageLiveLocation struct {
+	bot             Bot
+	ChatId          int
+	MessageId       int
+	InlineMessageId string
+	Latitude        float64
+	Longitude       float64
+	ReplyMarkup     ReplyMarkup
+}
+
+func (msg *sendableEditMessageLiveLocation) Send() (*Message, error) {
+	var replyMarkup []byte
+	if msg.ReplyMarkup != nil {
+		var err error
+		replyMarkup, err = msg.ReplyMarkup.Marshal()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	v := url.Values{}
+	v.Add("chat_id", strconv.Itoa(msg.ChatId))
+	v.Add("message_id", strconv.Itoa(msg.MessageId))
+	v.Add("inline_message_id", msg.InlineMessageId)
+	v.Add("latitude", strconv.FormatFloat(msg.Latitude, 'f', -1, 64))
+	v.Add("longitude", strconv.FormatFloat(msg.Longitude, 'f', -1, 64))
+	v.Add("reply_markup", string(replyMarkup))
+
+	r, err := msg.bot.Get("editMessageLiveLocation", v)
+	if err != nil {
+		return nil, err
+	}
+
+	return msg.bot.ParseMessage(r)
+}
+
+type sendableStopMessageLiveLocation struct {
+	bot             Bot
+	ChatId          int
+	MessageId       int
+	InlineMessageId string
+	ReplyMarkup     ReplyMarkup
+}
+
+func (msg *sendableStopMessageLiveLocation) Send() (*Message, error) {
+	var replyMarkup []byte
+	if msg.ReplyMarkup != nil {
+		var err error
+		replyMarkup, err = msg.ReplyMarkup.Marshal()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	v := url.Values{}
+	v.Add("chat_id", strconv.Itoa(msg.ChatId))
+	v.Add("message_id", strconv.Itoa(msg.MessageId))
+	v.Add("inline_message_id", msg.InlineMessageId)
+	v.Add("reply_markup", string(replyMarkup))
+
+	r, err := msg.bot.Get("stopMessageLiveLocation", v)
+	if err != nil {
+		return nil, err
+	}
+
+	return msg.bot.ParseMessage(r)
+}
 
 type sendableVenue struct {
 	bot                 Bot
@@ -805,9 +969,9 @@ func (msg *sendableVenue) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "sendVenue", v)
+	r, err := msg.bot.Get("sendVenue", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendVenue")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -843,9 +1007,9 @@ func (msg *sendableContact) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "sendContact", v)
+	r, err := msg.bot.Get("sendContact", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendContact")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -862,9 +1026,9 @@ func (msg *sendableChatAction) Send() (bool, error) {
 	v.Add("chat_id", strconv.Itoa(msg.ChatId))
 	v.Add("Action", msg.Action)
 
-	r, err := Get(msg.bot, "sendChatAction", v)
+	r, err := msg.bot.Get("sendChatAction", v)
 	if err != nil {
-		return false, errors.Wrapf(err, "unable to sendChatAction")
+		return false, err
 	}
 
 	var bb bool
@@ -872,12 +1036,12 @@ func (msg *sendableChatAction) Send() (bool, error) {
 }
 
 type sendableAnimation struct {
-	bot    Bot
-	ChatId int
-	file
-	Duration int
-	Width    int
-	Height   int
+	bot       Bot
+	ChatId    int
+	Animation InputFile
+	Duration  int
+	Width     int
+	Height    int
 	// Thumb // TODO: support this
 	Caption             string
 	ParseMode           string
@@ -908,9 +1072,9 @@ func (msg *sendableAnimation) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := msg.bot.sendFile(msg.file, "animation", "sendAnimation", v)
+	r, err := msg.Animation.send("sendAnimation", v, "animation")
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendAnimation")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -969,9 +1133,9 @@ func (msg *sendablePoll) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(msg.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(msg.bot, "sendPoll", v)
+	r, err := msg.bot.Get("sendPoll", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendChatPoll")
+		return nil, err
 	}
 
 	return msg.bot.ParseMessage(r)
@@ -1003,9 +1167,9 @@ func (d *sendableDice) Send() (*Message, error) {
 	v.Add("reply_to_message_id", strconv.Itoa(d.ReplyToMessageId))
 	v.Add("reply_markup", string(replyMarkup))
 
-	r, err := Get(d.bot, "sendDice", v)
+	r, err := d.bot.Get("sendDice", v)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to sendDice")
+		return nil, err
 	}
 
 	return d.bot.ParseMessage(r)
@@ -1029,23 +1193,4 @@ func (cbq *sendableCallbackQuery) Send() (bool, error) {
 	v.Add("cache_time", strconv.Itoa(cbq.CacheTime))
 
 	return cbq.bot.boolSender("answerCallbackQuery", v)
-}
-
-func (b Bot) sendFile(msg file, fileType string, endpoint string, params url.Values) (json.RawMessage, error) {
-	if msg.FileId != "" {
-		params.Add(fileType, msg.FileId)
-		return Get(b, endpoint, params)
-	} else if msg.Path != "" {
-		file, err := os.Open(msg.Path)
-		if err != nil {
-			return nil, err
-		}
-		defer file.Close()
-
-		return Post(b, fileType, endpoint, params, file, msg.Name)
-	} else if msg.Reader != nil {
-		return Post(b, fileType, endpoint, params, msg.Reader, msg.Name)
-	} else {
-		return nil, errors.New("the message had no files that could be sent")
-	}
 }

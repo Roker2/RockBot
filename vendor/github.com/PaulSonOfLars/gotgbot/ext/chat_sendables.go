@@ -9,7 +9,7 @@ import (
 )
 
 type sendableKickChatMember struct {
-	bot       Bot `json:"-"`
+	bot       Bot
 	ChatId    int
 	UserId    int
 	UntilDate int64
@@ -29,9 +29,9 @@ func (kcm *sendableKickChatMember) Send() (bool, error) {
 	v.Add("user_id", strconv.Itoa(kcm.UserId))
 	v.Add("until_date", strconv.FormatInt(kcm.UntilDate, 10))
 
-	r, err := Get(kcm.bot, "kickChatMember", v)
+	r, err := kcm.bot.Get("kickChatMember", v)
 	if err != nil {
-		return false, errors.Wrapf(err, "could not kickChatMember")
+		return false, err
 	}
 
 	var bb bool
@@ -39,7 +39,7 @@ func (kcm *sendableKickChatMember) Send() (bool, error) {
 }
 
 type sendableRestrictChatMember struct {
-	bot         Bot `json:"-"`
+	bot         Bot
 	ChatId      int
 	UserId      int
 	Permissions ChatPermissions
@@ -79,9 +79,9 @@ func (rcm *sendableRestrictChatMember) Send() (bool, error) {
 
 	v.Add("permissions", string(perms))
 
-	r, err := Get(rcm.bot, "restrictChatMember", v)
+	r, err := rcm.bot.Get("restrictChatMember", v)
 	if err != nil {
-		return false, errors.Wrapf(err, "could not restrictChatMember")
+		return false, err
 	}
 
 	var bb bool
@@ -89,7 +89,7 @@ func (rcm *sendableRestrictChatMember) Send() (bool, error) {
 }
 
 type sendablePromoteChatMember struct {
-	bot                Bot `json:"-"`
+	bot                Bot
 	ChatId             int
 	UserId             int
 	CanChangeInfo      bool
@@ -130,9 +130,9 @@ func (pcm *sendablePromoteChatMember) Send() (bool, error) {
 	v.Add("can_pin_messages", strconv.FormatBool(pcm.CanPinMessages))
 	v.Add("can_promote_members", strconv.FormatBool(pcm.CanPromoteMembers))
 
-	r, err := Get(pcm.bot, "promoteChatMember", v)
+	r, err := pcm.bot.Get("promoteChatMember", v)
 	if err != nil {
-		return false, errors.Wrapf(err, "could not promoteChatMember")
+		return false, err
 	}
 
 	var bb bool
@@ -140,7 +140,7 @@ func (pcm *sendablePromoteChatMember) Send() (bool, error) {
 }
 
 type sendableSetChatAdministratorCustomTitle struct {
-	bot         Bot `json:"-"`
+	bot         Bot
 	ChatId      int
 	UserId      int
 	CustomTitle string
@@ -162,9 +162,9 @@ func (scact *sendableSetChatAdministratorCustomTitle) Send() (bool, error) {
 	v.Add("user_id", strconv.Itoa(scact.UserId))
 	v.Add("custom_title", scact.CustomTitle)
 
-	r, err := Get(scact.bot, "setChatAdministratorCustomTitle", v)
+	r, err := scact.bot.Get("setChatAdministratorCustomTitle", v)
 	if err != nil {
-		return false, errors.Wrapf(err, "could not setChatAdministratorCustomTitle")
+		return false, err
 	}
 
 	var bb bool
@@ -172,7 +172,7 @@ func (scact *sendableSetChatAdministratorCustomTitle) Send() (bool, error) {
 }
 
 type sendableSetChatPermissions struct {
-	bot         Bot `json:"-"`
+	bot         Bot
 	ChatId      int
 	Permissions ChatPermissions
 }
@@ -197,9 +197,9 @@ func (scp *sendableSetChatPermissions) Send() (bool, error) {
 
 	v.Add("permissions", string(perms))
 
-	r, err := Get(scp.bot, "setChatPermissions", v)
+	r, err := scp.bot.Get("setChatPermissions", v)
 	if err != nil {
-		return false, errors.Wrapf(err, "could not setChatPermissions")
+		return false, err
 	}
 
 	var bb bool
@@ -207,7 +207,7 @@ func (scp *sendableSetChatPermissions) Send() (bool, error) {
 }
 
 type sendablePinChatMessage struct {
-	bot                 Bot `json:"-"`
+	bot                 Bot
 	ChatId              int
 	MessageId           int
 	DisableNotification bool
@@ -228,9 +228,9 @@ func (pcm *sendablePinChatMessage) Send() (bool, error) {
 	v.Add("message_id", strconv.Itoa(pcm.MessageId))
 	v.Add("disable_notification", strconv.FormatBool(pcm.DisableNotification))
 
-	r, err := Get(pcm.bot, "pinChatMessage", v)
+	r, err := pcm.bot.Get("pinChatMessage", v)
 	if err != nil {
-		return false, errors.Wrapf(err, "unable to pinChatMessage")
+		return false, err
 	}
 
 	var bb bool
@@ -238,9 +238,9 @@ func (pcm *sendablePinChatMessage) Send() (bool, error) {
 }
 
 type sendableSetChatPhoto struct {
-	bot    Bot `json:"-"`
+	bot    Bot
 	ChatId int
-	file
+	Photo  InputFile
 }
 
 func (b Bot) NewSendableSetChatPhoto(chatId int) *sendableSetChatPhoto {
@@ -251,9 +251,9 @@ func (scp *sendableSetChatPhoto) Send() (bool, error) {
 	v := url.Values{}
 	v.Add("chat_id", strconv.Itoa(scp.ChatId))
 
-	r, err := scp.bot.sendFile(scp.file, "photo", "setChatPhoto", v)
+	r, err := scp.Photo.send("setChatPhoto", v, "photo")
 	if err != nil {
-		return false, errors.Wrapf(err, "unable to setChatPhoto")
+		return false, err
 	}
 
 	var bb bool

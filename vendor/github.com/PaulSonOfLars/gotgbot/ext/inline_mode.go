@@ -316,7 +316,7 @@ type ChosenInlineResult struct {
 }
 
 type sendableAnswerInlineQuery struct {
-	bot               Bot `json:"-"`
+	bot               Bot
 	InlineQueryId     string
 	Results           []InlineQueryResult
 	CacheTime         int
@@ -344,9 +344,9 @@ func (aiq sendableAnswerInlineQuery) Send() (bool, error) {
 	v.Add("switch_pm_text", aiq.SwitchPmText)
 	v.Add("switch_pm_parameter", aiq.SwitchPmParameter)
 
-	r, err := Get(aiq.bot, "answerInlineQuery", v)
+	r, err := aiq.bot.Get("answerInlineQuery", v)
 	if err != nil {
-		return false, errors.Wrapf(err, "unable to execute answerInlineQuery request")
+		return false, err
 	}
 
 	var bb bool

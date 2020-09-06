@@ -6,7 +6,10 @@ import (
 	"html"
 	"strconv"
 	"strings"
+	"unicode"
 	"unicode/utf16"
+
+	"github.com/PaulSonOfLars/gotgbot/parsemode"
 )
 
 type MessageEntity struct {
@@ -160,6 +163,7 @@ type Message struct {
 	ForwardSenderName     string                `json:"forward_sender_name"`
 	ForwardDate           int                   `json:"forward_date"`
 	ReplyToMessage        *Message              `json:"reply_to_message"`
+	ViaBot                *User                 `json:"via_bot"`
 	EditDate              int                   `json:"edit_date"`
 	MediaGroupId          string                `json:"media_group_id"`
 	AuthorSignature       string                `json:"author_signature"`
@@ -262,40 +266,64 @@ func (m Message) EditMarkdownf(format string, a ...interface{}) (*Message, error
 	return m.Bot.EditMessageMarkdown(m.Chat.Id, m.MessageId, fmt.Sprintf(format, a...))
 }
 
-func (m Message) ReplyAudioStr(audio string) (*Message, error) {
-	return m.Bot.ReplyAudioStr(m.Chat.Id, audio, m.MessageId)
+func (m Message) EditCaption(text string) (*Message, error) {
+	return m.Bot.EditMessageCaption(m.Chat.Id, m.MessageId, text)
 }
 
-func (m Message) ReplyDocumentStr(document string) (*Message, error) {
-	return m.Bot.ReplyDocumentStr(m.Chat.Id, document, m.MessageId)
+func (m Message) EditCaptionf(format string, a ...interface{}) (*Message, error) {
+	return m.Bot.EditMessageCaption(m.Chat.Id, m.MessageId, fmt.Sprintf(format, a...))
+}
+
+func (m Message) EditCaptionHTML(text string) (*Message, error) {
+	return m.Bot.editMessageCaption(m.Chat.Id, m.MessageId, text, nil, parsemode.Html)
+}
+
+func (m Message) EditCaptionHTMLf(format string, a ...interface{}) (*Message, error) {
+	return m.Bot.editMessageCaption(m.Chat.Id, m.MessageId, fmt.Sprintf(format, a...), nil, parsemode.Html)
+}
+
+func (m Message) EditCaptionMarkdown(text string) (*Message, error) {
+	return m.Bot.editMessageCaption(m.Chat.Id, m.MessageId, text, nil, parsemode.Markdown)
+}
+
+func (m Message) EditCaptionMarkdownf(format string, a ...interface{}) (*Message, error) {
+	return m.Bot.editMessageCaption(m.Chat.Id, m.MessageId, fmt.Sprintf(format, a...), nil, parsemode.Markdown)
+}
+
+func (m Message) ReplyAudio(audio InputFile) (*Message, error) {
+	return m.Bot.ReplyAudio(m.Chat.Id, audio, m.MessageId)
+}
+
+func (m Message) ReplyDocument(document InputFile) (*Message, error) {
+	return m.Bot.ReplyDocument(m.Chat.Id, document, m.MessageId)
 }
 
 func (m Message) ReplyLocation(latitude float64, longitude float64) (*Message, error) {
 	return m.Bot.ReplyLocation(m.Chat.Id, latitude, longitude, m.MessageId)
 }
 
-func (m Message) ReplyPhotoStr(photo string) (*Message, error) {
-	return m.Bot.ReplyPhotoStr(m.Chat.Id, photo, m.MessageId)
+func (m Message) ReplyPhoto(photo InputFile) (*Message, error) {
+	return m.Bot.ReplyPhoto(m.Chat.Id, photo, m.MessageId)
 }
 
-func (m Message) ReplyStickerStr(sticker string) (*Message, error) {
-	return m.Bot.ReplyStickerStr(m.Chat.Id, sticker, m.MessageId)
+func (m Message) ReplySticker(sticker InputFile) (*Message, error) {
+	return m.Bot.ReplySticker(m.Chat.Id, sticker, m.MessageId)
 }
 
 func (m Message) ReplyVenue(latitude float64, longitude float64, title string, address string) (*Message, error) {
 	return m.Bot.ReplyVenue(m.Chat.Id, latitude, longitude, title, address, m.MessageId)
 }
 
-func (m Message) ReplyVideoStr(video string) (*Message, error) {
-	return m.Bot.ReplyVideoStr(m.Chat.Id, video, m.MessageId)
+func (m Message) ReplyVideo(video InputFile) (*Message, error) {
+	return m.Bot.ReplyVideo(m.Chat.Id, video, m.MessageId)
 }
 
-func (m Message) ReplyVideoNoteStr(videoNote string) (*Message, error) {
-	return m.Bot.ReplyVideoNoteStr(m.Chat.Id, videoNote, m.MessageId)
+func (m Message) ReplyVideoNote(videoNote InputFile) (*Message, error) {
+	return m.Bot.ReplyVideoNote(m.Chat.Id, videoNote, m.MessageId)
 }
 
-func (m Message) ReplyVoiceStr(voice string) (*Message, error) {
-	return m.Bot.ReplyVoiceStr(m.Chat.Id, voice, m.MessageId)
+func (m Message) ReplyVoice(voice InputFile) (*Message, error) {
+	return m.Bot.ReplyVoice(m.Chat.Id, voice, m.MessageId)
 }
 
 func (m Message) Delete() (bool, error) {
@@ -507,13 +535,18 @@ func getOrigMsgMD(utf16Data []uint16, ents []MessageEntity) string {
 	for _, ent := range getUpperEntities(ents) {
 		newPrev := ent.Offset + ent.Length
 		prevText := string(utf16.Decode(utf16Data[prev:ent.Offset]))
+
+		text := utf16.Decode(utf16Data[ent.Offset:newPrev])
+		pre, cleanCntnt, post := splitEdgeWhitespace(string(text))
+		cleanCntntRune := []rune(cleanCntnt)
+
 		switch ent.Type {
 		case "bold", "italic", "code":
-			out.WriteString(prevText + mdMap[ent.Type] + escapeContainedMDV1(utf16.Decode(utf16Data[ent.Offset:newPrev]), []rune(mdMap[ent.Type])) + mdMap[ent.Type])
+			out.WriteString(prevText + pre + mdMap[ent.Type] + escapeContainedMDV1(cleanCntntRune, []rune(mdMap[ent.Type])) + mdMap[ent.Type] + post)
 		case "text_mention":
-			out.WriteString(prevText + "[" + escapeContainedMDV1(utf16.Decode(utf16Data[ent.Offset:newPrev]), []rune("[]()")) + "](tg://user?id=" + strconv.Itoa(ent.User.Id) + ")")
+			out.WriteString(prevText + pre + "[" + escapeContainedMDV1(cleanCntntRune, []rune("[]()")) + "](tg://user?id=" + strconv.Itoa(ent.User.Id) + ")" + post)
 		case "text_link":
-			out.WriteString(prevText + "[" + escapeContainedMDV1(utf16.Decode(utf16Data[ent.Offset:newPrev]), []rune("[]()")) + "](" + ent.Url + ")")
+			out.WriteString(prevText + pre + "[" + escapeContainedMDV1(cleanCntntRune, []rune("[]()")) + "](" + ent.Url + ")" + post)
 		default:
 			continue
 		}
@@ -612,6 +645,23 @@ func fillNestedMarkdownV2(data []uint16, ent MessageEntity, start int, entities 
 	return writeFinalMarkdownV2(data, ent, start, bd.String()), entEnd
 }
 
+func splitEdgeWhitespace(text string) (pre string, cntnt string, post string) {
+	bd := strings.Builder{}
+	rText := []rune(text)
+	for i := 0; i < len(rText) && unicode.IsSpace(rText[i]); i++ {
+		bd.WriteRune(rText[i])
+	}
+	pre = bd.String()
+	text = strings.TrimPrefix(text, pre)
+
+	bd.Reset()
+	for i := len(rText) - 1; i >= 0 && unicode.IsSpace(rText[i]); i-- {
+		bd.WriteRune(rText[i])
+	}
+	post = bd.String()
+	return pre, strings.TrimSuffix(text, post), post
+}
+
 func writeFinalHTML(data []uint16, ent MessageEntity, start int, cntnt string) string {
 	prevText := html.EscapeString(string(utf16.Decode(data[start:ent.Offset])))
 	switch ent.Type {
@@ -635,13 +685,14 @@ func writeFinalHTML(data []uint16, ent MessageEntity, start int, cntnt string) s
 
 func writeFinalMarkdownV2(data []uint16, ent MessageEntity, start int, cntnt string) string {
 	prevText := string(utf16.Decode(data[start:ent.Offset]))
+	pre, cleanCntnt, post := splitEdgeWhitespace(cntnt)
 	switch ent.Type {
 	case "bold", "italic", "code", "underline", "strikethrough", "pre":
-		return prevText + mdV2Map[ent.Type] + cntnt + mdV2Map[ent.Type]
+		return prevText + pre + mdV2Map[ent.Type] + cleanCntnt + mdV2Map[ent.Type] + post
 	case "text_mention":
-		return prevText + "[" + cntnt + "](tg://user?id=" + strconv.Itoa(ent.User.Id) + ")"
+		return prevText + pre + "[" + cleanCntnt + "](tg://user?id=" + strconv.Itoa(ent.User.Id) + ")" + post
 	case "text_link":
-		return prevText + "[" + cntnt + "](" + ent.Url + ")"
+		return prevText + pre + "[" + cleanCntnt + "](" + ent.Url + ")" + post
 	default:
 		return prevText + cntnt
 	}
