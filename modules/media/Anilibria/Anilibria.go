@@ -108,7 +108,7 @@ func Randomal(b ext.Bot, u *gotgbot.Update) error  {
 	if len(release.ToString()) <= 1024 {
 		msg := b.NewSendablePhoto(u.Message.Chat.Id, release.ToString())
 		msg.ParseMode = parsemode.Html
-		msg.FileId = "https://www.anilibria.tv" + release.pictureurl
+		msg.Photo = b.NewFileId("https://www.anilibria.tv" + release.pictureurl)
 		msg.ReplyMarkup = ext.ReplyMarkup(&markup)
 		_, err = msg.Send()
 		if err != nil {
@@ -116,7 +116,7 @@ func Randomal(b ext.Bot, u *gotgbot.Update) error  {
 		}
 	} else {
 		msg := b.NewSendablePhoto(u.Message.Chat.Id, "")
-		msg.FileId = "https://www.anilibria.tv" + release.pictureurl
+		msg.Photo = b.NewFileId("https://www.anilibria.tv" + release.pictureurl)
 		_, err = msg.Send()
 		if err != nil {
 			return err

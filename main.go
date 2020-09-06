@@ -44,7 +44,7 @@ func main() {
 	l.Info("Starting Rock...")
 
 	l.Info(os.Getenv("TOKEN"))
-	updater, err := gotgbot.NewUpdater(os.Getenv("TOKEN"), logger)
+	updater, err := gotgbot.NewUpdater(logger, os.Getenv("TOKEN"))
 	if err != nil {
 		l.Fatalw("failed to start updater", zap.Error(err))
 	}
@@ -87,7 +87,7 @@ func main() {
 		logrus.Println("Starting webhook")
 		port, err := strconv.Atoi(os.Getenv("PORT"))
 		herokuUrl := os.Getenv("HEROKU_URL")
-		webhook := gotgbot.Webhook{
+		webhook := ext.Webhook{
 			Serve:          "0.0.0.0",
 			ServePort:      port,
 			ServePath:      updater.Bot.Token,
