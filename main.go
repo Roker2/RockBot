@@ -48,6 +48,7 @@ func main() {
 	if err != nil {
 		l.Fatalw("failed to start updater", zap.Error(err))
 	}
+	updater.Dispatcher.AddHandler(handlers.NewCallback("removeWarn", warns.RemoveWarnButton))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("start", start))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("randomal", Anilibria.Randomal))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("randomsmmq", SunMyungMoon.RandomSMMQ))

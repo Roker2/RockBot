@@ -8,7 +8,9 @@ import (
 	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
+	"github.com/sirupsen/logrus"
 	"log"
+	"regexp"
 	"strconv"
 )
 
@@ -33,7 +35,18 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
   	if err != nil {
     	return err
   	}
-  	_, err = b.SendMessage(u.Message.Chat.Id, texts.WarnsQuantityOfUser(banMember.User.FirstName, quantity, maxQuantity))
+	msg := b.NewSendableMessage(u.Message.Chat.Id, texts.WarnsQuantityOfUser(banMember.User.FirstName, quantity, maxQuantity))
+	if quantity < maxQuantity {
+		markup := ext.InlineKeyboardMarkup{
+			InlineKeyboard: &[][]ext.InlineKeyboardButton{
+				[]ext.InlineKeyboardButton{
+					ext.InlineKeyboardButton{Text:"Убрать предупреждение", CallbackData: "removeWarn(" + strconv.Itoa(banId) + ")"},
+				},
+			},
+		}
+		msg.ReplyMarkup = ext.ReplyMarkup(&markup)
+	}
+	_, err = msg.Send()
   	if err != nil {
   		return err
   	}
@@ -42,6 +55,33 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
   		return err
   	}
   	return nil
+}
+
+func RemoveWarnButton(b ext.Bot, u *gotgbot.Update) error {
+	pattern, _ := regexp.Compile(`removeWarn\((.+?)\)`)
+	member, err := u.EffectiveChat.GetMember(u.EffectiveUser.Id) // user, which touch button
+	if err != nil {
+		return err
+	}
+	if !utils.MemberIsAdministrator(member) {
+		_, err = b.AnswerCallbackQueryText(u.CallbackQuery.Id, texts.YouAreNotAdministrator, true)
+		return err
+	}
+	if pattern.MatchString(u.CallbackQuery.Data) {
+		userId, err := strconv.Atoi(pattern.FindStringSubmatch(u.CallbackQuery.Data)[1])
+		if err != nil {
+			return err
+		}
+		logrus.Println(strconv.Itoa(userId))
+		_, err = sql.RemoveUserWarn(u.EffectiveChat.Id, userId)
+		if err != nil {
+			return err
+		}
+		msg := b.NewSendableEditMessageText(u.EffectiveChat.Id, u.EffectiveMessage.MessageId, "Предупреждение убрано.")
+		_, err = msg.Send()
+		return err
+	}
+	return nil
 }
 
 /*func WarnsQuantity (b ext.Bot, u *gotgbot.Update) error {
