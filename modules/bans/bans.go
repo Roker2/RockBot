@@ -6,8 +6,6 @@ import (
 	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
-	"github.com/sirupsen/logrus"
-	"strconv"
 )
 
 func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
@@ -32,37 +30,16 @@ func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 }
 
 func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
-	banId, errortext := utils.ExtractId(b, u, args)
-	if banId == 0 {
-		_, err := b.SendMessage(u.Message.Chat.Id, errortext)
-		return err
-	}
-	if utils.ItIsMe(b, u, banId) {
-		return nil
-	}
-	logrus.Println(strconv.Itoa(banId))
-	if utils.IsUserInChat(u.Message.Chat, banId) {
-		_, err := b.SendMessage(u.Message.Chat.Id, texts.UserIsInTheChat)
-		return err
-	}
-	member, err := u.Message.Chat.GetMember(u.Message.From.Id)
-	if !utils.BotIsAdministrator(b, u) {
+	canBan, banId, err := utils.CommonBan(b, u, args)
+	if !canBan || err != nil {
 		return err
 	}
 	banMember, err := u.Message.Chat.GetMember(banId)
 	if err != nil {
 		return err
 	}
-	if !utils.MemberIsAdministrator(member) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
-		return err
-	}
-	if !utils.MemberCanRestrictMembers(b, u) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouCanNotDoSomethingWithUsers)
-		return err
-	}
-	if utils.MemberIsAdministrator(banMember) {
-		_, err = b.SendMessage(u.Message.Chat.Id, texts.ICanNotDoItWithAdministrator)
+	if utils.IsUserInChat(u.Message.Chat, banId) {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsInTheChat)
 		return err
 	}
 	_, err = u.Message.Chat.UnbanMember(banId)
