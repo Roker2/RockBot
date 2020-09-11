@@ -170,6 +170,36 @@ func AddUserWarn (ChatId int, UserId int) (int, error) {
   return warns, nil
 }
 
+func RemoveUserWarn (ChatId int, UserId int) (int, error) {
+  db, err := openDataBase()
+  defer db.Close()
+  if err != nil {
+    return -1, err
+  }
+  _, err = db.Exec(usersTable)
+  if err != nil {
+    return -1, err
+  }
+  warns, err := GetUserWarns(ChatId, UserId)
+  if err != nil {
+    return -1, err
+  }
+  //log.Print("UserId + ChatId: " + strconv.Itoa(UserId + ChatId) + " warns: " + strconv.Itoa(warns))
+  warns--
+  if warns == 1 {
+    _, err = db.Exec("INSERT INTO users(id, warns, ChatId, UserId) VALUES ($1, $2, $3, $4);", UserId + ChatId, warns, ChatId, UserId)
+    if err != nil {
+      return -1, err
+    }
+  } else {
+    _, err = db.Exec("UPDATE users SET warns = $1 WHERE id = $2 ;", warns, UserId + ChatId)
+    if err != nil {
+      return -1, err
+    }
+  }
+  return warns, nil
+}
+
 func GetUserWarns (ChatId int, UserId int) (int, error) {
   db, err := openDataBase()
   defer db.Close()
