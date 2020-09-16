@@ -80,6 +80,24 @@ func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
 	return err
 }
 
+func ResetWelcome(b ext.Bot, u *gotgbot.Update) error {
+	member, err := u.Message.Chat.GetMember(u.Message.From.Id)
+	if !utils.MemberIsAdministrator(member) {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.YouAreNotAdministrator)
+		return err
+	}
+	err = sql.SetWelcome(u.Message.Chat.Id, texts.DefaultWelcome)
+	if err != nil {
+		return err
+	}
+	_, err = b.SendMessageHTML(u.Message.Chat.Id, texts.NewWelcomeIsSettled)
+	if err != nil {
+		return err
+	}
+	err = Welcome(b, u)
+	return err
+}
+
 func Welcome(b ext.Bot, u *gotgbot.Update) error {
 	disabledCommands, err := sql.GetDisabledCommands(u.Message.Chat.Id)
 	if err != nil {

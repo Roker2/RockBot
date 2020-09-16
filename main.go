@@ -63,6 +63,7 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("unmute", mute.Unmute))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("welcome", welcome.Welcome))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("setwelcome", welcome.SetWelcome))
+	updater.Dispatcher.AddHandler(handlers.NewCommand("resetwelcome", welcome.ResetWelcome))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("pin", admin.Pin))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("unpin", admin.Unpin))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("promote", admin.Promote))
