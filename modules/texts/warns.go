@@ -19,3 +19,7 @@ const AdministratorAlwaysIsClean = "У администраторов всегд
 func UserDoesNotHaveWarns(FirstName string) string {
 	return "У пользователя " + FirstName + " очищена карма."
 }
+
+const RemoveWarn = "Убрать предупреждение"
+
+const WarnWasRemoved = "Предупреждение убрано."

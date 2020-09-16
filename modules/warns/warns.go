@@ -40,7 +40,7 @@ func WarnUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 		markup := ext.InlineKeyboardMarkup{
 			InlineKeyboard: &[][]ext.InlineKeyboardButton{
 				[]ext.InlineKeyboardButton{
-					ext.InlineKeyboardButton{Text:"Убрать предупреждение", CallbackData: "removeWarn(" + strconv.Itoa(banId) + ")"},
+					ext.InlineKeyboardButton{Text:texts.RemoveWarn, CallbackData: "removeWarn(" + strconv.Itoa(banId) + ")"},
 				},
 			},
 		}
@@ -77,7 +77,7 @@ func RemoveWarnButton(b ext.Bot, u *gotgbot.Update) error {
 		if err != nil {
 			return err
 		}
-		msg := b.NewSendableEditMessageText(u.EffectiveChat.Id, u.EffectiveMessage.MessageId, "Предупреждение убрано.")
+		msg := b.NewSendableEditMessageText(u.EffectiveChat.Id, u.EffectiveMessage.MessageId, texts.WarnWasRemoved)
 		_, err = msg.Send()
 		return err
 	}
