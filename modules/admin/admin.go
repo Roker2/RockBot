@@ -7,7 +7,6 @@ import (
 	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -84,16 +83,10 @@ func Promote(bot ext.Bot, u *gotgbot.Update, args []string) error {
 	if !utils.BotCanPromote(bot, u) {
 		return nil
 	}
-	var promoteId int
-	if u.Message.ReplyToMessage != nil {
-		promoteId = u.Message.ReplyToMessage.From.Id
-	} else {
-		if len(args) > 0 {
-			promoteId, err = strconv.Atoi(args[0])
-		} else {
-			_, err = bot.SendMessage(u.Message.Chat.Id, texts.PleaseReplyToTheMessageOfThePersonYouWantToGrantAdministratorRightsToOrEnterTheirID)
-			return err
-		}
+	promoteId, errorText := utils.ExtractId(bot, u, args)
+	if errorText != "" {
+		_, err := bot.SendMessage(u.Message.Chat.Id, errorText)
+		return err
 	}
 	_, err = bot.PromoteChatMember(u.Message.Chat.Id, promoteId)
 	return  err
@@ -114,16 +107,10 @@ func Demote(bot ext.Bot, u *gotgbot.Update, args []string) error {
 	if !utils.BotCanPromote(bot, u) {
 		return nil
 	}
-	var promoteId int
-	if u.Message.ReplyToMessage != nil {
-		promoteId = u.Message.ReplyToMessage.From.Id
-	} else {
-		if len(args) > 0 {
-			promoteId, err = strconv.Atoi(args[0])
-		} else {
-			_, err = bot.SendMessage(u.Message.Chat.Id, texts.PleaseReplyToTheMessageOfThePersonYouWantToRemoveAdministratorRightsToOrEnterTheirID)
-			return err
-		}
+	promoteId, errorText := utils.ExtractId(bot, u, args)
+	if errorText != "" {
+		_, err := bot.SendMessage(u.Message.Chat.Id, errorText)
+		return err
 	}
 	_, err = bot.DemoteChatMember(u.Message.Chat.Id, promoteId)
 	return  err
