@@ -40,10 +40,7 @@ func LeftMember(b ext.Bot, u *gotgbot.Update) error {
 	member := u.EffectiveMessage.LeftChatMember
 	text := textHandler(texts.ByeUser, member)
 	_, err := b.SendMessage(u.Message.Chat.Id, text)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func SetWelcome(b ext.Bot, u *gotgbot.Update, args []string) error {
