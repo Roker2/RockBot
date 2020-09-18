@@ -149,8 +149,15 @@ func MemberCanRestrictMembers(b ext.Bot, u *gotgbot.Update) bool {
 }
 
 func ExtractId(b ext.Bot, u *gotgbot.Update, args []string) (int, string) {
+	if IsForward(u.Message) {
+		return u.Message.ForwardFrom.Id, ""
+	}
 	if IsReply(b, u, false) {
-		return u.Message.ReplyToMessage.From.Id, ""
+		if IsForward(u.Message.ReplyToMessage) {
+			return u.Message.ReplyToMessage.ForwardFrom.Id, ""
+		} else {
+			return u.Message.ReplyToMessage.From.Id, ""
+		}
 	} else {
 		id := 0
 		if len(args) >= 1  {
