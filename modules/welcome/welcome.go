@@ -33,16 +33,14 @@ func textHandler(text string, user *ext.User) string {
 
 func NewMember(b ext.Bot, u *gotgbot.Update) error {
 	newMembers := u.EffectiveMessage.NewChatMembers
-	var prevUser *ext.User
 	for _, member := range newMembers {
-		if (member.Id == b.Id) || (prevUser != nil && prevUser.Id == member.Id) {
+		if member.Id == b.Id {
 			continue
 		}
 		err := Welcome(b, u)
 		if err != nil {
 			return err
 		}
-		prevUser = &member
 	}
 	return nil
 }
