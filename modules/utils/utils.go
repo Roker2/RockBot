@@ -28,8 +28,8 @@ func IsReply(b ext.Bot, u *gotgbot.Update, writeMsg bool) bool {
 	return true
 }
 
-func IsForward(b ext.Bot, u *gotgbot.Update) bool {
-	return u.Message.ForwardFrom != nil
+func IsForward(msg *ext.Message) bool {
+	return msg.ForwardFrom != nil
 }
 
 func BotIsAdministrator(b ext.Bot, u *gotgbot.Update) bool {
