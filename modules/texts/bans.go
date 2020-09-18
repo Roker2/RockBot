@@ -2,8 +2,6 @@ package texts
 
 const UserIsInTheChat = "Этот пользователь в данный момент в чате."
 
-const UserIsNotInTheChat = "Этого пользователя нет в чате."
-
 func UserIsBanned(name string) string {
 	return "Пользователь " + name + " забанен!"
 }
