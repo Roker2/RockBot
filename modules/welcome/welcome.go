@@ -32,17 +32,12 @@ func textHandler(text string, user *ext.User) string {
 }
 
 func NewMember(b ext.Bot, u *gotgbot.Update) error {
-	newMembers := u.EffectiveMessage.NewChatMembers
-	for _, member := range newMembers {
-		if member.Id == b.Id {
-			continue
-		}
-		err := Welcome(b, u)
-		if err != nil {
-			return err
-		}
+	newMember := u.EffectiveMessage.NewChatMembers[0]
+	if newMember.Id == b.Id {
+		return nil
 	}
-	return nil
+	err := Welcome(b, u)
+	return err
 }
 
 func LeftMember(b ext.Bot, u *gotgbot.Update) error {
