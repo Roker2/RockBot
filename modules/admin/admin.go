@@ -37,12 +37,11 @@ func Pin(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err := bot.SendMessage(u.Message.Chat.Id, texts.ThisChatIsPrivateICanNotToPinMessage)
 		return err
 	}
-	Notify := true
-	if len(args) > 0 {
-		Notify = strings.ToLower(args[0]) != "loud"
-	}
 	Message := bot.NewSendablePinChatMessage(u.Message.Chat.Id, u.Message.ReplyToMessage.MessageId)
-	Message.DisableNotification = Notify
+	Message.DisableNotification = true
+	if len(args) > 0 {
+		Message.DisableNotification = strings.ToLower(args[0]) != "loud"
+	}
 	_, err = Message.Send()
 	return err
 }
