@@ -15,11 +15,7 @@ import (
 func textHandler(text string, user *ext.User) string {
 	text = strings.ReplaceAll(text, "<br>", "\n")
 	//Replace {firstName} to first name of user
-	if user.FirstName != "" {
-		text = strings.ReplaceAll(text, "{firstName}", user.FirstName)
-	} else {
-		text = strings.ReplaceAll(text, "{firstName}", texts.User)
-	}
+	text = strings.ReplaceAll(text, "{firstName}", user.FirstName)
 	//Replace {lastName} to last name of user
 	if user.LastName != "" {
 		text = strings.ReplaceAll(text, "{lastName}", user.LastName)
