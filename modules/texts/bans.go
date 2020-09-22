@@ -13,3 +13,11 @@ func UserIsUnbanned(name string) string {
 func UserIsKicked(name string) string {
 	return "Пользователь " + name + " кикнут!"
 }
+
+func UserIsPromoted(name string) string {
+	return "Пользователю " + name + " даны права администратора."
+}
+
+func UserIsDemoted(name string) string {
+	return "Пользователь " + name + " лишен прав администратора."
+}

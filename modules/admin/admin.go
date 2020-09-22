@@ -89,6 +89,14 @@ func Promote(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	_, err = bot.PromoteChatMember(u.Message.Chat.Id, promoteId)
+	if err != nil {
+		return err
+	}
+	member, err := u.Message.Chat.GetMember(promoteId)
+	if err != nil {
+		return err
+	}
+	_, err = bot.SendMessage(u.Message.Chat.Id, texts.UserIsPromoted(member.User.FirstName))
 	return  err
 }
 
@@ -113,6 +121,14 @@ func Demote(bot ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 	_, err = bot.DemoteChatMember(u.Message.Chat.Id, promoteId)
+	if err != nil {
+		return err
+	}
+	member, err := u.Message.Chat.GetMember(promoteId)
+	if err != nil {
+		return err
+	}
+	_, err = bot.SendMessage(u.Message.Chat.Id, texts.UserIsDemoted(member.User.FirstName))
 	return  err
 }
 
