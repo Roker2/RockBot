@@ -32,20 +32,22 @@ type sendableInvoice struct {
 	IsFlexible                bool
 	DisableNotification       bool
 	ReplyToMessageId          int
+	AllowSendingWithoutReply  bool
 	ReplyMarkup               ReplyMarkup
 }
 
 func (b Bot) NewSendableInvoice(chatId int, title string, description string, payload string, providerToken string, startParameter string, currency string, prices []LabeledPrice) *sendableInvoice {
 	return &sendableInvoice{
-		bot:            b,
-		ChatId:         chatId,
-		Title:          title,
-		Description:    description,
-		Payload:        payload,
-		ProviderToken:  providerToken,
-		StartParameter: startParameter,
-		Currency:       currency,
-		Prices:         prices,
+		bot:                      b,
+		ChatId:                   chatId,
+		Title:                    title,
+		Description:              description,
+		Payload:                  payload,
+		ProviderToken:            providerToken,
+		StartParameter:           startParameter,
+		Currency:                 currency,
+		Prices:                   prices,
+		AllowSendingWithoutReply: b.AllowSendingWithoutReply,
 	}
 }
 
@@ -85,6 +87,7 @@ func (i *sendableInvoice) Send() (*Message, error) {
 	v.Add("is_flexible", strconv.FormatBool(i.IsFlexible))
 	v.Add("disable_notification", strconv.FormatBool(i.DisableNotification))
 	v.Add("reply_to_message_id", strconv.Itoa(i.ReplyToMessageId))
+	v.Add("allow_sending_without_reply", strconv.FormatBool(i.AllowSendingWithoutReply))
 	v.Add("reply_markup", string(replyMarkup))
 
 	r, err := i.bot.Get("sendInvoice", v)

@@ -5,27 +5,27 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot",
-			"Rev": "587332a585825906b77618f311ec0f89a97f6650"
+			"Rev": "ef1b6e86fe977745219414a326c61425c15853dc"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/dice",
-			"Rev": "587332a585825906b77618f311ec0f89a97f6650"
+			"Rev": "ef1b6e86fe977745219414a326c61425c15853dc"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/ext",
-			"Rev": "587332a585825906b77618f311ec0f89a97f6650"
+			"Rev": "ef1b6e86fe977745219414a326c61425c15853dc"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/handlers",
-			"Rev": "587332a585825906b77618f311ec0f89a97f6650"
+			"Rev": "ef1b6e86fe977745219414a326c61425c15853dc"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/handlers/Filters",
-			"Rev": "587332a585825906b77618f311ec0f89a97f6650"
+			"Rev": "ef1b6e86fe977745219414a326c61425c15853dc"
 		},
 		{
 			"ImportPath": "github.com/PaulSonOfLars/gotgbot/parsemode",
-			"Rev": "587332a585825906b77618f311ec0f89a97f6650"
+			"Rev": "ef1b6e86fe977745219414a326c61425c15853dc"
 		},
 		{
 			"ImportPath": "github.com/glinton/ping",
@@ -34,18 +34,18 @@
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
-			"Comment": "v1.8.0-4-gef080b6",
-			"Rev": "ef080b6a8f499b5d60fe9f24a2f8a8beb671566d"
+			"Comment": "v1.8.0-6-g083382b",
+			"Rev": "083382b7e6fc78cc91eb57afab268fe2f1b6ed6d"
 		},
 		{
 			"ImportPath": "github.com/lib/pq/oid",
-			"Comment": "v1.8.0-4-gef080b6",
-			"Rev": "ef080b6a8f499b5d60fe9f24a2f8a8beb671566d"
+			"Comment": "v1.8.0-6-g083382b",
+			"Rev": "083382b7e6fc78cc91eb57afab268fe2f1b6ed6d"
 		},
 		{
 			"ImportPath": "github.com/lib/pq/scram",
-			"Comment": "v1.8.0-4-gef080b6",
-			"Rev": "ef080b6a8f499b5d60fe9f24a2f8a8beb671566d"
+			"Comment": "v1.8.0-6-g083382b",
+			"Rev": "083382b7e6fc78cc91eb57afab268fe2f1b6ed6d"
 		},
 		{
 			"ImportPath": "github.com/pkg/errors",
@@ -54,84 +54,84 @@
 		},
 		{
 			"ImportPath": "github.com/sirupsen/logrus",
-			"Comment": "v1.6.0-12-g6699a89",
-			"Rev": "6699a89a232f3db797f2e280639854bbc4b89725"
+			"Comment": "v1.7.0-4-ga752a62",
+			"Rev": "a752a62f5ec3c6d29ec8c0f0cce75147894fe768"
 		},
 		{
 			"ImportPath": "go.uber.org/atomic",
-			"Comment": "v1.6.0-19-g7ccfa79",
-			"Rev": "7ccfa79b883fc5ba5bd24ee88a8e5a455556d2dd"
+			"Comment": "v1.7.0",
+			"Rev": "12f27ba2637fa0e13772a4f05fa46a5d18d53182"
 		},
 		{
 			"ImportPath": "go.uber.org/multierr",
-			"Comment": "v1.5.0-1-g4a27324",
-			"Rev": "4a27324ebb71d5097bb088c40aa6348a52c57829"
+			"Comment": "v1.6.0-1-g0eb6eb5",
+			"Rev": "0eb6eb5383b9e83a1a2501e65768bd818a2b2599"
 		},
 		{
 			"ImportPath": "go.uber.org/zap",
-			"Comment": "v1.16.0",
-			"Rev": "404189cf44aea95b0cd9bddcb0242dd4cf88c510"
+			"Comment": "v1.16.0-1-g9d2e5de",
+			"Rev": "9d2e5dea6deb0f1eb8edb2d94ba7b0deecca5c0c"
 		},
 		{
 			"ImportPath": "go.uber.org/zap/buffer",
-			"Comment": "v1.16.0",
-			"Rev": "404189cf44aea95b0cd9bddcb0242dd4cf88c510"
+			"Comment": "v1.16.0-1-g9d2e5de",
+			"Rev": "9d2e5dea6deb0f1eb8edb2d94ba7b0deecca5c0c"
 		},
 		{
 			"ImportPath": "go.uber.org/zap/internal/bufferpool",
-			"Comment": "v1.16.0",
-			"Rev": "404189cf44aea95b0cd9bddcb0242dd4cf88c510"
+			"Comment": "v1.16.0-1-g9d2e5de",
+			"Rev": "9d2e5dea6deb0f1eb8edb2d94ba7b0deecca5c0c"
 		},
 		{
 			"ImportPath": "go.uber.org/zap/internal/color",
-			"Comment": "v1.16.0",
-			"Rev": "404189cf44aea95b0cd9bddcb0242dd4cf88c510"
+			"Comment": "v1.16.0-1-g9d2e5de",
+			"Rev": "9d2e5dea6deb0f1eb8edb2d94ba7b0deecca5c0c"
 		},
 		{
 			"ImportPath": "go.uber.org/zap/internal/exit",
-			"Comment": "v1.16.0",
-			"Rev": "404189cf44aea95b0cd9bddcb0242dd4cf88c510"
+			"Comment": "v1.16.0-1-g9d2e5de",
+			"Rev": "9d2e5dea6deb0f1eb8edb2d94ba7b0deecca5c0c"
 		},
 		{
 			"ImportPath": "go.uber.org/zap/zapcore",
-			"Comment": "v1.16.0",
-			"Rev": "404189cf44aea95b0cd9bddcb0242dd4cf88c510"
+			"Comment": "v1.16.0-1-g9d2e5de",
+			"Rev": "9d2e5dea6deb0f1eb8edb2d94ba7b0deecca5c0c"
 		},
 		{
 			"ImportPath": "golang.org/x/net/bpf",
-			"Rev": "62affa334b73ec65ed44a326519ac12c421905e3"
+			"Rev": "69a78807bb2bb6d1599c68698c6b009505012083"
 		},
 		{
 			"ImportPath": "golang.org/x/net/icmp",
-			"Rev": "62affa334b73ec65ed44a326519ac12c421905e3"
+			"Rev": "69a78807bb2bb6d1599c68698c6b009505012083"
 		},
 		{
 			"ImportPath": "golang.org/x/net/internal/iana",
-			"Rev": "62affa334b73ec65ed44a326519ac12c421905e3"
+			"Rev": "69a78807bb2bb6d1599c68698c6b009505012083"
 		},
 		{
 			"ImportPath": "golang.org/x/net/internal/socket",
-			"Rev": "62affa334b73ec65ed44a326519ac12c421905e3"
+			"Rev": "69a78807bb2bb6d1599c68698c6b009505012083"
 		},
 		{
 			"ImportPath": "golang.org/x/net/ipv4",
-			"Rev": "62affa334b73ec65ed44a326519ac12c421905e3"
+			"Rev": "69a78807bb2bb6d1599c68698c6b009505012083"
 		},
 		{
 			"ImportPath": "golang.org/x/net/ipv6",
-			"Rev": "62affa334b73ec65ed44a326519ac12c421905e3"
+			"Rev": "69a78807bb2bb6d1599c68698c6b009505012083"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/internal/unsafeheader",
-			"Rev": "be1d3432aa8f4fd677757447c4c9e7ff9bf25f73"
+			"Rev": "f84b799fce68db3cb46a8f6f819c1e56377181df"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/unix",
-			"Rev": "be1d3432aa8f4fd677757447c4c9e7ff9bf25f73"
+			"Rev": "f84b799fce68db3cb46a8f6f819c1e56377181df"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/windows",
-			"Rev": "be1d3432aa8f4fd677757447c4c9e7ff9bf25f73"
+			"Rev": "f84b799fce68db3cb46a8f6f819c1e56377181df"
 		}
 	]
 }
