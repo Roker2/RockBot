@@ -25,7 +25,11 @@ func Ban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsBanned(banMember.User.FirstName))
+	if banMember.User.Username == "" {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsBanned(banMember.User.FirstName))
+	} else {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsBanned("@" + banMember.User.Username))
+	}
 	return err
 }
 
@@ -50,7 +54,11 @@ func Unban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsUnbanned(banMember.User.FirstName))
+	if banMember.User.Username == "" {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsUnbanned(banMember.User.FirstName))
+	} else {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsUnbanned("@" + banMember.User.Username))
+	}
 	return err
 }
 
@@ -71,7 +79,11 @@ func Kick(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsKicked(banMember.User.FirstName))
+	if banMember.User.Username == "" {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsKicked(banMember.User.FirstName))
+	} else {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsKicked("@" + banMember.User.Username))
+	}
 	return err
 }
 
@@ -90,6 +102,10 @@ func Kickme(b ext.Bot, u *gotgbot.Update) error {
 	if err != nil {
 		return err
 	}
-	_, err = b.SendMessage(chat.Id, texts.UserIsKicked(banMember.User.FirstName))
+	if banMember.User.Username == "" {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsKicked(banMember.User.FirstName))
+	} else {
+		_, err = b.SendMessage(u.Message.Chat.Id, texts.UserIsKicked("@" + banMember.User.Username))
+	}
 	return err
 }
