@@ -7,3 +7,5 @@ const ICanNotGetId = "Не могу получить ID человека. Отв
 const WriteIdNotBadText = "Введите пожалуйста ID, а не бред."
 
 const AmIThing = "Я для тебя что, вещь, которую можно выбросить?"
+
+const ReplyPlease = "Ответьте пожалуйста на сообщение"

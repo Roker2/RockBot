@@ -8,6 +8,7 @@ import (
 	"github.com/Roker2/RockBot/modules/sql"
 	"github.com/Roker2/RockBot/modules/texts"
 	"github.com/Roker2/RockBot/modules/utils"
+	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
 )
@@ -240,4 +241,32 @@ func EnableAllCommands(bot ext.Bot, u *gotgbot.Update) error {
 	}
 	_, err = bot.SendMessage(u.Message.Chat.Id, texts.AllUserCommandsAreEnabled)
 	return err
+}
+
+func Report(bot ext.Bot, u *gotgbot.Update) error {
+	if !utils.IsReply(bot, u, false) {
+		_, err := bot.SendMessage(u.Message.Chat.Id, texts.ReplyPlease)
+		if err != nil {
+			return err
+		}
+	}
+	from, err := u.Message.Chat.GetMember(u.Message.From.Id)
+	if err != nil {
+		return err
+	}
+	per, err := u.Message.Chat.GetMember(u.Message.ReplyToMessage.From.Id)
+	if err != nil {
+		return err
+	}
+	admins, err := u.Message.Chat.GetAdministrators()
+	if err != nil {
+		return err
+	}
+	for _, admin := range admins {
+		_, err := bot.SendMessageHTML(admin.User.Id, fmt.Sprintf(texts.ReportMessage, u.Message.Chat.Title, "@" + from.User.Username, "@" + per.User.Username, u.Message.ReplyToMessage.OriginalHTML()))
+		if err != nil {
+			logrus.Warn(fmt.Sprintf("I can not send message to %s, error: %s", "@" + admin.User.Username, err.Error()))
+		}
+	}
+	return nil
 }

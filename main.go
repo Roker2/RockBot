@@ -69,6 +69,7 @@ func main() {
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("promote", admin.Promote))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("demote", admin.Demote))
 	updater.Dispatcher.AddHandler(handlers.NewCommand("purge", admin.Purge))
+	updater.Dispatcher.AddHandler(handlers.NewCommand("report", admin.Report))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("warn", warns.WarnUser))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("warns", warns.GetUserWarns))
 	updater.Dispatcher.AddHandler(handlers.NewArgsCommand("setwarns", warns.SetWarnsQuantity))
