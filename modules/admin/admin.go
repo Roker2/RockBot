@@ -263,7 +263,11 @@ func Report(bot ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 	for _, admin := range admins {
-		_, err := bot.SendMessageHTML(admin.User.Id, fmt.Sprintf(texts.ReportMessage, u.Message.Chat.Title, "@" + from.User.Username, "@" + per.User.Username, u.Message.ReplyToMessage.OriginalHTML()))
+		_, err := bot.SendMessage(admin.User.Id, fmt.Sprintf(texts.ReportMessage, u.Message.Chat.Title, "@" + from.User.Username, "@" + per.User.Username))
+		if err != nil {
+			logrus.Warn(fmt.Sprintf("I can not send message to %s, error: %s", "@" + admin.User.Username, err.Error()))
+		}
+		_, err = bot.ForwardMessage(admin.User.Id, u.Message.Chat.Id, u.Message.ReplyToMessage.MessageId)
 		if err != nil {
 			logrus.Warn(fmt.Sprintf("I can not send message to %s, error: %s", "@" + admin.User.Username, err.Error()))
 		}
