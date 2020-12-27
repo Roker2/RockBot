@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/Roker2/RockBot/modules/errors"
@@ -190,7 +191,7 @@ func DisableCommands(bot ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = bot.SendMessage(u.Message.Chat.Id, texts.DisabledUserCommandsList(disabledCommands))
+	_, err = bot.SendMessage(u.Message.Chat.Id, fmt.Sprintf(texts.DisabledUserCommandsList, disabledCommands))
 	return err
 }
 
@@ -202,7 +203,7 @@ func GetDisabledCommands(bot ext.Bot, u *gotgbot.Update) error {
 	if disabledCommands == "" {
 		_, err = bot.SendMessage(u.Message.Chat.Id, texts.AllUserCommandsAreEnabled)
 	} else {
-		_, err = bot.SendMessage(u.Message.Chat.Id, texts.DisabledUserCommandsList(disabledCommands))
+		_, err = bot.SendMessage(u.Message.Chat.Id, fmt.Sprintf(texts.DisabledUserCommandsList, disabledCommands))
 	}
 	return err
 }

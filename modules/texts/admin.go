@@ -20,6 +20,4 @@ const AllUserCommandsAreEnabled = "Все пользовательские ко�
 
 const YouDidNotWriteAnyUserCommands = "Вы не написали ни одной пользовательской команды."
 
-func DisabledUserCommandsList(disabledCommands string) string {
-	return "Отключены следующие пользовательские команды: " + disabledCommands
-}
+const DisabledUserCommandsList = "Отключены следующие пользовательские команды: %s"
