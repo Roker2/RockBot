@@ -27,6 +27,7 @@ Commands
 | warns      | Check warns                 |
 | setwarns   | Set quantity of warns       |
 | resetwarns | Reset user warns            |
+| report     | Report bad people           |
 | welcome    | Say "Hi!"                   |
 | setwelcome | Set welcome text            |
 | setrules   | Set rules of chat           |
