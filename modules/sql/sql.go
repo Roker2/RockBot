@@ -287,7 +287,7 @@ func GetDisabledCommands(ChatId int) (string, error) {
   var disabledCommands string
   err = db.QueryRow("SELECT disabled_commands FROM chatinfo WHERE id = $1;", ChatId).Scan(&disabledCommands)
   if err != nil {
-    if strings.Contains(err.Error(), "sql: no rows in result set") {
+    if strings.Contains(err.Error(), "sql: no rows in result set") || strings.Contains(err.Error(), "converting NULL to string is unsupported") {
       errors.SendError(err)
       return "", nil
     } else {
