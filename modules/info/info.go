@@ -42,9 +42,9 @@ func ChatInfo(b ext.Bot, u *gotgbot.Update) error {
 	if err != nil {
 		return err
 	}
-	textInfo := "<b>Chat ID:</b> <code>" + strconv.Itoa(chat.Id)
+	textInfo := "<b>Chat ID:</b> <code>" + strconv.Itoa(chat.Id) + "</code>"
 	if len(chat.Username) != 0 {
-		textInfo += "</code>\n<b>User Name:</b> @" + chat.Username
+		textInfo += "\n<b>User Name:</b> @" + chat.Username
 	}
 	textInfo += "\n<b>Members count:</b> " + strconv.Itoa(membersCount)
 	_, err = b.SendMessageHTML(u.Message.Chat.Id, textInfo)
