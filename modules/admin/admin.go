@@ -246,9 +246,7 @@ func EnableAllCommands(bot ext.Bot, u *gotgbot.Update) error {
 func Report(bot ext.Bot, u *gotgbot.Update) error {
 	if !utils.IsReply(bot, u, false) {
 		_, err := bot.SendMessage(u.Message.Chat.Id, texts.ReplyPlease)
-		if err != nil {
-			return err
-		}
+		return err
 	}
 	from, err := u.Message.Chat.GetMember(u.Message.From.Id)
 	if err != nil {
