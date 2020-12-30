@@ -15,7 +15,7 @@ func UserIsKicked(name string) string {
 }
 
 func UserIsPromoted(name string) string {
-	return "Пользователю " + name + " даны права администратора."
+	return "Пользователь " + name + " получил права администратора."
 }
 
 func UserIsDemoted(name string) string {
