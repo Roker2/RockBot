@@ -1,6 +1,8 @@
 package texts
 
-import "strconv"
+import (
+	"fmt"
+)
 
 const ICanNotGiveWarnToAdministrator = "Я не могу дать предупреждение администратору."
 
@@ -13,13 +15,13 @@ const RemoveWarn = "Убрать предупреждение"
 const WarnWasRemoved = "Предупреждение убрано."
 
 func WarnsQuantityOfUser(FirstName string, quantity int, maxQuantity int) string {
-	return "Количество предупреждений у " + FirstName + ": " + strconv.Itoa(quantity) + "/" + strconv.Itoa(maxQuantity)
+	return fmt.Sprintf("Количество предупреждений у %s: %d/%d", FirstName, quantity, maxQuantity)
 }
 
 func NewWarnsQuantity(quantity string) string {
-	return "Новое количество максимальных предупреждений: " + quantity + "."
+	return fmt.Sprintf("Новое количество максимальных предупреждений: %s.", quantity)
 }
 
 func UserDoesNotHaveWarns(FirstName string) string {
-	return "У пользователя " + FirstName + " очищена карма."
+	return fmt.Sprintf("У пользователя %s очищена карма.", FirstName)
 }
