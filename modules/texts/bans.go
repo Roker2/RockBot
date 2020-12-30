@@ -1,23 +1,25 @@
 package texts
 
+import "fmt"
+
 const UserIsInTheChat = "Этот пользователь в данный момент в чате."
 
 func UserIsBanned(name string) string {
-	return "Пользователь " + name + " забанен!"
+	return fmt.Sprintf("Пользователь %s забанен!", name)
 }
 
 func UserIsUnbanned(name string) string {
-	return "Пользователь " + name + " разбанен!"
+	return fmt.Sprintf("Пользователь %s разбанен!", name)
 }
 
 func UserIsKicked(name string) string {
-	return "Пользователь " + name + " кикнут!"
+	return fmt.Sprintf("Пользователь %s кикнут!", name)
 }
 
 func UserIsPromoted(name string) string {
-	return "Пользователь " + name + " получил права администратора."
+	return fmt.Sprintf("Пользователь %s получил права администратора.", name)
 }
 
 func UserIsDemoted(name string) string {
-	return "Пользователь " + name + " лишен прав администратора."
+	return fmt.Sprintf("Пользователь %s лишен прав администратора.", name)
 }
