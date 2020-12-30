@@ -192,7 +192,7 @@ func DisableCommands(bot ext.Bot, u *gotgbot.Update, args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = bot.SendMessage(u.Message.Chat.Id, fmt.Sprintf(texts.DisabledUserCommandsList, disabledCommands))
+	_, err = bot.SendMessage(u.Message.Chat.Id, texts.DisabledUserCommandsList(disabledCommands))
 	return err
 }
 
@@ -204,7 +204,7 @@ func GetDisabledCommands(bot ext.Bot, u *gotgbot.Update) error {
 	if disabledCommands == "" {
 		_, err = bot.SendMessage(u.Message.Chat.Id, texts.AllUserCommandsAreEnabled)
 	} else {
-		_, err = bot.SendMessage(u.Message.Chat.Id, fmt.Sprintf(texts.DisabledUserCommandsList, disabledCommands))
+		_, err = bot.SendMessage(u.Message.Chat.Id, texts.DisabledUserCommandsList(disabledCommands))
 	}
 	return err
 }
@@ -263,7 +263,7 @@ func Report(bot ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 	for _, admin := range admins {
-		_, err := bot.SendMessage(admin.User.Id, fmt.Sprintf(texts.ReportMessage, u.Message.Chat.Title, "@" + from.User.Username, "@" + per.User.Username))
+		_, err := bot.SendMessage(admin.User.Id, texts.ReportMessage(u.Message.Chat.Title, "@" + from.User.Username, "@" + per.User.Username))
 		if err != nil {
 			logrus.Warn(fmt.Sprintf("I can not send message to %s, error: %s", "@" + admin.User.Username, err.Error()))
 		}

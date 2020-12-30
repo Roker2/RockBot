@@ -1,5 +1,7 @@
 package texts
 
+import "fmt"
+
 const PleaseReplyToTheMessageYouWantToPin = "Ответьте пожалуйста на сообщение, которое Вы хотите закрепить."
 
 const ThisChatIsPrivateICanNotToPinMessage = "Данный чат приватный, в приватных чатах я не могу закрепить сообщение."
@@ -20,6 +22,10 @@ const AllUserCommandsAreEnabled = "Все пользовательские ко�
 
 const YouDidNotWriteAnyUserCommands = "Вы не написали ни одной пользовательской команды."
 
-const DisabledUserCommandsList = "Отключены следующие пользовательские команды: %s"
+func DisabledUserCommandsList(disabledCommands string) string {
+	return fmt.Sprintf("Отключены следующие пользовательские команды: %s", disabledCommands)
+}
 
-const ReportMessage = "Новый репорт из чата %s\nОтправитель: %s\nНа кого: %s\nСообщение:"
+func ReportMessage(chatName string, from string, per string) string {
+	return fmt.Sprintf("Новый репорт из чата %s\nОтправитель: %s\nНа кого: %s\nСообщение:", chatName, from, per)
+}
